@@ -1,5 +1,21 @@
 # fuelmeter-tools
 
+This is a collection of data management and mangling tools developed to support
+the ACEP fuelmeter project.
+
+## Contributing
+
+The repository, content within, and contributions are licensed under MIT license.
+
+## other tools used
+
+* [click](https://github.com/pallets/click) - cli tool builder helper (alternative to argparse)
+* jupyter - data lab
+* [pandas](https://pandas.pydata.org/) - data analysis and modeling library
+* [plotly](https://plot.ly/python/plotly-fundamentals/) - data visualization
+* [ubidots-python](https://github.com/ubidots/ubidots-python) - 
+* [python-dotenv](https://github.com/theskumar/python-dotenv) - parsing .env
+  files
 
 ## dev setup
 
