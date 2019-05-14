@@ -22,9 +22,14 @@ The repository, content within, and contributions are licensed under MIT license
 This project uses a `Pipfile` to manage library dependancies using the pipenv
 tool. See pytohn tutorials for using [pipenv for managing depenacies](https://packaging.python.org/tutorials/managing-dependencies/). Pipenv is good but there are some some valid [gripes](https://hynek.me/articles/python-app-deps-2018/).
 
-To install pipenv do this:
 
-* `pip install --user pipenv`
+To install pipenv do this:
+* `pip3 install --user pipenv`
+* The above installs pipenv to `$HOME/.local/bin` which will need to be in `$PATH`.  If that is missing add following line to `.bashrc`
+  `export PATH=$PATH:$HOME/.local/bin`
+
+To install project dependancies:
+* `pipenv update`
 
 Running a script here with neccessary depenacies in the python environment:
 ```
