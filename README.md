@@ -19,6 +19,8 @@ The repository, content within, and contributions are licensed under MIT license
 
 ## dev setup
 
+### pipenv
+
 This project uses a `Pipfile` to manage library dependancies using the pipenv
 tool. See pytohn tutorials for using [pipenv for managing depenacies](https://packaging.python.org/tutorials/managing-dependencies/). Pipenv is good but there are some some valid [gripes](https://hynek.me/articles/python-app-deps-2018/).
 
@@ -30,6 +32,9 @@ To install pipenv do this:
 
 To install project dependancies:
 * `pipenv update`
+
+Then install all this projects python dependancies using:
+* `pipenv install`
 
 Running a script here with neccessary depenacies in the python environment:
 ```
@@ -49,3 +54,21 @@ git add Pipfile
 # hack hack, commit & push
 ```
 
+## `.env` file for secrets
+
+We use a .env file to hold secrets.  When kicking off you will want to copy
+`env-sample` to `.env` like so
+```
+cp env-sample .env
+```
+Then populate with the secrets as needed.
+
+## Enable Google Sheets API
+
+Read the [sheeds api quickstart for python](https://developers.google.com/sheets/api/quickstart/python).
+
+* Enable the API (see link on quickstart guide) 
+* Add the the client_id and client_secret the `.env` file.
+  * `SHEETS_API_CLIENT_ID=` ...
+  * `SHEETS_API_SECRET=` ... 
+* 
