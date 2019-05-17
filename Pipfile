@@ -17,6 +17,7 @@ oauth2client = "*"
 pyyaml = "*"
 netcdf4 = "*"
 matplotlib = "*"
+seaborn = "*"
 
 [requires]
 python_version = "3.6"
