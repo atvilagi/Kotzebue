@@ -15,6 +15,7 @@ click = "*"
 gspread = "*"
 oauth2client = "*"
 pyyaml = "*"
+netcdf4 = "*"
 
 [requires]
 python_version = "3.6"
