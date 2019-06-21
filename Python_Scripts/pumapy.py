@@ -27,6 +27,9 @@ def run_deltaT(intT, outT): #Runs the deltaT function for lists of indoor temp. 
     
 def indoorT(thermistor): #Computes the indoor temperature from the thermistor value collected by the PUMA device
     
+    if int(thermistor) == 0:
+        return np.nan
+
     indoorT = round(((3.354*10**-3 + (2.56985*10**-4)*np.log(thermistor/10000) + #This is the function returning temp. from thermistor values; may return a NaN
                 (2.620131*10**-6)*np.log( thermistor/10000)**2 + 
                 (6.383091*10**-8)*np.log( thermistor/10000)**3)**-1 - 273.15)*1.8 + 32, 2)
@@ -103,6 +106,7 @@ def file2data(stove_file,air_temp_file): #Extracts the final data indoor temp., 
     outT = run_outdoorT(air_temp_file,stove_time)
     inT = run_indoorT(thermistor)
     dT = deltaT(inT,outT)
+    print(stove_file)
     stime = stove_time
     
     return stime, inT, outT, dT, state, clicks
@@ -175,7 +179,7 @@ def remove_duplicates_list(dup_list): #Removes duplicate and NaN inflicted tuple
     
     fin_list = []
     for item in dup_list:
-        if item not in fin_list and np.nan not in item:
+        if item not in fin_list and not True in np.isnan(item): 
             fin_list.append(item)
             
     return fin_list

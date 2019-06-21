@@ -6,7 +6,7 @@
 def dir2data_mp(air_temp_file): #This runs the file2data_mp function for each month directory in the yearly stove datasets
 
     if __name__ == '__main__': #This makes the multiprocessing module safe for Windows to use (other OS don't require it to run properly)
-        
+
         file_list = [] #Making a list of the file names in each directory, only adding the text files, excluding the log.txt files
         for file in os.listdir():
             if file.endswith('.txt'):
@@ -47,6 +47,7 @@ name_list = [] #Making a list of the stove names
 for i in yams:
     name_list.append(i)
 
+air_temp_file = os.path.join(os.path.abspath(os.path.dirname(__file__)),'../Data/aoos_snotel_temp.nc')
 merged_file = Dataset('../Data/puma_unified_data.nc','w',format='NETCDF4') #Making a netCDF4 file for the final data product (netCDF4 allows for grouping, which is used per stove later)
 
 os.chdir('../../ftp-data') #This function changes the active directory to the directory with all the stove data files in 'FBK000' format; this will need adjusting depending on where the stove files are stored relative to this script 
@@ -56,6 +57,9 @@ stoves = []
 for stove in dir_list: #Making a list of all the inventoried stoves
     if stove in name_list:
         stoves.append(stove)
+
+print('Stove data collated:')
+print(stoves)
 
 for stove in stoves:
     
@@ -99,14 +103,14 @@ for stove in stoves:
         os.chdir(year) #Changing to the year directory
         
         month_data = [[],[],[],[],[],[]] #Data buffer for all months
-        
+
         for month in months:
             os.chdir(month) #Changing to the month directory
-            dir_data = dir2data_mp('../../../../fuelmeter-tools/Data/aoos_snotel_temp.nc') #Inputing the path to the outdoor temperature file and the running the function defined at the top of the script, extracting the data from the PUMA text files; this will need to be changed depending on the database structure and the location of the outdoor temperature file relative to this script
+            dir_data = dir2data_mp(air_temp_file) #Inputing the path to the outdoor temperature file and the running the function defined at the top of the script, extracting the data from the PUMA text files; this will need to be changed depending on the database structure and the location of the outdoor temperature file relative to this script
             for i in range(len(month_data)): #Collating the month data into the transcending all month buffer
                 month_data[i] += dir_data[i]
             os.chdir('..') #Leaving the month directory
-        
+
         for i in range(len(year_data)): #Collating the year data into the transcending all year buffer
             year_data[i] += month_data[i]
         
