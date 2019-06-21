@@ -2,4 +2,4 @@
 .ipynb_checkpoints/
 puma-client.json
 client_secret.json
-__pycache__/
+Python_Scripts/__pycache__/
