@@ -40,54 +40,6 @@ def run_indoorT(thermistor): #Computes the array of indoor temperatures from the
         inT.append(indoorT(thermistor[i]))
         
     return inT
-
-#def outdoorT(air_temp,datetime_obj): #Computes the outdoor temperature for the area and time of interest
-#    
-#    pumaRange = air_temp.loc[:] #Range of days available for the outdoor temp.
-#
-#    pumaPoint = datetime_obj #Time of interest for the outdoor temp.
-#   
-#    dataStart = pumaRange.iloc[0].name.to_pydatetime()
-#    dataEnd = pumaRange.iloc[-1].name.to_pydatetime()
-#    
-#    if pumaPoint < dataStart or pumaPoint > dataEnd: #Checking if the desired point is in the outdoor temp. data
-#        return -999
-#    
-#    nearestIndex = pumaRange.index.get_loc(pumaPoint, method='nearest') #Finds the nearest outdoor temp.
-#    
-#    nearestTemp = pumaRange.iloc[nearestIndex]
-#
-#    timeDiff = nearestTemp.name - pumaPoint #timeDelta
-#    #in this expression, when the point is ahead, the day=0
-#    #when the point is behind, the day=-1
-#    
-#    if abs(timeDiff) < timedelta(minutes = 15):
-#        #less than 15 minutes from an hour
-#        return nearestTemp.air_temperature
-#    elif timeDiff.days == -1:
-#        #greater than 15 minutes from the hour
-#        #and goes to previous hour
-#        #so look forward to interpolate
-#        
-#        #have to convert pandas timestamp to datetime to python timestamp
-#        xpRaw = [nearestTemp.name.to_pydatetime(), pumaRange.iloc[nearestIndex + 1].name.to_pydatetime()]
-#        xp = np.array([time.mktime(d.timetuple()) for d in xpRaw])
-#        
-#        fp = [nearestTemp.air_temperature, pumaRange.iloc[nearestIndex + 1].air_temperature]
-#        
-#        return round(np.interp(time.mktime(pumaPoint.timetuple()), xp, fp), 2)
-#    
-#    else:
-#        #greater than 15 minutes from the hour
-#        #and goes to next hour
-#        #so look backward to interpolate
-#        
-#        xpRawToo = [pumaRange.iloc[nearestIndex - 1].name.to_pydatetime(), nearestTemp.name.to_pydatetime()]
-#        xpToo = np.array([time.mktime(d.timetuple()) for d in xpRawToo])
-#        
-#        fpToo = [pumaRange.iloc[nearestIndex - 1].air_temperature, nearestTemp.air_temperature]
-#        
-#        return round(np.interp(time.mktime(pumaPoint.timetuple()), xpToo, fpToo), 2)
     
 def outdoorT(air_temp,air_time,stove_time): #Computes the outdoor temperature for the area and time of interest
 
