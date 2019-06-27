@@ -100,71 +100,17 @@ def pumatxt2data(stove_file): #Function that extracts the time, state, clicks, a
         
     return stove_time, state, clicks, thermistor
 
-def file2data(stove_file,air_temp_file): #Extracts the final data indoor temp., outdoor temp., and temp. difference and collates with the status, clicks, and time
-    
-    stove_time, state, clicks, thermistor = pumatxt2data(stove_file)
-    outT = run_outdoorT(air_temp_file,stove_time)
-    inT = run_indoorT(thermistor)
-    dT = deltaT(inT,outT)
-    print(stove_file)
-    stime = stove_time
-    
-    return stime, inT, outT, dT, state, clicks
-
-def dir2data(air_temp_file): #This runs the file2data function for each month directory in the yearly stove datasets; robust but slow, use the parallelized code
-    
-    file_list = []
-    for file in os.listdir():
-        if file.endswith('.txt'):
-            if not file.endswith('LOG.txt'):
-                file_list.append(file)
-    file_list.sort()
-    pumas = [[],[],[],[],[],[]]
-    for file in file_list:
-        print(file)
-        data = file2data(file,air_temp_file)
-        for i in range(len(pumas)):
-            pumas[i] += data[i]
-            
-    return pumas
-
-def file2data_mp(stove_file,air_temp_file,result): #This function is the parallelized version of file2data function above; main difference is the multiprocess safe 'result' buffer
-    
+def file2data_mp(stove_file,air_temp_file,stove_dict,fuel_consume_file,result): #This function is the parallelized version of file2data function above; main difference is the multiprocess safe 'result' buffer
+    #This runs the file2data function for each month directory in the yearly stove datasets; robust but slow, use the parallelized code
     stove_time, state, clicks, thermistor = pumatxt2data(stove_file)
     outT = run_outdoorT(air_temp_file,stove_time)
     inT = run_indoorT(thermistor)
     dT = run_deltaT(inT,outT)
     stime = stove_time
+    gallons = run_clicks2gallons(clicks,state,stove_dict,fuel_consume_file)
+    gph = run_galperhour(gallons,stime)
     print(stove_file)
-    result.put([stime, inT, outT, dT, state, clicks])
-    
-def dir2data_mp(air_temp_file): #This runs the file2data_mp function for each month directory in the yearly stove datasets but IS NOT Windows SAFE
-
-    file_list = []
-    for file in os.listdir():
-        if file.endswith('.txt'):
-            if not file.endswith('LOG.txt'):
-                file_list.append(file)
-    file_list.sort()
-    
-    result = mp.Manager().Queue()
-    pool = mp.Pool(mp.cpu_count())
-    for file in file_list:
-        pool.apply_async(file2data_mp,args=(file,air_temp_file,result))
-    pool.close()
-    pool.join()
-    results = []
-    
-    while not result.empty():
-        results.append(result.get())
-    
-    data = [[],[],[],[],[],[]]
-    
-    for i in range(len(results)):
-        for j in range(len(data)):
-            data[j] += results[i][j]
-
-    return data
+    result.put([stime, inT, outT, dT, state, clicks, gallons, gph])
 
 def data_sort(data_list): #Sorts the stove data by putting the information into a tuple per timestamp and sorting by said timestamp
     
@@ -189,10 +135,52 @@ def stove_data_polish(stove_data): #Runs both the data_sort function and the rem
     stove_data_sorted = data_sort(stove_data)
     stove_data_fin = remove_duplicates_list(stove_data_sorted)
     
-    stove_data_polished = [[],[],[],[],[],[]]
+    stove_data_polished = [[],[],[],[],[],[],[],[]]
     for item in stove_data_fin:
         for i in range(len(stove_data_polished)):
             stove_data_polished[i].append(item[i])
             
     return stove_data_polished
 
+def stove_rate(stove_dict,fuel_consume_file): #Determines the stove fuel pump rate depending on the stove type
+    
+    fuel_consume_file = open(fuel_consume_file,'r')
+    fuel_consume = csv.reader(fuel_consume_file, delimiter=',') #Reading the file as a comma delimited file
+    
+    for stove_type in fuel_consume:
+        if stove_type[0] == stove_dict['Stove Type']:
+            rates = stove_type[1::]
+    
+    return rates
+
+def clicks2gallons(clicks,rate): #Determines the fuel pumped from the clicks counted by the PuMA device
+    
+    return clicks*rate
+
+def run_clicks2gallons(clicks,state,stove_dict,fuel_consume_file): #Runs the clicks to gallons function for the clicks array
+    
+    rates = stove_rate(stove_dict,fuel_consume_file)
+    gallons = []
+    for i in range(len(clicks)):
+        if clicks[i] != -1:
+            gallons.append(clicks2gallons(clicks[i],rates[state[i]]))
+        else:
+            gallons.append(0)
+            
+    return gallons
+
+def galperhour(gal,deltat): #Calculates the US gallons per hour
+    
+    return gal/deltat*3600
+
+def run_galperhour(gallons,stime): #Runs the US gallons per hour calculation
+    
+    gph = []
+    for i in range(len(gallons)):
+        if i == 0:
+            deltat = stime[1] - stime[0]
+        else:
+            deltat = stime[i] - stime[i-1]
+        gph.append(galperhour(gallons[i],deltat))
+        
+    return gph
