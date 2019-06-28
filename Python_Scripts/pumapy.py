@@ -46,12 +46,12 @@ def run_indoorT(thermistor): #Computes the array of indoor temperatures from the
     
 def outdoorT(air_temp,air_time,stove_time): #Computes the outdoor temperature for the area and time of interest
 
-    if stove_time < air_time[0] and air_time[-1] < stove_time: #Checking if the desired point is in the outdoor temp. data
+    if stove_time < air_time[0] or air_time[-1] < stove_time: #Checking if the desired point is in the outdoor temp. data
         
         return np.nan
     
     else:
-    
+
         temp_interp = interp1d(air_time,air_temp) #Linearly interpolates the outdoor temp. when the indoor temp. is between hours
         
         return round(float(temp_interp(stove_time)),2)
@@ -107,7 +107,9 @@ def file2data_mp(stove_file,air_temp_file,stove_dict,fuel_consume_file,result): 
     inT = run_indoorT(thermistor)
     dT = run_deltaT(inT,outT)
     stime = stove_time
+    print('ok')
     gallons = run_clicks2gallons(clicks,state,stove_dict,fuel_consume_file)
+    print('okay')
     gph = run_galperhour(gallons,stime)
     print(stove_file)
     result.put([stime, inT, outT, dT, state, clicks, gallons, gph])
@@ -116,7 +118,7 @@ def data_sort(data_list): #Sorts the stove data by putting the information into 
     
     data_sorted = []
     for i in range(len(data_list[0])):
-        data_sorted.append((data_list[0][i],data_list[1][i],data_list[2][i],data_list[3][i],data_list[4][i],data_list[5][i]))
+        data_sorted.append((data_list[0][i],data_list[1][i],data_list[2][i],data_list[3][i],data_list[4][i],data_list[5][i],data_list[6][i],data_list[7][i]))
     data_sorted.sort()
     
     return data_sorted
@@ -161,12 +163,14 @@ def run_clicks2gallons(clicks,state,stove_dict,fuel_consume_file): #Runs the cli
     
     rates = stove_rate(stove_dict,fuel_consume_file)
     gallons = []
-    for i in range(len(clicks)):
-        if clicks[i] != -1:
-            gallons.append(clicks2gallons(clicks[i],rates[state[i]]))
+    for i in range(len(state)):
+        if state[i] > 4:
+            print(state[i])
+        if state[i] != -1 and state[i] < 4:
+            gallons.append(clicks2gallons(clicks[i],float(rates[state[i]])))
         else:
             gallons.append(0)
-            
+    print(gallons)
     return gallons
 
 def galperhour(gal,deltat): #Calculates the US gallons per hour

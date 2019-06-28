@@ -17,7 +17,7 @@ def dir2data_mp(air_temp_file,stove_dict,fuel_consume_file): #This runs the file
         result = mp.Manager().Queue() #Instantiating a multiprocess safe buffer (needed for multiprocessing)
         pool = mp.Pool(mp.cpu_count()) #Making a pool of processes (think of it as other initializations of python each running its own program)
         for file in file_list:
-            pool.apply_async(puma.file2data_mp,args=(file,air_temp_file,stove_dict,fuel_consume_file,result)) #Asynchronous running of the file2data_mp function on the text files
+            pool.apply(puma.file2data_mp,args=(file,air_temp_file,stove_dict,fuel_consume_file,result)) #Asynchronous running of the file2data_mp function on the text files
         pool.close()
         pool.join()
         results = []
@@ -31,7 +31,7 @@ def dir2data_mp(air_temp_file,stove_dict,fuel_consume_file): #This runs the file
             for j in range(len(data)):
                 data[j] += results[i][j]
 
-    return data #Returning data as [time,intT,outT,dT,state,clicks]
+    return data #Returning data as [time,intT,outT,dT,state,clicks,gallons,gph]
 
 from netCDF4 import Dataset
 import multiprocessing as mp
