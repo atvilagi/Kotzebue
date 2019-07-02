@@ -6,7 +6,8 @@ import numpy as np
 import csv
 import matplotlib.pyplot as plt
 from scipy import io as sio
-#
+import yaml
+
 #def Pt(a,b,c):
 #    print(a,b,c)
 #
@@ -58,3 +59,30 @@ from scipy import io as sio
 #
 #u1 = sio.loadmat('UBM719.mat')
 #u2 = sio.loadmat('UXM719.mat')
+
+merged_file = Dataset('../Data/puma_unified_data.nc','r')
+file = open('../PuMA_Inventory/puma-inventory.yml','r') #Opening the inventory file of the stoves in the project
+yams = yaml.load(file)
+file.close()
+
+stoves = [] #Making a list of the stove names
+for stove in yams:
+    stoves.append(stove)
+
+for stove in stoves:
+    
+    fbk = merged_file[stove]
+    c = fbk['clicks'][:]
+    t = fbk['time'][:]
+#    gal = fbk['fuel_consumption'][:]
+    gph = fbk['fuel_consumption_rate'][:]
+    cumclicks = fbk['cumulative_clicks'][:]
+    a = 0
+    for i in range(len(cumclicks)):
+        if gph[i] > 1:
+            if gph[i] > a:
+                a = gph[i]
+                print(gph[i])
+#        if c[i] != 0 and gal[i] < 0:
+    #        print(t[i],cumclicks[i],c[i])
+#            print(t[i],gal[i])

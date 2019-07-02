@@ -3,7 +3,7 @@
 #Created: Tue Jun 18 23:56:10 2019
 #By: Douglas Keller
 
-def dir2data_mp(air_temp_file,stove_dict,fuel_consume_file): #This runs the file2data_mp function for each month directory in the yearly stove datasets
+def dir2data_mp(air_temp_file): #This runs the file2data_mp function for each month directory in the yearly stove datasets
 
     if __name__ == '__main__': #This makes the multiprocessing module safe for Windows to use (other OS don't require it to run properly)
 
@@ -17,7 +17,7 @@ def dir2data_mp(air_temp_file,stove_dict,fuel_consume_file): #This runs the file
         result = mp.Manager().Queue() #Instantiating a multiprocess safe buffer (needed for multiprocessing)
         pool = mp.Pool(mp.cpu_count()) #Making a pool of processes (think of it as other initializations of python each running its own program)
         for file in file_list:
-            pool.apply(puma.file2data_mp,args=(file,air_temp_file,stove_dict,fuel_consume_file,result)) #Asynchronous running of the file2data_mp function on the text files
+            pool.apply_async(puma.file2data,args=(file,air_temp_file,result)) #Asynchronous running of the file2data_mp function on the text files
         pool.close()
         pool.join()
         results = []
@@ -25,13 +25,13 @@ def dir2data_mp(air_temp_file,stove_dict,fuel_consume_file): #This runs the file
         while not result.empty(): #Extracting results from the multiprocessing
             results.append(result.get())
         
-        data = [[],[],[],[],[],[],[],[]]
+        data = [[],[],[],[],[],[]]
         
         for i in range(len(results)):
             for j in range(len(data)):
                 data[j] += results[i][j]
 
-    return data #Returning data as [time,intT,outT,dT,state,clicks,gallons,gph]
+    return data #Returning data as [time,intT,outT,dT,state,cumulative_clicks]
 
 from netCDF4 import Dataset
 import multiprocessing as mp
@@ -48,7 +48,7 @@ for i in yams:
     name_list.append(i)
 
 air_temp_file = os.path.join(os.path.abspath(os.path.dirname(__file__)),'../Data/aoos_snotel_temp.nc')
-fuel_consume_file = os.path.join(os.path.abspath(os.path.dirname(__file__)),'../Data/FuelConsumption.txt')
+fuel_click_file = os.path.join(os.path.abspath(os.path.dirname(__file__)),'../Data/FuelClickConversion.txt')
 
 merged_file = Dataset('../Data/puma_unified_data.nc','w',format='NETCDF4') #Making a netCDF4 file for the final data product (netCDF4 allows for grouping, which is used per stove later)
 
@@ -76,7 +76,8 @@ for stove in stoves:
     merged_file[stove].createVariable('lon','f4',('location'))    
     merged_file[stove].createVariable('time','f8',('time'))
     merged_file[stove].createVariable('state','i4',('time'))
-    merged_file[stove].createVariable('clicks','i4',('time'))
+    merged_file[stove].createVariable('clicks','i8',('time'))
+    merged_file[stove].createVariable('cumulative_clicks','i8',('time'))
     merged_file[stove].createVariable('fuel_consumption','f8',('time'))
     merged_file[stove].createVariable('fuel_consumption_rate','f8',('time'))
     merged_file[stove].createVariable('indoor_temp','f4',('time'))
@@ -87,10 +88,12 @@ for stove in stoves:
     merged_file[stove]['lon'].description = 'Longitude of the PUMA device location'
     merged_file[stove]['time'].description = 'Timestamp of each PUMA device reading'
     merged_file[stove]['time'].units = 'Time since 1970, 1, 1, 00:00:00 UTC (Unix time)'
-    merged_file[stove]['state'].description = 'State of the stove when powered on; depends on the stove type the PUMA device is attached to'
+    merged_file[stove]['state'].description = 'State of the stove when powered on; depends on the stove type the PuMA device is attached to'
     merged_file[stove]['state'].units = 'Integer units corresponding to power states; -1 indicates powered off'
-    merged_file[stove]['clicks'].description = 'Number of clicks the fuel pump solenoid makes when the stove turns on'
-    merged_file[stove]['clicks'].units = 'Number of clicks; -1 indicates stove powered off'
+    merged_file[stove]['cumulative_clicks'].description = 'Number of cumulative clicks since PuMA installation the fuel pump solenoid makes when the stove turns on'
+    merged_file[stove]['cumulative_clicks'].units = 'Number of cumulative clicks; -1 indicates stove powered off'
+    merged_file[stove]['clicks'].description = 'Number of clicks the fuel pump solenoid makes when the stove turns on per time interval'
+    merged_file[stove]['clicks'].units = 'Number of clicks'
     merged_file[stove]['fuel_consumption'].description = 'The amount of fuel consumed by the stove'
     merged_file[stove]['fuel_consumption'].units = 'US gallons'
     merged_file[stove]['fuel_consumption_rate'].description = 'The fuel consumption rate of the stove'
@@ -104,17 +107,17 @@ for stove in stoves:
     
     os.chdir(stove) #Changing to the stove directory
     
-    year_data = [[],[],[],[],[],[],[],[]] #Data buffer for all years
+    year_data = [[],[],[],[],[],[]] #Data buffer for all years
     
     for year in years:
         months = os.listdir(year) #Collecting all month directories in the year directory
         os.chdir(year) #Changing to the year directory
         
-        month_data = [[],[],[],[],[],[],[],[]] #Data buffer for all months
+        month_data = [[],[],[],[],[],[]] #Data buffer for all months
 
         for month in months:
             os.chdir(month) #Changing to the month directory
-            dir_data = dir2data_mp(air_temp_file,yams[stove],fuel_consume_file) #Inputing the path to the outdoor temperature file and the running the function defined at the top of the script, extracting the data from the PUMA text files; this will need to be changed depending on the database structure and the location of the outdoor temperature file relative to this script
+            dir_data = dir2data_mp(air_temp_file) #Inputing the path to the outdoor temperature file and the running the function defined at the top of the script, extracting the data from the PUMA text files; this will need to be changed depending on the database structure and the location of the outdoor temperature file relative to this script
             for i in range(len(month_data)): #Collating the month data into the transcending all month buffer
                 month_data[i] += dir_data[i]
             os.chdir('..') #Leaving the month directory
@@ -123,16 +126,26 @@ for stove in stoves:
             year_data[i] += month_data[i]
         
         os.chdir('..') #Leaving the year directory
-        
-    stove_data = puma.stove_data_polish(year_data) #Sorting and removing duplicates and bad data from the data
+    
+    year_data = puma.stove_data_polish(year_data) #Sorting and removing duplicates and bad data from the data
+    
+    clicks = puma.cumulative_clicks2clicks(year_data[5],year_data[0])
+    year_data.append(clicks)
+    gallons = puma.run_clicks2gallons(year_data[6],year_data[4],yams[stove],fuel_click_file)
+    year_data.append(gallons)
+    gph = puma.run_galperhour(gallons,year_data[0])
+    year_data.append(gph) #year_data now looks like [stime,inT,outT,dT,state,cumulative_clicks,clicks,gallons,gph]
+    
+    stove_data = puma.stove_data_polish(year_data)
         
     merged_file[stove]['lat'][:] = yams[stove]['Location'][0] #Filling the variables
     merged_file[stove]['lon'][:] = yams[stove]['Location'][1]
     merged_file[stove]['time'][:] = stove_data[0]
     merged_file[stove]['state'][:] = stove_data[4]
-    merged_file[stove]['clicks'][:] = stove_data[5]
-    merged_file[stove]['fuel_consumption'][:] = stove_data[6]
-    merged_file[stove]['fuel_consumption_rate'][:] = stove_data[7]
+    merged_file[stove]['cumulative_clicks'][:] = stove_data[5]
+    merged_file[stove]['clicks'][:] = stove_data[6]
+    merged_file[stove]['fuel_consumption'][:] = stove_data[7]
+    merged_file[stove]['fuel_consumption_rate'][:] = stove_data[8]
     merged_file[stove]['indoor_temp'][:] = stove_data[1]
     merged_file[stove]['outdoor_temp'][:] = stove_data[2]
     merged_file[stove]['delta_temp'][:] = stove_data[3]
@@ -140,3 +153,4 @@ for stove in stoves:
     os.chdir('..') #Leaving the stove directory
     
 merged_file.close() #Closing the netCDF4 file and you're done!
+os.chdir('../fuelmeter-tools/Python_Scripts/')

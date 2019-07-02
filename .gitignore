@@ -3,3 +3,4 @@
 puma-client.json
 client_secret.json
 Python_Scripts/__pycache__/
+.pyc

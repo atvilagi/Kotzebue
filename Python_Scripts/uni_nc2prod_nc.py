@@ -30,7 +30,8 @@ for stove in stoves:
     product_file[stove].createVariable('lon','f4',('location'))    
     product_file[stove].createVariable('time','f8',('time'))
     product_file[stove].createVariable('state','i4',('time'))
-    product_file[stove].createVariable('clicks','i4',('time'))
+    product_file[stove].createVariable('clicks','i8',('time'))
+    product_file[stove].createVariable('cumulative_clicks','i8',('time'))
     product_file[stove].createVariable('fuel_consumption','f8',('time'))
     product_file[stove].createVariable('fuel_consumption_rate','f8',('time'))
     product_file[stove].createVariable('indoor_temp','f4',('time'))
@@ -43,8 +44,10 @@ for stove in stoves:
     product_file[stove]['time'].units = 'Time since 1970, 1, 1, 00:00:00 UTC (Unix time)'
     product_file[stove]['state'].description = 'State of the stove when powered on; depends on the stove type the PUMA device is attached to'
     product_file[stove]['state'].units = 'Integer units corresponding to power states; -1 indicates powered off'
-    product_file[stove]['clicks'].description = 'Number of clicks the fuel pump solenoid makes when the stove turns on'
-    product_file[stove]['clicks'].units = 'Number of clicks; -1 indicates stove powered off'
+    product_file[stove]['clicks'].description = 'Number of clicks the fuel pump solenoid makes when the stove turns on per time interval'
+    product_file[stove]['clicks'].units = 'Number of clicks'
+    product_file[stove]['cumulative_clicks'].description = 'Number of cumulative clicks since PuMA installation the fuel pump solenoid makes when the stove turns on'
+    product_file[stove]['cumulative_clicks'].units = 'Number of cumulative clicks; -1 indicates stove powered off'
     product_file[stove]['fuel_consumption'].description = 'The amount of fuel consumed by the stove'
     product_file[stove]['fuel_consumption'].units = 'US gallons'
     product_file[stove]['fuel_consumption_rate'].description = 'The fuel consumption rate of the stove'
@@ -61,8 +64,9 @@ for stove in stoves:
     product_file[stove]['time'][:] = unified_file[stove]['time'][:]
     product_file[stove]['state'][:] = unified_file[stove]['state'][:]
     product_file[stove]['clicks'][:] = unified_file[stove]['clicks'][:]
+    product_file[stove]['cumulative_clicks'][:] = unified_file[stove]['cumulative_clicks'][:]
     product_file[stove]['fuel_consumption'][:] = unified_file[stove]['fuel_consumption'][:]
-    product_file[stove]['fuel_consumption_rate'][:] = unified_file['fuel_consumption_rate'][:]
+    product_file[stove]['fuel_consumption_rate'][:] = unified_file[stove]['fuel_consumption_rate'][:]
     product_file[stove]['indoor_temp'][:] = unified_file[stove]['indoor_temp'][:]
     product_file[stove]['outdoor_temp'][:] = unified_file[stove]['outdoor_temp'][:]
     product_file[stove]['delta_temp'][:] = unified_file[stove]['delta_temp'][:]
