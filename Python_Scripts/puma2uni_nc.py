@@ -136,7 +136,6 @@ for stove in stoves:
     gph = puma.run_galperhour(gallons,year_data[0])
     year_data.append(gph) #year_data now looks like [stime,inT,outT,dT,state,cumulative_clicks,clicks,gallons,gph]
     
-#    stove_data = puma.stove_data_polish(year_data)
     stove_data = year_data
 
     merged_file[stove]['lat'][:] = yams[stove]['Location'][0] #Filling the variables
@@ -154,4 +153,3 @@ for stove in stoves:
     os.chdir('..') #Leaving the stove directory
     
 merged_file.close() #Closing the netCDF4 file and you're done!
-os.chdir('../fuelmeter-tools/Python_Scripts/')
