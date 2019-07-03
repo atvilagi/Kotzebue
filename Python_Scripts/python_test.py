@@ -68,21 +68,26 @@ file.close()
 stoves = [] #Making a list of the stove names
 for stove in yams:
     stoves.append(stove)
-
+#stoves = ['FBK000','FBK001','FBK002']
+#stoves = ['FBK011']
 for stove in stoves:
     
     fbk = merged_file[stove]
+    stat = fbk['state'][:]
     c = fbk['clicks'][:]
     t = fbk['time'][:]
-#    gal = fbk['fuel_consumption'][:]
+    gal = fbk['fuel_consumption'][:]
     gph = fbk['fuel_consumption_rate'][:]
     cumclicks = fbk['cumulative_clicks'][:]
-    a = 0
     for i in range(len(cumclicks)):
-        if gph[i] > 1:
-            if gph[i] > a:
-                a = gph[i]
-                print(gph[i])
+        if c[i] > 0 and stat[i] < 0:
+            print(stat[i],cumclicks[i],c[i],gal[i],gph[i])
+#    a = 0
+#    for i in range(len(cumclicks)):
+#        if gph[i] > 1:
+#            if gph[i] > a:
+#                a = gph[i]
+#                print(gph[i])
 #        if c[i] != 0 and gal[i] < 0:
     #        print(t[i],cumclicks[i],c[i])
 #            print(t[i],gal[i])

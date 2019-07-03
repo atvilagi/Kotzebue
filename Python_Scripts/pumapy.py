@@ -152,25 +152,25 @@ def stove_data_polish(stove_data): #Runs both the data_sort function and the rem
             
     return stove_data_polished
 
-def cumulative_clicks2clicks(cumulative_clicks,stime):
+def cumulative_clicks2clicks(cumulative_clicks):
     
     clicks = []
     last_click = -1
     for i in range(len(cumulative_clicks)):
-        if cumulative_clicks[i] == -1 or cumulative_clicks[i] == 0:
+        if cumulative_clicks[i] < 0:
+            clicks.append(0)
+        elif last_click < 0:
+            last_click = cumulative_clicks[i]
+            clicks.append(0)
+        elif cumulative_clicks[i] - last_click > 0:
+            clicks.append(cumulative_clicks[i]-last_click)
+            last_click = cumulative_clicks[i]
+        elif cumulative_clicks[i] - last_click < 0:
+            last_click = cumulative_clicks[i]
             clicks.append(0)
         else:
-            if last_click == -1:
-                last_click = cumulative_clicks[i]
-                clicks.append(np.nan)
-            else:
-                if cumulative_clicks[i] - last_click > 0:
-                    clicks.append(cumulative_clicks[i] - last_click)
-                    last_click = cumulative_clicks[i]
-                if cumulative_clicks[i] - last_click <= 0:
-                    clicks.append(0)
-                    last_click = cumulative_clicks[i]
-    
+            clicks.append(0)
+
     return clicks
             
 def stove_rate(stove_dict,fuel_click_file): #Determines the stove fuel pump rate depending on the stove type

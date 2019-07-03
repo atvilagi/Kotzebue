@@ -129,15 +129,16 @@ for stove in stoves:
     
     year_data = puma.stove_data_polish(year_data) #Sorting and removing duplicates and bad data from the data
     
-    clicks = puma.cumulative_clicks2clicks(year_data[5],year_data[0])
+    clicks = puma.cumulative_clicks2clicks(year_data[5])
     year_data.append(clicks)
     gallons = puma.run_clicks2gallons(year_data[6],year_data[4],yams[stove],fuel_click_file)
     year_data.append(gallons)
     gph = puma.run_galperhour(gallons,year_data[0])
     year_data.append(gph) #year_data now looks like [stime,inT,outT,dT,state,cumulative_clicks,clicks,gallons,gph]
     
-    stove_data = puma.stove_data_polish(year_data)
-        
+#    stove_data = puma.stove_data_polish(year_data)
+    stove_data = year_data
+
     merged_file[stove]['lat'][:] = yams[stove]['Location'][0] #Filling the variables
     merged_file[stove]['lon'][:] = yams[stove]['Location'][1]
     merged_file[stove]['time'][:] = stove_data[0]
