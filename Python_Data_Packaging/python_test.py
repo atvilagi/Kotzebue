@@ -2,6 +2,7 @@
 #Created: Fri Jul 19 15:38:17 2019
 
 from netCDF4 import Dataset
+import os
 
 file_path = os.path.abspath(os.path.dirname(__file__))
 
