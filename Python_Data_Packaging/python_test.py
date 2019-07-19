@@ -11,3 +11,4 @@ merged_file = Dataset(new_nc,'r',format='NETCDF4')
 
 print(merged_file['ATV000'].getncattr('Location'))
 print(merged_file['ATV000'])
+print(merged_file)

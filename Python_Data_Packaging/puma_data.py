@@ -264,6 +264,9 @@ def puma2uni_nc():
     new_nc = os.path.join(file_path,'..','Data','netCDF_Files','puma_unified_data.nc')
     merged_file = Dataset(new_nc,'w',format='NETCDF4') #Making a netCDF4 file for the final data product (netCDF4 allows for grouping, which is used per stove later)
     
+    new_nc_att = {'Contents':'netCDF file that contains the stoves in the fuel meter project, found in individual groups','Variables':'variables in each stove group are: time, cumulative clicks, clicks per interval, fuel consumption per interval, fuel consumption rate per interval, indoor temperature, outdoor temperature, temperature difference, stove status per interval'}
+    merged_file.setncatts(new_nc_att)
+
     ftp_data = os.path.join(file_path,'..','..','ftp-data')
     os.chdir(ftp_data) #This function changes the active directory to the directory with all the stove data files in 'FBK000' format; this will need adjusting depending on where the stove files are stored relative to this script 
     
