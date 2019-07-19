@@ -326,7 +326,7 @@ def puma2uni_nc():
     
             for month in months:
                 os.chdir(month) #Changing to the month directory
-                dir_data = pdata.dir2data(air_temp_file) #Inputing the path to the outdoor temperature file and the running the function defined at the top of the script, extracting the data from the PUMA text files; this will need to be changed depending on the database structure and the location of the outdoor temperature file relative to this script
+                dir_data = dir2data(air_temp_file) #Inputing the path to the outdoor temperature file and the running the function defined at the top of the script, extracting the data from the PUMA text files; this will need to be changed depending on the database structure and the location of the outdoor temperature file relative to this script
                 for i in range(len(month_data)): #Collating the month data into the transcending all month buffer
                     month_data[i] += dir_data[i]
                 os.chdir('..') #Leaving the month directory
@@ -336,13 +336,13 @@ def puma2uni_nc():
             
             os.chdir('..') #Leaving the year directory
         
-        year_data = pdata.stove_data_polish(year_data) #Sorting and removing duplicates and bad data from the data
+        year_data = stove_data_polish(year_data) #Sorting and removing duplicates and bad data from the data
         
-        clicks = pdata.cumulative_clicks2clicks(year_data[5])
+        clicks = cumulative_clicks2clicks(year_data[5])
         year_data.append(clicks)
-        gallons = pdata.run_clicks2gallons(year_data[6],year_data[4],yams[stove],fuel_click_file)
+        gallons = run_clicks2gallons(year_data[6],year_data[4],yams[stove],fuel_click_file)
         year_data.append(gallons)
-        gph = pdata.run_galperhour(gallons,year_data[0])
+        gph = run_galperhour(gallons,year_data[0])
         year_data.append(gph) #year_data now looks like [stime,inT,outT,dT,state,cumulative_clicks,clicks,gallons,gph]
         
         stove_data = year_data

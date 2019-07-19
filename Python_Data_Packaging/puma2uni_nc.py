@@ -124,4 +124,4 @@ def puma2uni_nc():
         
     merged_file.close() #Closing the netCDF4 file and you're done!
     
-puma2uni_nc()
+pdata.puma2uni_nc()
