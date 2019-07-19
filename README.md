@@ -7,6 +7,10 @@ the ACEP fuelmeter project.
 
 The repository, content within, and contributions are licensed under MIT license.
 
+## Data Packaging Output Files
+
+Some scripts in the Python_Scripts folder packageAll data is collected and presented as a time series at a consistent time interval. Fuel consumption data includes the cumulative fuel pump clicks, clicks per interval, gallons consumed per interval (based off the clicks and theoretical pump flow rate), and gallons consumed per hour. The temperature data includes the indoor temperature, outdoor temperature (collected from the )
+
 ## other tools used
 
 * [click](https://github.com/pallets/click) - cli tool builder helper (alternative to argparse)
