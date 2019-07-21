@@ -48,6 +48,9 @@ To launch a shell where all these depenacies are available run:
 ```
 pipenv shell
 ```
+```
+pipenv run python -c 'from puma_data import prod_nc2csv; prod_nc2csv()'
+```
 
 Developer here and want to use a new library, for example `plotly`, you just:
 ```

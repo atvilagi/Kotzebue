@@ -387,8 +387,6 @@ def uni_nc2prod_nc():
     name_list = [] #Making a list of the stove names
     for i in yams:
         name_list.append(i)
-    
-    new_nc = os.path.join(file_path,'..','Data','netCDF_Files','puma_unified_data.nc')
         
     stoves = [] #Making a list of the stove names
     for stove in yams:
@@ -445,11 +443,7 @@ def uni_nc2prod_nc():
     
     return stoves,prod_nc
 
-def prod_nc2csv():
-    
-    stoves,product_file_name = uni_nc2prod_nc()
-
-    def stove_csv(stove,product_file_name):
+def stove_csv(stove,product_file_name):
     
         product_file = Dataset(product_file_name,'r') #Opening the product netcdf data file
         
@@ -483,6 +477,10 @@ def prod_nc2csv():
         
             product_file.close() #Closing the netCDF4 file
             print(stove)
+            
+def prod_nc2csv():
+    
+    stoves,product_file_name = uni_nc2prod_nc()
         
     file_path = os.path.abspath(os.path.dirname(__file__))
     
