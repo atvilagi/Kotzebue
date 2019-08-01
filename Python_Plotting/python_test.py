@@ -8,6 +8,9 @@ import numpy as np
 from datetime import datetime
 import pytz
 import puma_plot as pplot
+from pandas.plotting import register_matplotlib_converters
+
+timeAK = pytz.timezone('America/Anchorage')
 
 file_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -16,29 +19,66 @@ uni_nc = Dataset(uni_nc_file,'r')
 
 stoves = list(uni_nc.groups)
 
-timez = pytz.timezone('America/Anchorage')
-
-for stove in stoves:
+#for stove in stoves:
+#    print(stove)
+#    time = uni_nc[stove]['time'][:]
+#    t_datetime = pplot.timestamp2datetime(time)
+#    inT = uni_nc[stove]['indoor_temp'][:]
+#    gph = uni_nc[stove]['fuel_consumption_rate'][:]
+#    clicks = uni_nc[stove]['clicks'][:]
+#    cumclicks = uni_nc[stove]['cumulative_clicks'][:]
     
-    time = uni_nc[stove]['time'][:]
-    t = []
-    for i in range(len(time)):
-        t.append(datetime.fromtimestamp(time[i]))
-        t[i] = timez.localize(t[i])
-        
-    inT = uni_nc[stove]['indoor_temp'][:]
-    
-    print(time,inT)
-    
-flag = np.where(time<time[100]+86400)[0]
+stove = stoves[2]
+print(stove)
+time = uni_nc[stove]['time'][:]
+t_datetime = pplot.timestamp2datetime(time)
+inT = uni_nc[stove]['indoor_temp'][:]
+gph = uni_nc[stove]['fuel_consumption_rate'][:]
+clicks = uni_nc[stove]['clicks'][:]
+cumclicks = uni_nc[stove]['cumulative_clicks'][:]
 
-print(flag)
-#t_theta = pplot.time2theta_time(np.array(time),0)
+for i in range(len(gph)):
+    if gph[i] > 10:
+        print('yikes')
+        gph[i] = 0
 
-time2 = time[0:100]
-inT2 = inT[0:100]
-plt.polar(time2,inT2)
-plt.show()
+months = pplot.months_available(t_datetime)
+print(months)
+
+#for i in range(len(clicks)):
+#    print(time[i],cumclicks[i],clicks[i],gph[i])
+
+pplot.polar_flow_plot_per_month(stove,2019,2,t_datetime,gph,'test.png')
+pplot.polar_flow_plot_average_per_month(stove,2019,2,t_datetime,gph,30,'test2.png')
+
+#for i in range(len(clicks)):
+#    print(clicks[i],cumclicks[i],gph[i])
+
+#### By day plot ####
+
+#i,j = pplot.time_day_segment(time)
+#
+#t = time[i[0]:j[0]]
+#inT_s = inT[i[0]:j[0]]
+#gph_s = gph[i[0]:j[0]]
+#
+#t_s = pplot.time2timestamp(t)
+#t_theta = pplot.time2theta_time(t)
+#
+#a = datetime(2019,2,15,0,0,0)
+#a = timeAK.localize(a)
+#b = t_stamp[0]
+#c = a - b
+#
+#days,day_ind = pplot.time2days(t_s,a)
+#
+#t_day = t[day_ind[1]:day_ind[2]]
+#t_theta = pplot.time2theta_time(t_day)
+#inT_theta = inT_s[day_ind[1]:day_ind[2]]
+#gph_theta = gph_s[day_ind[1]:day_ind[2]]
+#
+#plt.polar(t_theta,gph_theta)
+#plt.show()
 
 #### Test Plotting ####
     
