@@ -1,0 +1,4 @@
+Unix Time(UTC)	Status	Clicks	Thermistor Resistance
+1492273348	4	0	11251
+1492273360	0	4	11314
+1492273800	4	10000	11251

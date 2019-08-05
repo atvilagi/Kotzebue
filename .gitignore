@@ -2,4 +2,7 @@
 .ipynb_checkpoints/
 puma-client.json
 client_secret.json
-puma-inventory.yml
+Python_Packaging/__pycache__/
+Python_Plotting/__pycache__/
+.pyc
+.lock
