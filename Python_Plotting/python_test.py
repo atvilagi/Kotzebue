@@ -28,7 +28,7 @@ stoves = list(uni_nc.groups)
 #    clicks = uni_nc[stove]['clicks'][:]
 #    cumclicks = uni_nc[stove]['cumulative_clicks'][:]
     
-stove = stoves[1]
+stove = stoves[2]
 print(stove)
 time = uni_nc[stove]['time'][:]
 t_datetime = pplot.timestamp2datetime(time)
@@ -41,15 +41,24 @@ cumclicks = uni_nc[stove]['cumulative_clicks'][:]
 months = pplot.months_available(t_datetime)
 print(months)
 
-gph = np.array(gph)
-gph,_,_ = pplot.brock_improved_despike(gph,1)
+cumclicks = np.array(cumclicks,dtype=np.float)
 
+for i in range(len(cumclicks)):
+    if cumclicks[i] == -1:
+        cumclicks[i] = np.nan
+plt.plot(t_datetime,cumclicks)
+gph,_,_ = pplot.brock_improved_despike(gph,2)
+#plt.plot(gph)
+plt.show()
+
+#for i in range(len(cumclicks)):
+#    print(t_datetime[i],cumclicks[i])
 #### Plotting Heat Degree Days ####
 
-hdd = pplot.heat_degree_day(t_datetime,outT)
-pplot.plot_heating_degree_days(stove,t_datetime,gph,hdd,'test_hdd.png')
+#hdd = pplot.heat_degree_day(t_datetime,outT)
+#pplot.plot_heating_degree_days(stove,t_datetime,gph,hdd,'test_hdd.png')
 
 #### Plotting Polar #####
 
-pplot.polar_flow_plot_per_month(stove,2019,2,t_datetime,gph,'test_pol.png')
-pplot.polar_flow_plot_average_per_month(stove,2019,2,t_datetime,gph,30,'test_pol_ave.png')
+#pplot.polar_flow_plot_per_month(stove,2019,2,t_datetime,gph,'test_pol.png')
+#pplot.polar_flow_plot_average_per_month(stove,2019,2,t_datetime,gph,30,'test_pol_ave.png')
