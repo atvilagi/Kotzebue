@@ -1,0 +1,49 @@
+\documentclass{article}
+
+\newcommand\x{30}
+\newcommand\y{50}
+\begin{document}
+
+ I would like to define some variables in a tex document. For example,
+ I write in .tex something similar as: Our tool succeeds to validate \x\
+ samples by Method A, and \y\ samples by Method B. Thus its score is
+ \the\numexpr\x+\y\relax. 
+
+\end{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% or
+
+% Name of organization
+\newcommand{\nameoforg}{Organization A}
+% Title color code
+\newcommand{\mainRGB}{255,0,0}
+% Background color code
+\newcommand{\backRGB}{255,255,255}
+% Logo width
+\newcommand{\clientlogowidth}{6cm}
+% Logo file name
+\newcommand{\clientlogo}{example-image-a}
+
+%%%%%%%%%%%%%%%%%%% as file clientA.tex, then with report file do:
+
+\documentclass{beamer}
+\usepackage{mwe}
+
+\input{clientA.tex}
+
+\definecolor{mainslidecolor}{RGB}{\mainRGB}
+\definecolor{backslidecolor}{RGB}{\backRGB}
+
+\title[\nameoforg]{Presentation Title}
+\titlegraphic{\includegraphics[width=\clientlogowidth]{\clientlogo}}
+
+\begin{document}
+\begin{frame}
+  \maketitle
+\end{frame}
+
+\begin{frame}
+  Hello, World!
+\end{frame}
+\end{document}
