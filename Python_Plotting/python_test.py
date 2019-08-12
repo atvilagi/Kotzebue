@@ -18,41 +18,46 @@ uni_nc_file = os.path.join(file_path,'..','Data','netCDF_Files','puma_unified_da
 uni_nc = Dataset(uni_nc_file,'r')
 
 stoves = list(uni_nc.groups)
-
-#for stove in stoves:
-#    print(stove)
-#    time = uni_nc[stove]['time'][:]
-#    t_datetime = pplot.timestamp2datetime(time)
-#    inT = uni_nc[stove]['indoor_temp'][:]
-#    gph = uni_nc[stove]['fuel_consumption_rate'][:]
-#    clicks = uni_nc[stove]['clicks'][:]
-#    cumclicks = uni_nc[stove]['cumulative_clicks'][:]
     
 stove = stoves[2]
 print(stove)
-time = uni_nc[stove]['time'][:]
-t_datetime = pplot.timestamp2datetime(time)
-inT = uni_nc[stove]['indoor_temp'][:]
-outT = uni_nc[stove]['outdoor_temp'][:]
-gph = uni_nc[stove]['fuel_consumption_rate'][:]
-clicks = uni_nc[stove]['clicks'][:]
-cumclicks = uni_nc[stove]['cumulative_clicks'][:]
 
-months = pplot.months_available(t_datetime)
-print(months)
+time = uni_nc[stove+'/Event/Clicks']['time'][:]
+clicks = uni_nc[stove+'/Event/Clicks']['clicks'][:]
+gallons = uni_nc[stove+'/Event/Clicks']['fuel_consumption'][:]
+gph = uni_nc[stove+'/Event/Clicks']['fuel_consumption_rate'][:]
 
-cumclicks = np.array(cumclicks,dtype=np.float)
-
-for i in range(len(cumclicks)):
-    if cumclicks[i] == -1:
-        cumclicks[i] = np.nan
-plt.plot(t_datetime,cumclicks)
-gph,_,_ = pplot.brock_improved_despike(gph,2)
-#plt.plot(gph)
+plt.plot(clicks)
 plt.show()
 
+#### Plotting Problems ####
+
+#stove = stoves[2]
+#print(stove)
+#time = uni_nc[stove]['time'][:]
+#t_datetime = pplot.timestamp2datetime(time)
+#inT = uni_nc[stove]['indoor_temp'][:]
+#outT = uni_nc[stove]['outdoor_temp'][:]
+#gph = uni_nc[stove]['fuel_consumption_rate'][:]
+#clicks = uni_nc[stove]['clicks'][:]
+#cumclicks = uni_nc[stove]['cumulative_clicks'][:]
+#
+#months = pplot.months_available(t_datetime)
+#print(months)
+#
+#cumclicks = np.array(cumclicks,dtype=np.float)
+#
 #for i in range(len(cumclicks)):
-#    print(t_datetime[i],cumclicks[i])
+#    if cumclicks[i] == -1:
+#        cumclicks[i] = np.nan
+#plt.plot(t_datetime,cumclicks)
+#plt.xlabel('Time',fontsize = 20)
+#plt.ylabel('Cumulative Clicks',fontsize = 20)
+#plt.title('Gaps in Data: Cumulative Clicks',fontsize = 40)
+#gph,_,_ = pplot.brock_improved_despike(gph,2)
+##plt.plot(gph)
+#plt.show()
+
 #### Plotting Heat Degree Days ####
 
 #hdd = pplot.heat_degree_day(t_datetime,outT)
