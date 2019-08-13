@@ -10,7 +10,7 @@ import pytz
 from pandas.plotting import register_matplotlib_converters
 import puma_data as pdata
 
-#pdata.puma2uni_nc()
+pdata.puma2uni_nc()
 #pdata.uni_nc2prod_nc()
 #pdata.prod_nc2csv()
 
