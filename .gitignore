@@ -6,3 +6,7 @@ Python_Packaging/__pycache__/
 Python_Plotting/__pycache__/
 .pyc
 .lock
+.log
+.aux
+.gz
+

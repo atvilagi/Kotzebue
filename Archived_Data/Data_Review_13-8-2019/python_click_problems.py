@@ -1,6 +1,8 @@
 #Created: Mon Aug 12 10:56:53 2019
 #By: mach
 
+#Place this in the Python_Plotting directory to get the proper pathing
+
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 import os

@@ -1,0 +1,14 @@
+Stove Type,Laser 73/730,Latitude,64.89301,Longitude,-147.831,,,
+Timestamp of each PUMA device reading,State of the stove when powered on; depends on the stove type the PuMA device is attached to,Number of cumulative clicks since PuMA installation the fuel pump solenoid makes when the stove turns on,Indoor temperature read by the thermistor monitored by the PUMA device,Outdoor temperature interpolated using area temperature data from Snotel,Temperature difference between the indoor and outdoor temperatures
+"Time since 1970, 1, 1, 00:00:00 UTC (Unix time)",Integer units corresponding to power states; -1 indicates powered off,Number of cumulative clicks; -1 indicates stove powered off,F,F,F
+1549039633.0,4,37270,96.67,-23.16,119.83
+1549039721.0,4,30272,75.3,-23.21,98.51
+1549040171.0,2,30297,74.42,-23.48,97.9
+1549040238.0,4,30870,76.61,-23.52,100.13
+1549040476.0,4,30870,75.96,-23.65,99.61
+1549040892.0,2,31556,74.42,-23.84,98.26
+1549041057.0,1,32985,75.08,-23.92,99.0
+1549041287.0,2,36455,78.96,-24.02,102.98
+1549049242.0,1,105099,75.74,-19.93,95.67
+1549049559.0,2,109876,76.61,-19.57,96.18
+1549061467.0,4,212605,75.08,10.76,64.32

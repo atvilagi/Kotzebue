@@ -34,8 +34,8 @@ plt.show()
 
 #stove = stoves[2]
 #print(stove)
-#time = uni_nc[stove]['time'][:]
-#t_datetime = pplot.timestamp2datetime(time)
+time = uni_nc[stove+'/Raw/']['time'][:]
+t_datetime = pplot.timestamp2datetime(time)
 #inT = uni_nc[stove]['indoor_temp'][:]
 #outT = uni_nc[stove]['outdoor_temp'][:]
 #gph = uni_nc[stove]['fuel_consumption_rate'][:]
@@ -65,5 +65,5 @@ plt.show()
 
 #### Plotting Polar #####
 
-#pplot.polar_flow_plot_per_month(stove,2019,2,t_datetime,gph,'test_pol.png')
-#pplot.polar_flow_plot_average_per_month(stove,2019,2,t_datetime,gph,30,'test_pol_ave.png')
+pplot.polar_flow_plot_per_month(stove,2019,2,t_datetime,gph,'test_pol.png')
+pplot.polar_flow_plot_average_per_month(stove,2019,2,t_datetime,gph,30,'test_pol_ave.png')
