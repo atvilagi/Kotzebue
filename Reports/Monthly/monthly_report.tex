@@ -10,9 +10,9 @@
 \fancyhead{}
 \pagestyle{fancy}
 
-\fancyhead[L]{\includegraphics[height = 32pt]{../Logos/acep.pdf}\\}
-\fancyhead[R]{\includegraphics[height = 24pt]{../Logos/uaf_blue_hor.pdf}\\}
-\fancyfoot[L]{\scriptsize{Alaska}}
+\fancyhead[L]{\includegraphics[height = 32pt]{../Logos/acep.pdf}}
+\fancyhead[R]{\includegraphics[height = 24pt]{../Logos/uaf_blue_hor.pdf}}
+\fancyfoot[C]{Flip page for tips to help you save on fuel!}
 \renewcommand{\headrulewidth}{0pt}
 
 \setlength{\parindent}{0pt}
@@ -24,84 +24,82 @@
 \begin{document}
 
 \begin{center}
-\textbf{\Huge{\\Monthly Fuel Usage Report}}
+\textbf{\Huge{\\{\reportmonth} {\reportyear} Fuel Usage Report}}
 \end{center}
 
 \begin{center}
-	\fbox{
-		\begin{varwidth}{.8\textwidth}
-			This month you consumed {\percentusage}\% {\moreless} than your neighbors.
-		\end{varwidth}
-	}
+\fbox{
+\begin{varwidth}{.8\textwidth}
+This month you consumed {\percentusage}\% {\moreless} than your neighbors.
+\end{varwidth}
+}
 \end{center}
 
 \vspace{12pt}
 
-\begin{tabu}{X[m,c]|X[m,c]}
+\begin{tabu}[c]{llX[m,c]}
 
-	\includegraphics[width = 3in]{monthly_fuel_usage.png}
-	
-	&
-	
-	\underline{{\reportmonth} {\reportyear} Fuel Usage:}
-	
-		\begin{description}
-		
-			\centering
-			
-			\item Total Usage (gal): {\totalusage}
-			
-			\item Price of Fuel (\$/gal): {\fuelprice}
-			
-			\item Total Cost (\$): {\totalcost}
-			
-		\end{description}
-	
-	
+\begin{minipage}{4in}
+\includegraphics[height = 2.375in]{monthly_fuel_usage.png}
+\end{minipage}
+
+ && 
+
+\begin{minipage}{\linewidth}
+\underline{{\reportmonth} {\reportyear} Fuel Usage:}\\
+
+Total Usage: {\totalusage} gal\\
+
+Price of Fuel: \${\fuelprice}/gal\\
+
+Total Cost: \${\totalcost}\\
+\end{minipage}
+
+
 \end{tabu}
 
-\vspace{12pt}
 \rule{\textwidth}{1pt}
-\vspace{12pt}
+\newline
 
 \begin{tabu}{X[m,c]X[m,c]}
 
-	\underline{This month:}
-	
-	\begin{itemize}
-	
-	\item Your average fuel consumption was {\fuelperday} gallons per day.
-	\item Your average fuel cost was \${\fuelcostperday} per day
+\begin{minipage}{\linewidth}
+\underline{This Month:}\\
 
-	\end{itemize}
+Your average fuel consumption was {\fuelperday} gallons per day.\\
 
-	&
-	
-	\includegraphics[width = 3in]{monthly_polar_plot.png}
+Your average fuel cost was \${\fuelcostperday} per day\\
+\end{minipage}
+
+&
+
+\begin{minipage}{\linewidth}
+\includegraphics[height = 3in]{monthly_polar_plot.png}
+\end{minipage}
+
 
 \end{tabu}
 
-\vspace{12pt}
 \rule{\textwidth}{1pt}
-\vspace{12pt}
+\newline
 
 \underline{Track Your Progress:}\\
 
-You used {\progress}\% {\progressmoreless} this month than last month.\\
+You consumed {\progress}\% {\progressmoreless} this month than last month.\\
+\begin{center}
+\includegraphics[height= 1.875in]{monthly_track_your_progress.png}
+\end{center}
 
-\includegraphics[width = 6in]{monthly_track_your_progress.png}
+\newpage
+\renewcommand{\headsep}{14pt}
+\fancyfoot{}
+\begin{center}
+\textbf{\Huge{Tips on Saving Fuel}}
+\end{center}
 
 \vspace{12pt}
-\rule{\textwidth}{1pt}
-\vspace{12pt}
-
-\section*{Tips}
-
-%\begin{figure}[h]
-%\captionsetup{justification = centering, margin = 1in}
-%\centering
-%\includegraphics[width = 480pt]{.png}
-%\caption{\label{gantt}}
-%\end{figure}
+\begin{itemize}
+\item Tips go here
+\end{itemize}
 
 \end{document}

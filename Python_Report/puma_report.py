@@ -11,6 +11,13 @@ import multiprocessing as mp
 
 #### Plotting Functions
 
+#colors
+#green [46,204,113]
+#orange [230,126,34]
+#blue [52,152,219]
+#purple [155,89,182]
+#red [271,76,60]
+
 def polar_flow_plot_average_per_month(stove,year_month,t_datetime,data,minutes,fname):
     
     index = []
@@ -21,7 +28,7 @@ def polar_flow_plot_average_per_month(stove,year_month,t_datetime,data,minutes,f
     t,data = month_average_temperature(year_month,t_datetime[index[0]:index[-1]+1],
                            data[index[0]:index[-1]+1],minutes)
     
-    t_theta = time2theta_time(t) + 5*np.pi/4
+    t_theta = time2theta_time(t)
     data_theta = data
     t_theta = np.append(t_theta,t_theta[0])
     data_theta = np.append(data_theta,data_theta[0])
@@ -39,23 +46,29 @@ def polar_flow_plot_per_month(stove,year_month,t_datetime,data,fname):
     data_theta = data[index[0]:index[-1]+1]
 
     polar_flow_plot(stove,year_month,t_datetime,data,t_theta,data_theta,fname)
-    
+            
 def polar_flow_plot(stove,year_month,t_datetime,data,t_theta,data_theta,fname):
     
-    months = ['','January','February','March','April','May','June','July',
-              'August','September','October','November','December']
-    fig = plt.figure(figsize = (8,9))
+#    months = ['','January','February','March','April','May','June','July',
+#              'August','September','October','November','December']
+    fig = plt.figure(figsize = (7,7), dpi = 200)
     ax = fig.add_subplot(111, polar=True)
-    plt.polar(t_theta,data_theta,label = 'gal/hr', linewidth = 3, color = 'aqua')
-    plt.thetagrids((0,45,90,135,180,225,270,315), ('6:00','3:00','0:00','21:00',
-                   '18:00','15:00','12:00','9:00'), fontsize = 20)
+    plt.polar([-5*np.pi/4,-5*np.pi/4],[0,3.5*np.nanmax(data)/3],linewidth = 4, color = [0,0,0])
+    plt.polar([-np.pi/4,-np.pi/4],[0,3.5*np.nanmax(data)/3],linewidth = 4, color = [0,0,0])
+    plt.polar(t_theta,data_theta, linewidth = 3, color = np.array([230,126,34])/255, label = '$gal/hr$')
+    plt.thetagrids((0,45,90,135,180,225,270,315), ('6:00','3:00','12:00 AM','9:00',
+                   '6:00','3:00','12:00 PM','9:00'), fontsize = 20)
     plt.rgrids((np.nanmax(data)/3, 2*np.nanmax(data)/3, np.nanmax(data), 
                 3.5*np.nanmax(data)/3), labels = (round((np.nanmax(data)/3),2), 
                 round((2*np.nanmax(data)/3),2), round(np.nanmax(data),2),''),
                 angle = -45, fontsize = 14)
-    plt.suptitle('Flowrate Pattern $(gal/hr)$',fontsize = 38)
-    plt.title('\n'+months[year_month[1]]+' '+str(year_month[0])+'\n', fontsize = 28)
-    ax.tick_params(pad = 22)
+#    plt.suptitle('Daily Fuel Consumption',fontsize = 38)
+#    plt.title('\n'+months[year_month[1]]+' '+str(year_month[0])+'\n', fontsize = 28)
+    plt.title('Daily Fuel Consumption\n',fontsize = 28)
+    ax.tick_params(pad = 14)
+    plt.text(np.pi/4,np.nanmax(data)/6,'Night',fontsize = 14)
+    plt.text(5*np.pi/4,np.nanmax(data)/3,'Day',fontsize = 14)
+    plt.legend(bbox_to_anchor = (.35,.03),fontsize = 14)
     plt.tight_layout()
     plt.savefig(fname)
 
@@ -114,42 +127,32 @@ def plot_heating_degree_days(stove,t_datetime,gph,hdd,fname):
 
 def plot_fuel_usage(year_month,your_gal,their_gal,fname):
     
-    colors = ['springgreen','aqua']
+    colors = np.array([[46,204,113],[52,152,219]])/255
+    
     if your_gal > their_gal:
-        colors = ['hotpink','aqua']
+        colors = np.array([[271,76,60],[52,152,219]])/255
         
-    months = ['','January','February','March','April','May','June','July',
-              'August','September','October','November','December']
-    plt.figure(figsize = (8,8))
+#    months = ['','January','February','March','April','May','June','July',
+#              'August','September','October','November','December']
+    plt.figure(figsize = (9,6), dpi = 200)
     plt.subplot(111)
     plt.bar([1,2],[your_gal,their_gal],
             color = colors,width = .6)
-    plt.suptitle('Fuel Usage $(gal/ft^2)$\n',fontsize = 38)
-    plt.title('\n\n'+months[year_month[1]]+' '+str(year_month[0])+'\n', 
-              fontsize = 28)
-    plt.text(1,1.025*your_gal,str(round(your_gal,2)),
+#    plt.suptitle('Fuel Consumption',fontsize = 34)
+#    plt.title('\n\n'+months[year_month[1]]+' '+str(year_month[0])+'\n', 
+#              fontsize = 24)
+    plt.title('Fuel Consumption\n',fontsize = 28)
+    plt.text(1,1.05*your_gal,str(round(your_gal,2)) + ' $gal/ft^2$',
              horizontalalignment='center',fontsize=20)
-    plt.text(2,1.025*their_gal,str(round(their_gal,2)),
+    plt.text(2,1.05*their_gal,str(round(their_gal,2)) + ' $gal/ft^2$',
              horizontalalignment='center',fontsize=20)
     plt.yticks([])
     plt.xticks([1,2],['You','Your Neighbor$^*$'],fontsize=20)
     plt.xlabel('\n* Your neighbor is the average of all the other Fairbanks\nhouseholds participating in this study.',
-               fontsize = 14)
+               fontsize = 16)
     plt.box(False)
     plt.tight_layout()
     plt.savefig(fname)
-
-def year_month2datetime(year_month):
-    
-    return datetime(year_month[0],year_month[1],1,0,0,0)
-
-def run_year_month2datetime(year_months):
-    
-    ymdtime = []
-    for m in year_months:
-        ymdtime.append(year_month2datetime(m))
-        
-    return ymdtime
     
 def plot_bar_progress(year_months,gphddpd,fname):
     
@@ -159,17 +162,17 @@ def plot_bar_progress(year_months,gphddpd,fname):
         date.append(ym.strftime('%b %y'))
     x = range(len(date))
     
-    plt.figure(figsize = (12,6))
+    plt.figure(figsize = (12,4))
     plt.subplot(111)
-    plt.bar(x,gphddpd,width = .6)
+    plt.bar(x,gphddpd,width = .6,color = np.array([155,89,182])/255)
     for i in range(len(date)):
         if gphddpd[i] > 0:
             plt.text(x[i],1.025*gphddpd[i],str(round(gphddpd[i],4)),horizontalalignment='center',fontsize=18)
         else:
-            plt.text(x[i],0.1*max(gphddpd),'No\nData',horizontalalignment='center',fontsize=18)
+            plt.text(x[i],0.1*max(gphddpd),'Data\nUnavailable',horizontalalignment='center',fontsize=18)
     plt.yticks([])
-    plt.xticks(x,date,fontsize=18)
-    plt.xlabel('Weather Adjusted Gallons per Day',fontsize = 20)
+    plt.xticks(x,date,fontsize=20)
+    plt.xlabel('\nWeather Adjusted Gallons per Day',fontsize = 20)
     plt.box(False)
     plt.tight_layout()
     plt.savefig(fname)
@@ -178,16 +181,15 @@ def plot_bar_progress(year_months,gphddpd,fname):
     
 def time2theta_time(t):
     #expecting t in seconds
-    t_theta = -t*2*np.pi/86400 - 3*np.pi/4 #shifted so the top of the plot is 0:00
     
-    return t_theta
+    return np.pi/2 - t*2*np.pi/86400 #shifted so the top of the plot is 12:00 AM
 
 def datetime2theta_time(t_datetime):
     
     t = []
     for i in t_datetime:
-        t.append(i.timestamp())
-        
+        t.append(i.hour*24*3600 + i.minute*60 + i.second + i.microsecond/1e6)
+
     t = np.array(t)
     t_theta = time2theta_time(t)
     
@@ -298,6 +300,18 @@ def good_neighbor_stoves(stove,month,stove_comp_months):
             good_stoves.append(scm[0])
             
     return good_stoves
+
+def year_month2datetime(year_month):
+    
+    return datetime(year_month[0],year_month[1],1,0,0,0)
+
+def run_year_month2datetime(year_months):
+    
+    ymdtime = []
+    for m in year_months:
+        ymdtime.append(year_month2datetime(m))
+        
+    return ymdtime
 
 #### Temperature Manipulation Functions
 
@@ -567,17 +581,17 @@ def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,To
         months = ['','January','February','March','April','May','June','July',
               'August','September','October','November','December']
         
-        lines = [r'\newcommand{\totalusage}{'+str(round(Total_Usage,3))+'}',
-                 r'\newcommand{\fuelperday}{'+str(round(Fuel_per_Day,3))+'}',
-                 r'\newcommand{\fuelprice}{'+str(round(Fuel_Price,2))+'}',
-                 r'\newcommand{\totalcost}{'+str(round(Total_Cost,2))+'}',
-                 r'\newcommand{\fuelcostperday}{'+str(round(Fuel_Cost_per_Day,2))+'}',
-                 r'\newcommand{\neighborusage}{'+str(round(Neighbor_Usage,3))+'}',
-                 r'\newcommand{\percentusage}{'+str(round(Percent_Usage*100,2))+'}',
+        lines = [r'\newcommand{\totalusage}{'+format(Total_Usage,'.3f')+'}',
+                 r'\newcommand{\fuelperday}{'+format(Fuel_per_Day,'.3f')+'}',
+                 r'\newcommand{\fuelprice}{'+format(Fuel_Price,'.2f')+'}',
+                 r'\newcommand{\totalcost}{'+format(Total_Cost,'.2f')+'}',
+                 r'\newcommand{\fuelcostperday}{'+format(Fuel_Cost_per_Day,'.2f')+'}',
+                 r'\newcommand{\neighborusage}{'+format(Neighbor_Usage,'.3f')+'}',
+                 r'\newcommand{\percentusage}{'+format(Percent_Usage*100,'.2f')+'}',
                  r'\newcommand{\moreless}{'+ML+'}',
                  r'\newcommand{\reportmonth}{'+months[Year_Month[1]]+'}',
                  r'\newcommand{\reportyear}{'+str(Year_Month[0])+'}',
-                 r'\newcommand{\progress}{'+str(round(Prog_Usage*100,2))+'}',
+                 r'\newcommand{\progress}{'+format(Prog_Usage*100,'.2f')+'}',
                  r'\newcommand{\progressmoreless}{'+PML+'}']
         
         for line in lines:

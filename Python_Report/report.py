@@ -23,7 +23,7 @@ def monthly_report(unified_nc_file,stove,year_month):
     Neighbor_Usage = prep.neighbor_gallons_consumed_per_month(year_month,unified_nc_file,neighbor_stoves)
     Total_Usage = prep.gallons_consumed_per_month(year_month,dtime,gallons)
 #    Fuel_Price = float(input('Current price of fuel: '))
-    Fuel_Price = float(3)
+    Fuel_Price = float(3.00)
     Total_Cost = Total_Usage*Fuel_Price
     Fuel_per_Day = Total_Usage/days_active
     Fuel_Cost_per_Day = Total_Cost/days_active
@@ -31,10 +31,12 @@ def monthly_report(unified_nc_file,stove,year_month):
     
     prep.plot_bar_progress(months,gphddpd,'monthly_track_your_progress.png')
     prep.plot_fuel_usage(year_month,Total_Usage,Neighbor_Usage,'monthly_fuel_usage.png')
-    #retrieve square footage from the puma-inventory -> stove.getattrs
+#    retrieve square footage from the puma-inventory -> stove.getattrs
     prep.polar_flow_plot_average_per_month(stove,year_month,dtime,gph,45,'monthly_polar_plot.png')
     
     prep.write_monthly_tex_var_file(year_month,Total_Usage,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage,Prog_Usage)
+
+    return dtime
 
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
@@ -54,8 +56,8 @@ uni_nc = Dataset(uni_nc_file,'r')
 stoves = list(uni_nc.groups)
 stove_comp_months = prep.run_complete_months(uni_nc_file)
 
-year_month = (2019,5)
+year_month = (2019,4)
 
 mystove = stoves[2]
 
-monthly_report(uni_nc_file,mystove,year_month)
+dtime = monthly_report(uni_nc_file,mystove,year_month)
