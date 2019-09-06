@@ -33,7 +33,7 @@ def polar_flow_plot(stove,year,month,t_datetime,data,t_theta,data_theta,fname):
     plt.thetagrids((0,45,90,135,180,225,270,315), ('6:00','3:00','0:00','21:00','18:00','15:00','12:00','9:00'), fontsize = 16)
     plt.rgrids((np.nanmax(data)/3, 2*np.nanmax(data)/3, np.nanmax(data), 3.5*np.nanmax(data)/3), labels = (round((np.nanmax(data)/3),2), round((2*np.nanmax(data)/3),2), round(np.nanmax(data),2),''), angle = -45, fontsize = 12)
     plt.legend(bbox_to_anchor = (.35,0.03),fontsize = 16)
-    plt.title(stove + ' ' + months[month] + ' ' + str(year) + '\nDaily (HH:MM) Flowrate Patterns\n', fontsize = 20)
+    plt.title(stove + ' ' + months[month] + ' ' + str(year) + '\nHourly (HH:MM) Flowrate Patterns\n', fontsize = 20)
     ax.tick_params(pad = 15)
     plt.tight_layout()
     plt.savefig(fname)

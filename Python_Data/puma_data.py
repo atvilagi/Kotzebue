@@ -528,7 +528,7 @@ def uni_nc2prod_nc():
         
         product_file.createGroup(stove) #Creating a netCDF4 group for each stove
         
-        attributes = ['Location','Stove Type']
+        attributes = ['Location','Stove Type','Square Footage']
         
         nc_transfer_attributes(unified_file[stove],product_file[stove],attributes)
 
@@ -670,7 +670,8 @@ def stove_csv(stove,group,product_file_name):
             
             stove_csv_file.writerow(['Stove Type'] + [product_file[stove].getncattr('Stove Type')] + #Stove description and location
                                     ['Latitude'] + [str(product_file[stove].getncattr('Location')[0])] + 
-                                    ['Longitude'] + [str(product_file[stove].getncattr('Location')[1])] + [''] + [''] + [''])
+                                    ['Longitude'] + [str(product_file[stove].getncattr('Location')[1])] + 
+                                    ['Square Footage'] + [str(product_file[stove].getncattr('Square Footage'))] + [''])
             
             desc = nc2csv_descriptions(product_file[group_dir])
             stove_csv_file.writerow(desc)
@@ -706,3 +707,31 @@ def prod_nc2csv():
             pool.apply_async(stove_csv,args=(stove,group,product_file_name)) #Asynchronous running of the stove_csv function to create csv files
     pool.close()
     pool.join()
+    
+def puma_inv2yaml():
+    
+    file_path = os.path.abspath(os.path.dirname(__file__))
+    csv_file = os.path.join(file_path,'..','Data','temp_Files','PuMA Units + SIMS - Sheet1.csv')
+    
+    csv_data = []
+    with open(csv_file,'r') as file:
+        puma_csv_data = csv.reader(file, delimiter=',')
+        
+        for line in puma_csv_data:
+            csv_data.append(line)
+        
+    inventory = {}
+    for line in csv_data[1::]:
+        inventory[line[6]] = {'Stove Type': line[4], 
+                 'Location': [float(line[-2]), float(line[-1])], 
+                 'Square Footage': line[8]}
+    
+    inv_file = os.path.join(file_path,'..','Data','yaml_Files','puma-inventory.yml')
+    
+    with open(inv_file,'w') as file:
+        file.write(yaml.dump(inventory))
+    
+def puma2csv():
+    
+    puma2uni_nc()
+    prod_nc2csv()

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Arch Linux) (preloaded format=pdflatex 2019.7.28)  18 AUG 2019 17:18
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Arch Linux) (preloaded format=pdflatex 2019.7.28)  4 SEP 2019 17:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -399,7 +399,7 @@ Here is how much of TeX's memory you used:
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on monthly_report.pdf (2 pages, 596111 bytes).
+Output written on monthly_report.pdf (2 pages, 596036 bytes).
 PDF statistics:
  43 PDF objects out of 1000 (max. 8388607)
  23 compressed objects within 1 object stream
