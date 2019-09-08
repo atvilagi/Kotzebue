@@ -14,34 +14,38 @@ import puma.temperature as ptemp
 import puma.signal_processing as psp
 import puma.time as ptime
 
-uni_nc_file = os.path.join(file_path,'..','..','Data','netCDF_Files','puma_unified_data.nc')
-uni_nc = Dataset(uni_nc_file,'r')
+pdata.puma2uni_nc()
+#pdata.uni_nc2prod_nc()
+#pdata.puma2csv()
 
-stoves = list(uni_nc.groups)
-
-p = 0
-m = 0
-for stove in stoves:
-    
-    test_data = uni_nc[stove + '/Event/Clicks']
-    
-    clicks = test_data['clicks'][:]
-    pos = pdata.positive_clicks(clicks)
-    
-    g = test_data['fuel_consumption'][pos]
-    dT = test_data['delta_temp'][pos]
-    
-    lx,ly,slope,inter,r = psp.linear_regression2line(dT,g)
-    plt.plot(dT,g,'o')
-    plt.plot(lx,ly)
-    plt.show()
-    print(slope)
-    if slope > 0:
-        p += 1
-    else:
-        m += 1
-
-print(p,m)
+#uni_nc_file = os.path.join(file_path,'..','..','Data','netCDF_Files','puma_unified_data.nc')
+#uni_nc = Dataset(uni_nc_file,'r')
+#
+#stoves = list(uni_nc.groups)
+#
+#p = 0
+#m = 0
+#for stove in stoves:
+#    
+#    test_data = uni_nc[stove + '/Event/Clicks']
+#    
+#    clicks = test_data['clicks'][:]
+#    pos = pdata.positive_clicks(clicks)
+#    
+#    g = test_data['fuel_consumption'][pos]
+#    dT = test_data['delta_temp'][pos]
+#    
+#    lx,ly,slope,inter,r = psp.linear_regression2line(dT,g)
+#    plt.plot(dT,g,'o')
+#    plt.plot(lx,ly)
+#    plt.show()
+#    print(slope)
+#    if slope > 0:
+#        p += 1
+#    else:
+#        m += 1
+#
+#print(p,m)
     
     #outT = test_data['outdoor_temp'][pos]
     #t = test_data['time'][pos]

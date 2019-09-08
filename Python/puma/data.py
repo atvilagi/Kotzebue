@@ -185,6 +185,15 @@ def raw_time2event(year_data,time_data,stove_type_dict,fuel_click_file):
     
     pos = positive_clicks(clicks)
     
+    click_time = np.array(click_time,dtype=np.float64)
+    clicks = np.array(clicks,dtype=np.int64)
+    click_state = np.array(click_state,dtype=np.int32)
+    click_inT = np.array(click_time,dtype=np.float32)
+    click_outT = np.array(click_time,dtype=np.float32)
+    click_dT = np.array(click_time,dtype=np.float32)
+    gallons = np.array(click_time,dtype=np.float64)
+    gph = np.array(click_time,dtype=np.float64)
+    
     click_data.append(click_time[pos])
     click_data.append(clicks[pos])
     click_data.append(click_state[pos])
@@ -375,7 +384,7 @@ def puma2uni_nc():
     
     file_path = os.path.abspath(os.path.dirname(__file__))
     
-    yaml_file = os.path.join(file_path,'..','Data','yaml_Files','puma-inventory.yml')
+    yaml_file = os.path.join(file_path,'..','..','Data','yaml_Files','puma-inventory.yml')
     file = open(yaml_file,'r') 
     #Opening the inventory file of the stoves in the project
     yams = yaml.load(file)
@@ -386,16 +395,16 @@ def puma2uni_nc():
     for i in yams:
         name_list.append(i)
     
-    air_temp_file = os.path.join(file_path,'..','Data','netCDF_Files','aoos_snotel_temp.nc')
-    fuel_click_file = os.path.join(file_path,'..','Data','text_Files','FuelClickConversion.txt')
+    air_temp_file = os.path.join(file_path,'..','..','Data','netCDF_Files','aoos_snotel_temp.nc')
+    fuel_click_file = os.path.join(file_path,'..','..','Data','text_Files','FuelClickConversion.txt')
     
-    new_nc = os.path.join(file_path,'..','Data','netCDF_Files','puma_unified_data.nc')
+    new_nc = os.path.join(file_path,'..','..','Data','netCDF_Files','puma_unified_data.nc')
     merged_file = Dataset(new_nc,'w',format='NETCDF4') #Making a netCDF4 file for the final data product (netCDF4 allows for grouping, which is used per stove later)
     
     new_nc_att = {'Contents':'netCDF file that contains the stoves in the fuel meter project, found in individual groups','Variables':'variables in each stove group are: time, cumulative clicks, clicks per interval, fuel consumption per interval, fuel consumption rate per interval, indoor temperature, outdoor temperature, temperature difference, stove status per interval'}
     merged_file.setncatts(new_nc_att)
 
-    ftp_data = os.path.join(file_path,'..','..','ftp-data')
+    ftp_data = os.path.join(file_path,'..','..','..','ftp-data')
     os.chdir(ftp_data) 
     #This function changes the active directory to the directory with all the stove data files in 'FBK000' format; this will need adjusting depending on where the stove files are stored relative to this script 
     
@@ -573,18 +582,18 @@ def uni_nc2prod_nc():
     
     file_path = os.path.abspath(os.path.dirname(__file__))
     
-    uni_nc = os.path.join(file_path,'..','Data','netCDF_Files','puma_unified_data.nc')
+    uni_nc = os.path.join(file_path,'..','..','Data','netCDF_Files','puma_unified_data.nc')
     unified_file = Dataset(uni_nc,'r') #Opening the central unified data
     
     new_nc = input('Input the name of the new netCDF file with the packaged data: ')
-    prod_nc = os.path.join(file_path,'..','Data','netCDF_Files',new_nc)
+    prod_nc = os.path.join(file_path,'..','..','Data','netCDF_Files',new_nc)
     product_file = Dataset(prod_nc,'w',format='NETCDF4') #Opening the output file
     
     prod_nc_att = {'Contents':'netCDF file that contains the stoves in the fuel meter project, found in individual groups','Variables':'variables in each stove group are: time, cumulative clicks, clicks per interval, fuel consumption per interval, fuel consumption rate per interval, indoor temperature, outdoor temperature, temperature difference, stove status per interval'}
     product_file.setncatts(prod_nc_att)
     
     inv_file = input('Input the name of the inventory file for the data subset: ') #Asks for the user to input the name of the new yaml file with the particular inventory
-    yaml_file = os.path.join(file_path,'..','Data','yaml_Files',inv_file)
+    yaml_file = os.path.join(file_path,'..','..','Data','yaml_Files',inv_file)
     file = open(yaml_file,'r') 
     #Opening the inventory file of the stoves in the project
     yams = yaml.load(file)
@@ -776,7 +785,7 @@ def prod_nc2csv():
         
     file_path = os.path.abspath(os.path.dirname(__file__))
     
-    csv_files = os.path.join(file_path,'..','Data','csv_Files')
+    csv_files = os.path.join(file_path,'..','..','Data','csv_Files')
     os.chdir(csv_files)
     
     groups = ['Raw','Time','Event/Raw','Event/Clicks']
@@ -794,7 +803,7 @@ def prod_nc2csv():
 def puma_inv2yaml():
     
     file_path = os.path.abspath(os.path.dirname(__file__))
-    csv_file = os.path.join(file_path,'..','Data','temp_Files','PuMA Units + SIMS - Sheet1.csv')
+    csv_file = os.path.join(file_path,'..','..','Data','temp_Files','PuMA Units + SIMS - Sheet1.csv')
     
     csv_data = []
     with open(csv_file,'r') as file:
@@ -809,7 +818,7 @@ def puma_inv2yaml():
                  'Location': [float(line[-2]), float(line[-1])], 
                  'Square Footage': line[8]}
     
-    inv_file = os.path.join(file_path,'..','Data','yaml_Files','puma-inventory.yml')
+    inv_file = os.path.join(file_path,'..','..','Data','yaml_Files','puma-inventory.yml')
     
     with open(inv_file,'w') as file:
         file.write(yaml.dump(inventory))
