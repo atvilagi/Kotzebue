@@ -12,7 +12,7 @@ import puma_data as pdata
 
 #pdata.puma2uni_nc()
 #pdata.uni_nc2prod_nc()
-pdata.prod_nc2csv()
+#pdata.prod_nc2csv()
 
 #timeAK = pytz.timezone('America/Anchorage')
 #

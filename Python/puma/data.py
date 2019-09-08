@@ -1,13 +1,10 @@
-#This is the accompanying module file to go along with the doug_puma_run.py script; these are the functions utilized
+#This is the accompanying module file to go along with the doug_puma_run.py script; 
+#these are the functions utilized
 
-#Created: Tue Jun 18 10:39:04 2019
-#By: Douglas Keller
+#By Douglas Keller
 
-from netCDF4 import Dataset, num2date
-import pandas as pd
+from netCDF4 import Dataset
 import numpy as np
-from datetime import datetime, timedelta
-import time
 import csv
 import os
 import multiprocessing as mp
@@ -16,11 +13,14 @@ import yaml
 
 #### Text to netCDF files
     
-def pumatxt2data(stove_file): #Function that extracts the time, state, clicks, and thermistor data from the PUMA text files
+def pumatxt2data(stove_file):
+    #Function that extracts the time, state, clicks, and thermistor data from 
+    #the PUMA text files
     
     stove_file = open(stove_file,'r')
     
-    stove_csv = csv.reader(stove_file, delimiter='\t') #Reading the file as a tab delimited file
+    stove_csv = csv.reader(stove_file, delimiter='\t') 
+    #Reading the file as a tab delimited file
     
     stove_data = [[],[],[],[]]
     
@@ -39,36 +39,49 @@ def pumatxt2data(stove_file): #Function that extracts the time, state, clicks, a
     cumulative_clicks = stove_data[2][1::]
     thermistor = stove_data[3][1::]
     
-    for i in range(len(stove_time)): #Replacing off states from 'X' to a numeric -1 for easier data processing later on
-        stove_time[i] = float(stove_time[i]) #Keeping UTC time
+    for i in range(len(stove_time)): 
+        #Replacing off states from 'X' to a numeric -1 for easier data processing later on
+        stove_time[i] = float(stove_time[i]) 
+        #Keeping UTC time
         if state[i]=='X':
             state[i] = -1
             cumulative_clicks[i] = -1
         else:
-            state[i] = int(state[i]) #Converting from string to int (or float further down)
+            state[i] = int(state[i]) 
+            #Converting from string to int (or float further down)
             cumulative_clicks[i] = int(cumulative_clicks[i])
         thermistor[i] = float(thermistor[i])
         
     return stove_time, state, cumulative_clicks, thermistor
 
-def file2data(stove_file,result): #This function is the parallelized version of file2data function above; main difference is the multiprocess safe 'result' buffer
-    #This runs the file2data function for each month directory in the yearly stove datasets; robust but slow, use the parallelized code
+def file2data(stove_file,result): 
+    #This function is the parallelized version of file2data function above; 
+    #main difference is the multiprocess safe 'result' buffer
+    #This runs the file2data function for each month directory in the yearly stove datasets; 
+    #robust but slow, use the parallelized code
     stove_time, state, cumulative_clicks, thermistor = pumatxt2data(stove_file)
     stime = stove_time
     print(stove_file)
     result.put([stime, state, cumulative_clicks, thermistor])
     
-def dir2data(): #This runs the file2data_mp function for each month directory in the yearly stove datasets
+def dir2data():
+    #This runs the file2data_mp function for each month directory in the yearly 
+    #stove datasets
 
-    file_list = [] #Making a list of the file names in each directory, only adding the text files, excluding the log.txt files
+    file_list = [] 
+    #Making a list of the file names in each directory, only adding the text files, 
+    #excluding the log.txt files
     for file in os.listdir():
         if file.endswith('.txt'):
             if not file.endswith('LOG.txt'):
                 file_list.append(file)
     file_list.sort()
     
-    result = mp.Manager().Queue() #Instantiating a multiprocess safe buffer (needed for multiprocessing)
-    pool = mp.Pool(mp.cpu_count()) #Making a pool of processes (think of it as other initializations of python each running its own program)
+    result = mp.Manager().Queue() 
+    #Instantiating a multiprocess safe buffer (needed for multiprocessing)
+    pool = mp.Pool(mp.cpu_count()) 
+    #Making a pool of processes (think of it as other initializations of python
+    #each running its own program)
     for file in file_list:
         pool.apply_async(file2data,args=(file,result)) #Asynchronous running of the file2data_mp function on the text files
     pool.close()
@@ -86,7 +99,9 @@ def dir2data(): #This runs the file2data_mp function for each month directory in
 
     return data #Returning data as [time,intT,outT,dT,state,cumulative_clicks]
 
-def data_sort(data_list): #Sorts the stove data by putting the information into a tuple per timestamp and sorting by said timestamp
+def data_sort(data_list): 
+    #Sorts the stove data by putting the information into a tuple per timestamp
+    #and sorting by said timestamp
     
     data_sorted = []
     for i in range(len(data_list[0])):
@@ -98,7 +113,9 @@ def data_sort(data_list): #Sorts the stove data by putting the information into 
     
     return data_sorted
 
-def remove_duplicates_list(dup_list): #Removes duplicate and NaN inflicted tuples in the data list recieved from the data_sort function
+def remove_duplicates_list(dup_list): 
+    #Removes duplicate and NaN inflicted tuples in the data list recieved from 
+    #the data_sort function
     
     fin_list = [(0,)]
     for item in dup_list:
@@ -109,7 +126,9 @@ def remove_duplicates_list(dup_list): #Removes duplicate and NaN inflicted tuple
     
     return fin_list
 
-def stove_data_polish(stove_data): #Runs both the data_sort function and the remove_duplicates_list function and then changes the list back to a list of lists [time,intT,outT,dT,status,clicks]
+def stove_data_polish(stove_data): 
+    #Runs both the data_sort function and the remove_duplicates_list function 
+    #and then changes the list back to a list of lists [time,intT,outT,dT,status,clicks]
     
     stove_data_sorted = data_sort(stove_data)
     stove_data_fin = remove_duplicates_list(stove_data_sorted)
@@ -164,16 +183,20 @@ def raw_time2event(year_data,time_data,stove_type_dict,fuel_click_file):
     click_outT = midpoint(event_data[4])
     click_dT = midpoint(event_data[5])
     
-    click_data.append(click_time)
-    click_data.append(clicks)
-    click_data.append(click_state)
-    click_data.append(click_inT)
-    click_data.append(click_outT)
-    click_data.append(click_dT)
-    click_data.append(gallons)
-    click_data.append(gph)
+    pos = positive_clicks(clicks)
     
-    return event_data, click_data #[stime,state,cumulative_clicks,inT,outT,dT] and [click_time,clicks,click_state,click_inT,click_outT,click_dT,gallons,gph]
+    click_data.append(click_time[pos])
+    click_data.append(clicks[pos])
+    click_data.append(click_state[pos])
+    click_data.append(click_inT[pos])
+    click_data.append(click_outT[pos])
+    click_data.append(click_dT[pos])
+    click_data.append(gallons[pos])
+    click_data.append(gph[pos])
+    
+    return event_data, click_data 
+    #[stime,state,cumulative_clicks,inT,outT,dT] and 
+    #[click_time,clicks,click_state,click_inT,click_outT,click_dT,gallons,gph]
 
 def cumulative_clicks2clicks(cumulative_clicks,state):
     
@@ -184,10 +207,12 @@ def cumulative_clicks2clicks(cumulative_clicks,state):
 
     return clicks, click_state
             
-def stove_rate(stove_dict,fuel_click_file): #Determines the stove fuel pump rate depending on the stove type
+def stove_rate(stove_dict,fuel_click_file):
+    #Determines the stove fuel pump rate depending on the stove type
     
     fuel_click_file = open(fuel_click_file,'r')
-    fuel_click = csv.reader(fuel_click_file, delimiter=',') #Reading the file as a comma delimited file
+    fuel_click = csv.reader(fuel_click_file, delimiter=',') 
+    #Reading the file as a comma delimited file
     
     for stove_type in fuel_click:
         if stove_type[0] == stove_dict['Stove Type']:
@@ -195,11 +220,13 @@ def stove_rate(stove_dict,fuel_click_file): #Determines the stove fuel pump rate
     
     return rate
 
-def clicks2gallons(clicks,rate): #Determines the fuel pumped from the clicks counted by the PuMA device
+def clicks2gallons(clicks,rate): 
+    #Determines the fuel pumped from the clicks counted by the PuMA device
     
     return clicks*rate
 
-def run_clicks2gallons(clicks,stove_dict,fuel_click_file): #Runs the clicks to gallons function for the clicks array
+def run_clicks2gallons(clicks,stove_dict,fuel_click_file): 
+    #Runs the clicks to gallons function for the clicks array
     
     rate = stove_rate(stove_dict,fuel_click_file)
     gallons = []
@@ -208,11 +235,13 @@ def run_clicks2gallons(clicks,stove_dict,fuel_click_file): #Runs the clicks to g
         
     return gallons
 
-def galperhour(gal,deltat): #Calculates the US gallons per hour
+def galperhour(gal,deltat): 
+    #Calculates the US gallons per hour
     
     return gal/deltat*3600
     
-def run_galperhour(gallons,stime): #Runs the US gallons per hour calculation
+def run_galperhour(gallons,stime): 
+    #Runs the US gallons per hour calculation
     
     gph = []
     deltat = np.diff(stime)
@@ -231,11 +260,23 @@ def midpoint(array):
         
     return mid_array
 
-def deltaT(indoorT, outdoorT): #Computes the difference in temperature of the indoor and outdoor temperatures
+def positive_clicks(clicks):
+    
+    pos = []
+    for i in range(len(clicks)):
+        if clicks[i] > 0:
+            pos.append(i)
+            
+    return pos
+
+def deltaT(indoorT, outdoorT): 
+    #Computes the difference in temperature of the indoor and outdoor temperatures
     
     return indoorT - outdoorT
 
-def run_deltaT(intT, outT): #Runs the deltaT function for lists of indoor temp. and outdoor temp. of the same size
+def run_deltaT(intT, outT): 
+    #Runs the deltaT function for lists of indoor temp. and outdoor temp. of the 
+    #same size
     
     dT = []
     for i in range(len(intT)):
@@ -243,7 +284,9 @@ def run_deltaT(intT, outT): #Runs the deltaT function for lists of indoor temp. 
         
     return dT
     
-def indoorT(thermistor): #Computes the indoor temperature from the thermistor value collected by the PUMA device
+def indoorT(thermistor): 
+    #Computes the indoor temperature from the thermistor value collected by the
+    #PUMA device
     
     if int(thermistor) == 0:
         return np.nan
@@ -254,7 +297,8 @@ def indoorT(thermistor): #Computes the indoor temperature from the thermistor va
     
     return indoorT
 
-def run_indoorT(thermistor): #Computes the array of indoor temperatures from the PUMA device data
+def run_indoorT(thermistor): 
+    #Computes the array of indoor temperatures from the PUMA device data
     
     inT = []
     for i in range(len(thermistor)):
@@ -262,21 +306,28 @@ def run_indoorT(thermistor): #Computes the array of indoor temperatures from the
         
     return inT
     
-def outdoorT(air_temp,air_time,stove_time): #Computes the outdoor temperature for the area and time of interest
+def outdoorT(air_temp,air_time,stove_time): 
+    #Computes the outdoor temperature for the area and time of interest
 
-    if stove_time < air_time[0] or air_time[-1] < stove_time: #Checking if the desired point is in the outdoor temp. data
+    if stove_time < air_time[0] or air_time[-1] < stove_time: 
+        #Checking if the desired point is in the outdoor temp. data
         
         return np.nan
     
     else:
 
-        temp_interp = interp1d(air_time,air_temp) #Linearly interpolates the outdoor temp. when the indoor temp. is between hours
+        temp_interp = interp1d(air_time,air_temp) 
+        #Linearly interpolates the outdoor temp. when the indoor temp. is between 
+        #hours
         
         return round(float(temp_interp(stove_time)),2)
     
-def run_outdoorT(air_temp_file,stove_time): #Computes an array of outdoor temperature at the location specified in the netCDF file obtained from Snotel observations
+def run_outdoorT(air_temp_file,stove_time): 
+    #Computes an array of outdoor temperature at the location specified in the 
+    #netCDF file obtained from Snotel observations
     
-    at_data = Dataset(air_temp_file,'r') #Assuming air temperature file from NRCS Snotel observations in netCDF form
+    at_data = Dataset(air_temp_file,'r') 
+    #Assuming air temperature file from NRCS Snotel observations in netCDF form
     air_temp = at_data.variables['air_temperature'][:]
     at_time = at_data.variables['time'][:]
     
@@ -317,17 +368,21 @@ def nc_transfer_attributes(old_nc,new_nc,attributes):
     #Transferring the attributes from the old netCDF4 file to the new one
     for att in attributes:
         new_nc.setncattr(att,old_nc.getncattr(att))
-    
+
+#### Scriptstyle Functions
+
 def puma2uni_nc():
     
     file_path = os.path.abspath(os.path.dirname(__file__))
     
     yaml_file = os.path.join(file_path,'..','Data','yaml_Files','puma-inventory.yml')
-    file = open(yaml_file,'r') #Opening the inventory file of the stoves in the project
+    file = open(yaml_file,'r') 
+    #Opening the inventory file of the stoves in the project
     yams = yaml.load(file)
     file.close()
     
-    name_list = [] #Making a list of the stove names
+    name_list = [] 
+    #Making a list of the stove names
     for i in yams:
         name_list.append(i)
     
@@ -341,12 +396,14 @@ def puma2uni_nc():
     merged_file.setncatts(new_nc_att)
 
     ftp_data = os.path.join(file_path,'..','..','ftp-data')
-    os.chdir(ftp_data) #This function changes the active directory to the directory with all the stove data files in 'FBK000' format; this will need adjusting depending on where the stove files are stored relative to this script 
+    os.chdir(ftp_data) 
+    #This function changes the active directory to the directory with all the stove data files in 'FBK000' format; this will need adjusting depending on where the stove files are stored relative to this script 
     
     dir_list = os.listdir()
     dir_list.sort()
     stoves = []
-    for stove in dir_list: #Making a list of all the inventoried stoves
+    for stove in dir_list: 
+        #Making a list of all the inventoried stoves
         if stove in name_list:
             stoves.append(stove)
     
@@ -355,9 +412,11 @@ def puma2uni_nc():
     
     for stove in stoves:
         
-        years = os.listdir(stove) #Collecting all the year directories per stove directory
+        years = os.listdir(stove) 
+        #Collecting all the year directories per stove directory
         
-        merged_file.createGroup(stove) #Creating a netCDF4 group for each stove
+        merged_file.createGroup(stove) 
+        #Creating a netCDF4 group for each stove
         merged_file[stove].setncatts(yams[stove])
         
         #### Raw data section ####
@@ -451,29 +510,41 @@ def puma2uni_nc():
         nc_description_set(merged_file[stove+'/Event/Clicks'],click_variables,click_descriptions)
         nc_units_set(merged_file[stove+'/Event/Clicks'],click_variables,click_units)
         
-        os.chdir(stove) #Changing to the stove directory
+        os.chdir(stove) 
+        #Changing to the stove directory
         
-        year_data = [[],[],[],[]] #Data buffer for all years
+        year_data = [[],[],[],[]] 
+        #Data buffer for all years
         
         for year in years:
-            months = os.listdir(year) #Collecting all month directories in the year directory
-            os.chdir(year) #Changing to the year directory
+            months = os.listdir(year) 
+            #Collecting all month directories in the year directory
+            os.chdir(year) 
+            #Changing to the year directory
             
-            month_data = [[],[],[],[]] #Data buffer for all months
+            month_data = [[],[],[],[]] 
+            #Data buffer for all months
     
             for month in months:
-                os.chdir(month) #Changing to the month directory
-                dir_data = dir2data() #Inputing the path to the outdoor temperature file and the running the function defined at the top of the script, extracting the data from the PUMA text files; this will need to be changed depending on the database structure and the location of the outdoor temperature file relative to this script
-                for i in range(len(month_data)): #Collating the month data into the transcending all month buffer
+                os.chdir(month) 
+                #Changing to the month directory
+                dir_data = dir2data() 
+                #Inputing the path to the outdoor temperature file and the running the function defined at the top of the script, extracting the data from the PUMA text files; this will need to be changed depending on the database structure and the location of the outdoor temperature file relative to this script
+                for i in range(len(month_data)): 
+                    #Collating the month data into the transcending all month buffer
                     month_data[i] += dir_data[i]
-                os.chdir('..') #Leaving the month directory
+                os.chdir('..') 
+                #Leaving the month directory
     
-            for i in range(len(year_data)): #Collating the year data into the transcending all year buffer
+            for i in range(len(year_data)): 
+                #Collating the year data into the transcending all year buffer
                 year_data[i] += month_data[i]
             
-            os.chdir('..') #Leaving the year directory
+            os.chdir('..') 
+            #Leaving the year directory
         
-        year_data = stove_data_polish(year_data) #Sorting and removing duplicates and bad data from the data
+        year_data = stove_data_polish(year_data) 
+        #Sorting and removing duplicates and bad data from the data
         #year_data looks like [stime,state,cumulative_clicks,thermistor]
         
         fill_nc(merged_file[stove+'/Raw'],raw_variables,year_data)
@@ -492,9 +563,11 @@ def puma2uni_nc():
         fill_nc(merged_file[stove+'/Event/Raw'],event_variables,event_data)
         fill_nc(merged_file[stove+'/Event/Clicks'],click_variables,click_data)
         
-        os.chdir('..') #Leaving the stove directory
+        os.chdir('..') 
+        #Leaving the stove directory
         
-    merged_file.close() #Closing the netCDF4 file and you're done!
+    merged_file.close() 
+    #Closing the netCDF4 file and you're done!
     
 def uni_nc2prod_nc():
     
@@ -512,21 +585,25 @@ def uni_nc2prod_nc():
     
     inv_file = input('Input the name of the inventory file for the data subset: ') #Asks for the user to input the name of the new yaml file with the particular inventory
     yaml_file = os.path.join(file_path,'..','Data','yaml_Files',inv_file)
-    file = open(yaml_file,'r') #Opening the inventory file of the stoves in the project
+    file = open(yaml_file,'r') 
+    #Opening the inventory file of the stoves in the project
     yams = yaml.load(file)
     file.close()
     
-    name_list = [] #Making a list of the stove names
+    name_list = [] 
+    #Making a list of the stove names
     for i in yams:
         name_list.append(i)
         
-    stoves = [] #Making a list of the stove names
+    stoves = [] 
+    #Making a list of the stove names
     for stove in yams:
         stoves.append(stove)
     
     for stove in stoves:
         
-        product_file.createGroup(stove) #Creating a netCDF4 group for each stove
+        product_file.createGroup(stove) 
+        #Creating a netCDF4 group for each stove
         
         attributes = ['Location','Stove Type','Square Footage']
         
@@ -633,13 +710,15 @@ def uni_nc2prod_nc():
         nc_transfer_variables(unified_file[stove+'/Event/Raw'],product_file[stove+'/Event/Raw'],event_variables)
         nc_transfer_variables(unified_file[stove+'/Event/Clicks'],product_file[stove+'/Event/Clicks'],click_variables)
         
-    product_file.close() #Closing the netCDF4 file and you're done!
+    product_file.close() 
+    #Closing the netCDF4 file and you're done!
     
     return stoves,prod_nc
             
 def stove_csv(stove,group,product_file_name):
     
-        product_file = Dataset(product_file_name,'r') #Opening the product netcdf data file
+        product_file = Dataset(product_file_name,'r') 
+        #Opening the product netcdf data file
         
         def nc2csv_descriptions(nc):
     
@@ -687,7 +766,8 @@ def stove_csv(stove,group,product_file_name):
                 
                 stove_csv_file.writerow(row)
         
-            product_file.close() #Closing the netCDF4 file
+            product_file.close() 
+            #Closing the netCDF4 file
             print(group_dir)
     
 def prod_nc2csv():
@@ -701,10 +781,13 @@ def prod_nc2csv():
     
     groups = ['Raw','Time','Event/Raw','Event/Clicks']
     
-    pool = mp.Pool(mp.cpu_count()) #Making a pool of processes (think of it as other initializations of python each running its own program)
+    pool = mp.Pool(mp.cpu_count()) 
+    #Making a pool of processes (think of it as other initializations of python
+    #each running its own program)
     for stove in stoves:
         for group in groups:
-            pool.apply_async(stove_csv,args=(stove,group,product_file_name)) #Asynchronous running of the stove_csv function to create csv files
+            pool.apply_async(stove_csv,args=(stove,group,product_file_name)) 
+            #Asynchronous running of the stove_csv function to create csv files
     pool.close()
     pool.join()
     
