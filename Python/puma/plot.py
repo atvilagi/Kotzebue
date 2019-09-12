@@ -14,7 +14,7 @@ import puma.signal_processing as psp
 #orange [230,126,34]
 #blue [52,152,219]
 #purple [155,89,182]
-#red [271,76,60]
+#red [231,76,60]
 
 def polar_flow_plot_average_per_month(stove,year_month,t_datetime,data,minutes,fname):
     
@@ -57,7 +57,7 @@ def polar_flow_plot(stove,year_month,t_datetime,data,t_theta,data_theta,fname):
     plt.rgrids((np.nanmax(data)/3, 2*np.nanmax(data)/3, np.nanmax(data), 
                 3.5*np.nanmax(data)/3), labels = (round((np.nanmax(data)/3),2), 
                 round((2*np.nanmax(data)/3),2), round(np.nanmax(data),2),''),
-                angle = -45, fontsize = 14)
+                angle = 90, fontsize = 14)
     plt.title('Hourly Fuel Consumption\n',fontsize = 28)
     ax.tick_params(pad = 14)
     plt.text(np.pi/4,np.nanmax(data)/6,'Night',fontsize = 14)
@@ -103,35 +103,36 @@ def plot_heating_degree_days(stove,t_datetime,gph,hdd,fname):
               '\nFuel Consumption Rate against Temperature Load\n',
               fontsize = 20)
     plt.xlabel('Heat Degree Day (base 65 $\degree$F)',fontsize = 16)
-    plt.ylabel('Fuel Consumption Rate (gal/hr)', fontsize = 16)
+    plt.ylabel('Fuel Consumption Rate (gal/hr)',fontsize = 16)
     plt.tight_layout()
     plt.savefig(fname)
 
 def plot_fuel_usage(year_month,your_gal,their_gal,fname):
     
     colors = np.array([[46,204,113],[52,152,219]])/255
+    bar_text_height = their_gal
     
     if your_gal > their_gal:
-        colors = np.array([[271,76,60],[52,152,219]])/255
+        colors = np.array([[231,76,60],[52,152,219]])/255
+        bar_text_height = your_gal
         
     plt.figure(figsize = (9,6), dpi = 200)
     plt.subplot(111)
-    plt.bar([1,2],[your_gal,their_gal],
-            color = colors,width = .6)
+    plt.bar([1,2],[your_gal,their_gal],color = colors,width = .6)
     plt.title('Fuel Consumption\n',fontsize = 28)
-    plt.text(1,1.05*your_gal,str(round(your_gal,2)) + ' $gal/ft^2$',
+    plt.text(1,your_gal + .05*bar_text_height,str(round(your_gal,4)) + ' $gal/ft^2$',
              horizontalalignment='center',fontsize=20)
-    plt.text(2,1.05*their_gal,str(round(their_gal,2)) + ' $gal/ft^2$',
+    plt.text(2,their_gal + .05*bar_text_height,str(round(their_gal,4)) + ' $gal/ft^2$',
              horizontalalignment='center',fontsize=20)
     plt.yticks([])
     plt.xticks([1,2],['You','Your Neighbor$^*$'],fontsize=20)
-    plt.xlabel('\n* Your neighbor is the average of all the other Fairbanks\nhouseholds participating in this study.',
+    plt.xlabel('\n* Your neighbor is the average of all the other FNSB\nhouseholds participating in this study.',
                fontsize = 16)
     plt.box(False)
     plt.tight_layout()
     plt.savefig(fname)
     
-def plot_bar_progress(year_months,gphddpd,fname):
+def plot_bar_progress(year_months,gphddpm,fuel_price,fname):
     
     ymdtime = ptime.run_year_month2datetime(year_months)
     date = []
@@ -139,17 +140,25 @@ def plot_bar_progress(year_months,gphddpd,fname):
         date.append(ym.strftime('%b %y'))
     x = range(len(date))
     
+    colors = np.array([155,89,182])/255
+    
     plt.figure(figsize = (12,4))
     plt.subplot(111)
-    plt.bar(x,gphddpd,width = .6,color = np.array([155,89,182])/255)
+    plt.bar(x,gphddpm,width = .6,color = colors)
     for i in range(len(date)):
-        if gphddpd[i] > 0:
-            plt.text(x[i],1.025*gphddpd[i],str(round(gphddpd[i],4)),horizontalalignment='center',fontsize=18)
+        if gphddpm[i] > 0:
+            plt.text(x[i],(gphddpm[i]+.025*np.nanmax(gphddpm)),
+                     str(round(gphddpm[i],4)),horizontalalignment='center',
+                     fontsize=18)
+            plt.text(x[i],(gphddpm[i]+.175*np.nanmax(gphddpm)),
+                     '$ ' + str(round(fuel_price*gphddpm[i],2)),horizontalalignment='center',
+                     fontsize=18)
         else:
-            plt.text(x[i],0.1*max(gphddpd),'Data\nUnavailable',horizontalalignment='center',fontsize=18)
+            plt.text(x[i],0.1*max(gphddpm),'Data\nUnavailable',
+                     horizontalalignment='center',fontsize=18)
     plt.yticks([])
     plt.xticks(x,date,fontsize=20)
-    plt.xlabel('\nWeather Adjusted Gallons per Day',fontsize = 20)
+    plt.xlabel('\nWeather Adjusted Gallons per Month',fontsize = 20)
     plt.box(False)
     plt.tight_layout()
     plt.savefig(fname)

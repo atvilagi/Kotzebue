@@ -1,9 +1,3 @@
-ATV000:
-  Location:
-  - 0.0
-  - 0.0
-  Square Footage: ''
-  Stove Type: M422
 FBK000:
   Location:
   - 64.87628
@@ -56,7 +50,7 @@ FBK008:
   Location:
   - 64.8496
   - -147.715
-  Square Footage: ''
+  Square Footage: '576'
   Stove Type: Laser 73/730
 FBK009:
   Location:
@@ -98,7 +92,7 @@ FBK015:
   Location:
   - 64.83723
   - -148.027
-  Square Footage: ''
+  Square Footage: '1830'
   Stove Type: M422
 FBK016:
   Location:
@@ -116,7 +110,7 @@ FBK018:
   Location:
   - 64.81606
   - -148.002
-  Square Footage: ''
+  Square Footage: '1360'
   Stove Type: Laser 73/730
 FBK019:
   Location:
@@ -128,7 +122,7 @@ FBK020:
   Location:
   - 64.87386
   - -147.813
-  Square Footage: ''
+  Square Footage: '1080'
   Stove Type: M422
 FBK021:
   Location:
@@ -158,7 +152,7 @@ FBK025:
   Location:
   - 64.92216
   - -147.931
-  Square Footage: ''
+  Square Footage: '1264'
   Stove Type: Laser 530
 FBK026:
   Location:

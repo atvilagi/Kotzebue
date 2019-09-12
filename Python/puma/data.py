@@ -188,11 +188,11 @@ def raw_time2event(year_data,time_data,stove_type_dict,fuel_click_file):
     click_time = np.array(click_time,dtype=np.float64)
     clicks = np.array(clicks,dtype=np.int64)
     click_state = np.array(click_state,dtype=np.int32)
-    click_inT = np.array(click_time,dtype=np.float32)
-    click_outT = np.array(click_time,dtype=np.float32)
-    click_dT = np.array(click_time,dtype=np.float32)
-    gallons = np.array(click_time,dtype=np.float64)
-    gph = np.array(click_time,dtype=np.float64)
+    click_inT = np.array(click_inT,dtype=np.float32)
+    click_outT = np.array(click_outT,dtype=np.float32)
+    click_dT = np.array(click_dT,dtype=np.float32)
+    gallons = np.array(gallons,dtype=np.float64)
+    gph = np.array(gph,dtype=np.float64)
     
     click_data.append(click_time[pos])
     click_data.append(clicks[pos])
@@ -814,9 +814,10 @@ def puma_inv2yaml():
         
     inventory = {}
     for line in csv_data[1::]:
-        inventory[line[6]] = {'Stove Type': line[4], 
-                 'Location': [float(line[-2]), float(line[-1])], 
-                 'Square Footage': line[8]}
+        if line[6] != 'ATV000':
+            inventory[line[6]] = {'Stove Type': line[4], 
+                     'Location': [float(line[-2]), float(line[-1])], 
+                     'Square Footage': line[8]}
     
     inv_file = os.path.join(file_path,'..','..','Data','yaml_Files','puma-inventory.yml')
     

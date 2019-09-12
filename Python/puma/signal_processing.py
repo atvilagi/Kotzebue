@@ -2,6 +2,7 @@
 
 import scipy.stats as stats
 import numpy as np
+from netCDF4 import Dataset
 
 def moving_median(f,N):
     
@@ -41,22 +42,3 @@ def linear_regression2line(x,y):
     rvalue = linreg[2]
     
     return x_line, y_line, slope, intercept, rvalue
-
-    
-def find_neighbor_stoves(main_stove,good_stoves):
-    
-    neighbor_stoves = []
-    for stove in good_stoves:
-        if stove != main_stove:
-            neighbor_stoves.append(stove)
-    
-    return neighbor_stoves
-
-def good_neighbor_stoves(stove,month,stove_comp_months):
-    
-    good_stoves = []
-    for scm in stove_comp_months:
-        if month in scm[1]:
-            good_stoves.append(scm[0])
-            
-    return good_stoves

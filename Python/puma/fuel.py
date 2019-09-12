@@ -53,6 +53,10 @@ def neighbor_gallons_consumed_per_month(year_month,uni_nc_file,neighbor_stoves):
     
     return np.nanmean(np.array(neighbor_gal))
 
+def gallons_consumed_per_area(gallons,area):
+    
+    return gallons/area
+
 def gallons_per_day_per_month(t_datetime,gallons):
     
     months = ptime.months_available(t_datetime)    
@@ -82,6 +86,16 @@ def weather_adjusted_gallons_consumed_per_month(year_month,t_datetime,gphdd):
             gal_ind.append(i)
     
     return np.sum(np.array(gphdd)[gal_ind])
+
+def run_weather_adjusted_gallons_per_month(raw_t_datetime,t_datetime,gallons,hdd):
+    
+    gphdd = gallons_per_heating_degree_day(gallons,hdd)
+    months = ptime.months_available(t_datetime)
+    gphddpm = []
+    for m in months:
+        gphddpm.append(weather_adjusted_gallons_consumed_per_month(m,t_datetime,gphdd))
+    
+    return months, gphddpm
         
 def weather_adjusted_gallons_per_day_per_month(raw_t_datetime,t_datetime,gallons,hdd):
     
@@ -116,3 +130,31 @@ def weather_adjusted_gallons_consumed_range(year_month,months,gphddpd):
         i+=1
         
     return new_months, new_gphddpd
+
+def find_neighbor_stoves(main_stove,good_stoves):
+    
+    neighbor_stoves = []
+    for stove in good_stoves:
+        if stove != main_stove:
+            neighbor_stoves.append(stove)
+    
+    return neighbor_stoves
+
+def good_neighbor_stoves(stove,month,stove_comp_months):
+    
+    good_stoves = []
+    for scm in stove_comp_months:
+        if month in scm[1]:
+            good_stoves.append(scm[0])
+            
+    return good_stoves
+
+def neighbor_area(neighbor_stoves,uni_nc_file):
+    
+    uni_nc = Dataset(uni_nc_file,'r')
+    
+    area = []
+    for stove in neighbor_stoves:
+        area.append(float(uni_nc[stove].getncattr('Square Footage')))
+        
+    return np.nanmean(np.array(area))

@@ -68,6 +68,8 @@ def day_average_temperature(t,x,minutes):
     
 def month_average_temperature(year_month,t_datetime,data,minutes):
     
+    #data is temperature
+    
     index = []
     days = []
     for i in range(len(t_datetime)):
@@ -86,17 +88,26 @@ def month_average_temperature(year_month,t_datetime,data,minutes):
         
     ave.sort()
     t_ave = []
-    data_ave = []
+    temp_ave = []
     for i in ave:
         t_ave.append(i[0])
-        data_ave.append(i[1])
+        temp_ave.append(i[1])
     
     t_ave = np.array(t_ave)
-    data_ave = np.array(data_ave)
+    temp_ave = np.array(temp_ave)
     
-    t_ave,data_ave = day_average_temperature(t_ave,data_ave,minutes)
+    t_ave,temp_ave = day_average_temperature(t_ave,temp_ave,minutes)
     
     t_ave = np.array(t_ave)
-    data_ave = np.array(data_ave)
+    temp_ave = np.array(temp_ave)
     
-    return t_ave, data_ave
+    return t_ave, temp_ave
+
+def monthly_average_temperature(year_month,t_datetime,temp):
+    
+    index = []
+    for i in range(len(t_datetime)):
+        if (t_datetime[i].year,t_datetime[i].month) == (year_month):
+            index.append(i)
+    
+    return np.nanmean(np.array(temp)[index])
