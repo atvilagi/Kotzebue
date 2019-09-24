@@ -1,19 +1,36 @@
-#Temperature Functions for PuMA
+"""
+Temperature Functions for PuMA
+
+By Doug Keller
+"""
 
 import pytz
 from datetime import datetime
 import numpy as np
 
 def heat_degree_day(t_datetime,outT,base):
+    """
+    Returns a list of the heating degree day from an outdoor temperature list
     
-    T_ave,day = daily_average_temperature(t_datetime,outT)
+    Arguments:
+        t_datetime -- datetime object list
+        outT -- outdoor temperature list in Fahrenheit
+        base -- temperature base for the heating degree day value e.g. 65 for 65 degrees Fahrenheit
+        
+    Returns:
+        hdd -- list of heating degree day values
+        
+    This function provides the heating degree day value of a given list of outdoor temperature data (in Fahrenheit) with an accompanying datetime object list, needed for the definition of a heating degree day (https://www.weather.gov/key/climate_heat_cool).
+    """
+    
+    T_ave,day = daily_average_temperature(t_datetime,outT) #finds the average of the minimum and maximum temperature during a given day
     hdd = []
-    for i in range(len(t_datetime)):
+    for i in range(len(t_datetime)): #determining the heating degree day per given datetime object
         for j in range(len(day)):
             if day[j] == (t_datetime[i].year,t_datetime[i].month,t_datetime[i].day):
                 hdd.append(base - outT[i])
     
-    return hdd    
+    return hdd
 
 def daily_average_temperature(t_datetime,outT):
     

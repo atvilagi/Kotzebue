@@ -1,17 +1,22 @@
-# ACEP Fuel Meter Tools
+=====================
+ACEP Fuel Meter Tools
+=====================
 
 This is a collection of the data management and analysis tools developed to support
 the ACEP fuelmeter project.
 
-## Licensing
+Licensing
+=========
 
 The repository, content within, and contributions are licensed under MIT license.
 
-## Data Packaging Output Files
+Data Packaging Output Files
+===========================
 
 Some scripts in the Python_Scripts folder packageAll data is collected and presented as a time series at a consistent time interval. Fuel consumption data includes the cumulative fuel pump clicks, clicks per interval, gallons consumed per interval (based off the clicks and theoretical pump flow rate), and gallons consumed per hour. The temperature data includes the indoor temperature, outdoor temperature (collected from the )
 
-## other tools used
+Other tools used
+================
 
 * [click](https://github.com/pallets/click) - cli tool builder helper (alternative to argparse)
 * [jupyter notebooks] - data lab
@@ -20,24 +25,26 @@ Some scripts in the Python_Scripts folder packageAll data is collected and prese
 * [ubidots-python](https://github.com/ubidots/ubidots-python) - ubidots
 * [python-dotenv](https://github.com/theskumar/python-dotenv) - parsing .env files
 
-## dev setup
+Dev Setup
+=========
 
-### pipenv
+pipenv
+------
 
 This project uses a `Pipfile` to manage library dependancies using the pipenv
 tool. See pytohn tutorials for using [pipenv for managing depenacies](https://packaging.python.org/tutorials/managing-dependencies/). Pipenv is good but there are some some valid [gripes](https://hynek.me/articles/python-app-deps-2018/).
 
 
 To install pipenv do this:
-* `pip3 install --user pipenv`
-* The above installs pipenv to `$HOME/.local/bin` which will need to be in `$PATH`.  If that is missing add following line to `.bashrc`
+- `pip3 install --user pipenv`
+- The above installs pipenv to `$HOME/.local/bin` which will need to be in `$PATH`.  If that is missing add following line to `.bashrc`
   `export PATH=$PATH:$HOME/.local/bin`
 
 Update the project dependancies:
-* `pipenv update`
+- `pipenv update`
 
 Then install all this projects python dependancies using:
-* `pipenv install`
+- `pipenv install`
 
 Running a script here with neccessary dependancies in the python environment:
 ```

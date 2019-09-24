@@ -1,7 +1,9 @@
-#This is the accompanying module file to go along with the doug_puma_run.py script; 
-#these are the functions utilized
+"""
+This is the accompanying module file to go along with the doug_puma_run.py script; 
+these are the functions utilized
 
-#By Douglas Keller
+By Douglas Keller
+"""
 
 from netCDF4 import Dataset
 import numpy as np
