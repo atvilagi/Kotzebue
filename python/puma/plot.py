@@ -1,52 +1,85 @@
-#PuMA Plotting Module
+"""
+Plotting Module for PuMA
 
-#By Douglas Keller
+By Douglas Keller
+"""
 
 import numpy as np
 import matplotlib.pyplot as plt
-from pandas.plotting import register_matplotlib_converters
+from pandas.plotting import register_matplotlib_converters #this is here to shutup matplotlib warnings
 import puma.time as ptime
 import puma.temperature as ptemp
 import puma.signal_processing as psp
 
-#colors
-#green [46,204,113]
-#orange [230,126,34]
-#blue [52,152,219]
-#purple [155,89,182]
-#red [231,76,60]
+"""
+colors I used:
+    
+green [46,204,113]
+orange [230,126,34]
+blue [52,152,219]
+purple [155,89,182]
+red [231,76,60]
+"""
 
 def polar_flow_plot_average_per_month(stove,year_month,t_datetime,data,minutes,fname):
+    """
+    Plots a polar flow plot of the averaged hourly flow rate of a month.
+    
+    Arguments:
+        stove -- stove ID
+        year_month -- year and month tuple
+        t_datetime -- datetime object list
+        data -- data to be monthly averaged
+        minutes -- window of minutes to average
+        fname -- filename for the saved png
+        
+    Plots the averaged hourly flow rate of a month of flow rate data in a polar plot and saves the plot to a png file with the polar_flow_plot function.
+    """
     
     index = []
-    for i in range(len(t_datetime)):
+    for i in range(len(t_datetime)): #determining the data in the year and month of interest
         if (t_datetime[i].year,t_datetime[i].month) == (year_month):
             index.append(i)
         
-    t,data = ptemp.month_average_temperature(year_month,t_datetime[index[0]:index[-1]+1],
+    t,data = ptemp.month_average_temperature(year_month,t_datetime[index[0]:index[-1]+1], #averaging the flow data
                            data[index[0]:index[-1]+1],minutes)
     
-    t_theta = ptime.time2theta_time(t)
+    t_theta = ptime.time2theta_time(t) #turning the time into radian based time for the polar plot
     data_theta = data
-    t_theta = np.append(t_theta,t_theta[0])
+    t_theta = np.append(t_theta,t_theta[0]) #connecting the end points for the plot
     data_theta = np.append(data_theta,data_theta[0])
     
-    polar_flow_plot(stove,year_month,t_datetime,data,t_theta,data_theta,fname)
+    polar_flow_plot(stove,year_month,t_datetime,data,t_theta,data_theta,fname) #plotting using the polar_flow_plot function
     
 def polar_flow_plot_per_month(stove,year_month,t_datetime,data,fname):
+    """
+    Plots a polar flow plot of the hourly flow rate of a month.
+    
+    Arguments:
+        stove -- stove ID
+        year_month -- year and month tuple
+        t_datetime -- datetime object list
+        data -- data to be monthly averaged
+        minutes -- window of minutes to average
+        fname -- filename for the saved png
+        
+    Plots the hourly flow rate of a month of flow rate data in a polar plot and saves the plot to a png file with the polar_flow_plot function.
+    """
     
     index = []
-    for i in range(len(t_datetime)):
+    for i in range(len(t_datetime)): #determining the data in the year and month of interest
         if (t_datetime[i].year,t_datetime[i].month) == year_month:
             index.append(i)
     
     t_theta = ptime.datetime2theta_time(t_datetime[index[0]:index[-1]+1])
     data_theta = data[index[0]:index[-1]+1]
 
-    polar_flow_plot(stove,year_month,t_datetime,data,t_theta,data_theta,fname)
+    polar_flow_plot(stove,year_month,t_datetime,data,t_theta,data_theta,fname) #plotting using the polar_flow_plot function
             
 def polar_flow_plot(stove,year_month,t_datetime,data,t_theta,data_theta,fname):
-    
+    """
+    Polar plot 
+    """
     fig = plt.figure(figsize = (7,7), dpi = 200)
     ax = fig.add_subplot(111, polar=True)
     plt.polar([-5*np.pi/4,-5*np.pi/4],[0,3.5*np.nanmax(data)/3],linewidth = 4, color = [0,0,0])

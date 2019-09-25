@@ -1,10 +1,31 @@
-#TeX File Functions PuMA
+"""
+TeX File Functions for PuMA
 
-#By Douglas Keller
+By Douglas Keller
+"""
 
 def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No):
+    """
+    Writes a tex file with variables for the monthly report.
     
-    Percent_Usage = abs(1 - Total_Usage/Neighbor_Usage)
+    Arguments:
+        Year_Month -- year and month tuple
+        Total_Usage -- total fuel usage in gallons
+        Fuel_Price -- current fuel price
+        Fuel_per_Day -- fuel consumed per day
+        Total_Cost -- total cost of fuel usage in dollars
+        Fuel_Cost_per_Day -- fuel cost per day in dollars
+        Neighbor_Usage -- fuel consumed by the other stoves
+        Prog_Usage -- weather adjusted fuel consumption change percentage
+        Stove_ID -- stove ID
+        InT_Ave -- average indoor temperature during the month
+        OutT_Ave -- average outdoor temperature during the month
+        Tip_No -- tip index for the tip string list
+        
+    This function writes a tex file of all the given arguments as variables in tex format for the monthly report tex file to include and draw from.
+    """
+    
+    Percent_Usage = abs(1 - Total_Usage/Neighbor_Usage) #determining percent difference in consumption between stove of interest and their neighbors
     if Total_Usage > Neighbor_Usage:
         ML = 'more'
     else:
@@ -15,9 +36,9 @@ def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,To
     else:
         PML = 'less'
     
-    Prog_Usage = abs(1 - Prog_Usage)
+    Prog_Usage = abs(1 - Prog_Usage) #percentagizing the progress of usage
     
-    with open('monthly_values.tex','w') as tex_file:
+    with open('monthly_values.tex','w') as tex_file: #opening and writing the tex file
         
         months = ['','January','February','March','April','May','June','July',
               'August','September','October','November','December']
@@ -44,12 +65,28 @@ def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,To
             tex_file.write('\n')
 
 def report_tips(n):
+    """
+    Function holding the list of tips for the monthly reports.
     
-    tips = ['Consider reducing the set temperature on your heater. A one degree reduction in your set temperature results in about 2\% savings on your fuel bill. The U.S. Department of Energy recommends setting your temperature to 68 degrees when you are at home and awake, and recommends turning down the temperature (by as much as 10 degrees) during the nighttime hours when you are asleep or when you are away from your home. (http://alaskarenewableenergy.org/index.php/2019/07/18/2019-energy-savers-tips-published/)','In cold climates, a great deal of heat can be lost through your windows during the winter. Using transparent interior plastic film over your windows can improve the thermal efficiency of your home. In a study conducted by the Cold Climate Housing Research Center, inexpensive interior plastic film improved the insulation of the tested window by 33\%. (http://www.cchrc.org/evaluating-window-insulation)','Space heating accounts for 77\% of household energy costs in Interior Alaska. Air leaks around your windows and doors let cold air into your home. Don’t let your heat escape. Check around your windows and doors for air leaks, and use weather stripping and caulk to stop any air leaks. (www.energystar.com)','Heat rises. Reversing the direction of a ceiling fan to run clockwise on low speed in the winter forces warm air near the ceiling down into the living space. This may allow you to reduce your set temperature by a few degrees saving you fuel and money. (www.energystar.com)','After the sun goes down, closing your shades and drapes helps reduce heat loss from your windows. Insulated blinds, referred to as honeycomb or cellular shades, use pockets of inert air to increase the thermal efficiency of your windows. In a study conducted by the Cold Climate Housing Research Center, insulated blinds improved the insulation of the tested window by 60\%. (http://www.cchrc.org/evaluating-window-insulation)','Air leaks in attics, basements, and crawlspaces can result in a substantial loss of heat. Holes or gaps around vents, pipes, and electrical wires let heat out and drafts in, causing you to burn more fuel to heat your home. Seal small gaps with caulk and holes up to three inches in diameter with spray foam to stop air leaks. (www.energystar.gov)','Direct vent heaters, such as Toyostoves and Monitor heaters, are very fuel efficient heating appliances. To assure that your heater is running at its maximum efficiency, make sure to have it serviced at least every other year. Maintenance issues such as cracked gaskets can reduce the fuel efficiency of your heater, meaning you have to use more fuel to heat your home. Regular maintenance can add years to the life of your heater and reduces the odds of your heater breaking down in the middle of winter.']
+    Arguments:
+        n -- tip index
+        
+    Returns:
+        tip of interest
+    
+    This function just makes an easy way to select a tip for each new report to come out for the stoves owners to be "nudged."
+    """
+    
+    tips = ['Consider reducing the set temperature on your heater. A one degree reduction in your set temperature results in about 2\% savings on your fuel bill. The U.S. Department of Energy recommends setting your temperature to 68 degrees when you are at home and awake, and recommends turning down the temperature (by as much as 10 degrees) during the nighttime hours when you are asleep or when you are away from your home. (http://alaskarenewableenergy.org/index.php/2019/07/18/2019-energy-savers-tips-published/)','In cold climates, a great deal of heat can be lost through your windows during the winter. Using transparent interior plastic film over your windows can improve the thermal efficiency of your home. In a study conducted by the Cold Climate Housing Research Center, inexpensive interior plastic film improved the insulation of the tested window by 33\%. (http://www.cchrc.org/evaluating-window-insulation)','Space heating accounts for 77\% of household energy costs in Interior Alaska. Air leaks around your windows and doors let cold air into your home. Don’t let your heat escape. Check around your windows and doors for air leaks, and use weather stripping and caulk to stop any air leaks. (www.energystar.com)','Heat rises. Reversing the direction of a ceiling fan to run clockwise on low speed in the winter forces warm air near the ceiling down into the living space. This may allow you to reduce your set temperature by a few degrees saving you fuel and money. (www.energystar.com)','After the sun goes down, closing your shades and drapes helps reduce heat loss from your windows. Insulated blinds, referred to as honeycomb or cellular shades, use pockets of inert air to increase the thermal efficiency of your windows. In a study conducted by the Cold Climate Housing Research Center, insulated blinds improved the insulation of the tested window by 60\%. (http://www.cchrc.org/evaluating-window-insulation)','Air leaks in attics, basements, and crawlspaces can result in a substantial loss of heat. Holes or gaps around vents, pipes, and electrical wires let heat out and drafts in, causing you to burn more fuel to heat your home. Seal small gaps with caulk and holes up to three inches in diameter with spray foam to stop air leaks. (www.energystar.gov)','Direct vent heaters, such as Toyostoves and Monitor heaters, are very fuel efficient heating appliances. To assure that your heater is running at its maximum efficiency, make sure to have it serviced at least every other year. Maintenance issues such as cracked gaskets can reduce the fuel efficiency of your heater, meaning you have to use more fuel to heat your home. Regular maintenance can add years to the life of your heater and reduces the odds of your heater breaking down in the middle of winter.'] #list of strings of the tips
     
     return tips[n]
 
 def write_monthly_tex_report_file():
+    """
+    Autogenerates the tex file for the individual stoves.
+    
+    This function just writes a tex file through python to allow for an easy and efficient way of producing the custome "nudge" reports quickly.
+    """
 
     text = r'''
 %Monthly report for the PuMA fuel meter project
@@ -166,7 +203,7 @@ You consumed {\progress}\% {\progressmoreless} this month than last month.\\
 {\tips}
 
 \end{document}
-'''
+''' #tex text
 
-    with open('monthly_report.tex','w') as tex_file:
+    with open('monthly_report.tex','w') as tex_file: #writing the text to the tex file
         tex_file.write(text)
