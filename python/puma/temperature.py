@@ -4,8 +4,6 @@ Temperature Functions for PuMA
 By Doug Keller
 """
 
-import pytz
-from datetime import datetime
 import numpy as np
 
 def heat_degree_day(t_datetime,outT,base):
@@ -33,13 +31,26 @@ def heat_degree_day(t_datetime,outT,base):
     return hdd
 
 def daily_average_temperature(t_datetime,outT):
+    """
+    Returns the average daily temperature in an array.
+    
+    Arguments:
+        t_datetime -- datetime object list
+        outT -- outdoor temperature list
+        
+    Returns:
+        T_ave -- average daily temperature array
+        day -- list of tuples containing the year, month, and day of the averaged temperature e.g. [(2019,9,5),...]
+        
+    This function returns the daily temperature average based on the average of the daily high and low of the diurnal temperature swing. The time information is also returned in the day list.
+    """
     
     day = []
     T_max = []
     T_min = []
     
     i = 0
-    while i < len(t_datetime):
+    while i < len(t_datetime): #making the day array
         if (t_datetime[i].year,t_datetime[i].month,t_datetime[i].day) not in day:
             day.append((t_datetime[i].year,t_datetime[i].month,t_datetime[i].day))
         i += 1
@@ -49,7 +60,7 @@ def daily_average_temperature(t_datetime,outT):
         T_min.append(999)
         
     i = 0
-    while i < len(t_datetime):
+    while i < len(t_datetime): #finding the daily high and low
         for j in range(len(day)):
             if day[j] == (t_datetime[i].year,t_datetime[i].month,t_datetime[i].day):
                 if T_max[j] < outT[i]:
@@ -60,67 +71,24 @@ def daily_average_temperature(t_datetime,outT):
     
     T_max = np.array(T_max)
     T_min = np.array(T_min)
-    T_ave = (T_max + T_min)/2
+    T_ave = (T_max + T_min)/2 #averaging the high and low to make the average temperature array
     
-    return T_ave, day
-
-def day_average_temperature(t,x,minutes):
-    
-    ave = np.linspace(0,86400,1440/minutes)
-    t_ave = []
-    x_ave = []
-    for j in range(len(ave)-1):
-        x_ave.append([])
-        t_ave.append((ave[j] + ave[j+1])/2)
-        for i in range(len(t)):
-            if ave[j] < t[i] < ave[j+1]:
-                x_ave[j].append(x[i])
-                
-    temp = []
-    for i in x_ave:
-        temp.append(np.nanmean(i))
-    x_ave = temp
-    
-    return t_ave, x_ave
-    
-def month_average_temperature(year_month,t_datetime,data,minutes):
-    
-    #data is temperature
-    
-    index = []
-    days = []
-    for i in range(len(t_datetime)):
-        if (t_datetime[i].year,t_datetime[i].month) == (year_month):
-            if t_datetime[i].day not in days:
-                days.append(i)
-            index.append(i)
-    
-    t_ref = datetime(year_month[0],year_month[1],1,0,0,0)
-    timeAK = pytz.timezone('America/Anchorage')
-    t_ref = timeAK.localize(t_ref)
-    
-    ave = []
-    for i in index:
-        ave.append(((t_datetime[i].timestamp() - t_ref.timestamp()) % 86400,data[i]))
-        
-    ave.sort()
-    t_ave = []
-    temp_ave = []
-    for i in ave:
-        t_ave.append(i[0])
-        temp_ave.append(i[1])
-    
-    t_ave = np.array(t_ave)
-    temp_ave = np.array(temp_ave)
-    
-    t_ave,temp_ave = day_average_temperature(t_ave,temp_ave,minutes)
-    
-    t_ave = np.array(t_ave)
-    temp_ave = np.array(temp_ave)
-    
-    return t_ave, temp_ave
+    return T_ave, day #output structure numpy array and [(year,month,day),...]
 
 def monthly_average_temperature(year_month,t_datetime,temp):
+    """
+    Returns the average temperature array over a month.
+    
+    Arguments:
+        year_month -- year and month tuple e.g. (2019,9)
+        t_datetime -- datetime object list
+        temp -- temp list
+        
+    Returns:
+        the average temperature of the desired month.
+        
+    This function retures the average temperature of the temp list of the desired month given by the year_month tuple. Used for the monthly reports.
+    """
     
     index = []
     for i in range(len(t_datetime)):

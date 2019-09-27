@@ -1,6 +1,8 @@
-#Small script to run the unified netCDF4 file to the product netCDF4 file
+"""
+Small script to run the unified netCDF4 file into the product netCDF4 file
 
-#By Douglas Keller
+By Douglas Keller
+"""
 
 import sys
 import os

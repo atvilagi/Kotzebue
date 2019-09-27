@@ -1,6 +1,8 @@
-#Small script to run the product netCDF4 file to the csv files
+"""
+Small script to run the product netCDF4 file to the csv files for distribution
 
-#By Douglas Keller
+By Douglas Keller
+"""
 
 import sys
 import os

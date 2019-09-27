@@ -6,6 +6,8 @@ By Doug Keller
 
 import scipy.stats as stats
 import numpy as np
+from datetime import datetime
+import pytz
 
 def moving_median(f,N):
     """
@@ -73,3 +75,86 @@ def linear_regression2line(x,y):
     rvalue = linreg[2]
     
     return x_line, y_line, slope, intercept, rvalue
+
+def day_average(t_datetime,data,minutes):
+    """
+    Returns the day averaged data in "minutes" minute windows.
+    
+    Arguments:
+        t_datetime -- datetime object list
+        data -- list of the data to be averaged
+        minutes -- number of minutes for a window
+        
+    Returns:
+        t_datetime_ave -- averaged datetime object list
+        data_ave -- averaged list of data
+        
+    This function takes a list of data and compresses into an overlapping day of data. Then the data is averaged over windows of info of length "minutes." This is used in the polar plots to look at the hourly variation over a month.
+    """
+    
+    ave = np.linspace(0,86400,1440/minutes)
+    t_datetime_ave = []
+    data_ave = []
+    for j in range(len(ave)-1): #making a list of windowed data
+        data_ave.append([])
+        data_ave.append((ave[j] + ave[j+1])/2)
+        for i in range(len(t_datetime)):
+            if ave[j] < t_datetime[i] < ave[j+1]:
+                data_ave[j].append(data[i])
+                
+    temp = []
+    for i in data_ave: #averaging the windowed data
+        temp.append(np.nanmean(i))
+    data_ave = temp
+    
+    return t_datetime_ave, data_ave
+
+def month_average(year_month,t_datetime,data,minutes):
+    """
+        Returns the day averaged data in "minutes" minute windows.
+    
+    Arguments:
+        year_month -- year and month tuple e.g. (2019,9)
+        t_datetime -- datetime object list
+        data -- list of the data to be averaged
+        minutes -- number of minutes for a window
+        
+    Returns:
+        t_datetime_ave -- averaged datetime object list
+        temp_ave -- averaged list of data
+        
+    This function takes a list of data and compresses into an overlapping day of data by calling the day_average function over a month of data. Then the data is averaged over windows of info of length "minutes." This is used in the polar plots to look at the hourly variation over a month.
+    """
+    
+    index = []
+    days = []
+    for i in range(len(t_datetime)):
+        if (t_datetime[i].year,t_datetime[i].month) == (year_month):
+            if t_datetime[i].day not in days:
+                days.append(i)
+            index.append(i)
+    
+    t_ref = datetime(year_month[0],year_month[1],1,0,0,0) #making reference datetime object
+    timeAK = pytz.timezone('America/Anchorage')
+    t_ref = timeAK.localize(t_ref)
+    
+    ave = []
+    for i in index: #separating the t_datetime into days with the data
+        ave.append(((t_datetime[i].timestamp() - t_ref.timestamp()) % 86400,data[i]))
+        
+    ave.sort()
+    t_datetime_ave = []
+    temp_ave = []
+    for i in ave: 
+        t_datetime_ave.append(i[0])
+        temp_ave.append(i[1])
+    
+    t_datetime_ave = np.array(t_datetime_ave)
+    temp_ave = np.array(temp_ave)
+    
+    t_datetime_ave,temp_ave = day_average(t_datetime_ave,temp_ave,minutes) #running the window averaging function
+    
+    t_datetime_ave = np.array(t_datetime_ave)
+    temp_ave = np.array(temp_ave)
+    
+    return t_datetime_ave, temp_ave

@@ -8,7 +8,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pandas.plotting import register_matplotlib_converters #this is here to shutup matplotlib warnings
 import puma.time as ptime
-import puma.temperature as ptemp
 import puma.signal_processing as psp
 
 """
@@ -41,7 +40,7 @@ def polar_flow_plot_average_per_month(stove,year_month,t_datetime,data,minutes,f
         if (t_datetime[i].year,t_datetime[i].month) == (year_month):
             index.append(i)
         
-    t,data = ptemp.month_average_temperature(year_month,t_datetime[index[0]:index[-1]+1], #averaging the flow data
+    t,data = psp.month_average(year_month,t_datetime[index[0]:index[-1]+1], #averaging the flow data
                            data[index[0]:index[-1]+1],minutes)
     
     t_theta = ptime.time2theta_time(t) #turning the time into radian based time for the polar plot
