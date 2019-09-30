@@ -8,7 +8,7 @@ import sys
 import os
 
 file_path = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.join(file_path,'..','puma'))
+sys.path.append(os.path.join(file_path,'..'))
 
 import puma.data as pdata
 import wget
