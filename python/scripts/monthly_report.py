@@ -31,6 +31,10 @@ year_month = (year,month) #year and month of the report to print
 begin_year_month = (2019,9)
 end_year_month = (2020,5)
 
+for stove in report_stoves:
+    if stove == 'FBK018':
+        report_stoves.remove(stove)
+
 pool = mp.Pool(mp.cpu_count()) 
 for stove in report_stoves: #creating a report for each desired stove in multiple processes
     pool.apply_async(preport.monthly_report,args=(uni_nc_file,stove,year_month,begin_year_month,end_year_month)) 

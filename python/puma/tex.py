@@ -165,11 +165,13 @@ Total Cost: \${\totalcost}\\
 \begin{minipage}{\linewidth}
 \underline{In {\reportmonth:}}\\
 
-Your average fuel consumption was {\fuelperday} gallons per day.\\
+Your average fuel consumption for heating was {\fuelperday} gallons per day.\\
 
-Your average fuel cost was \${\fuelcostperday} per day\\
+Your average fuel cost for heating was \${\fuelcostperday} per day\\
 
-Average indoor and outdoor temperatures for this month are: {\inTave} {\degree}F and {\outTave} {\degree}F, respectively.\\
+The average indoor temperature for this month was: {\inTave} {\degree}F\\
+
+The average outdoor temperatures for this month was: {\outTave} {\degree}F\\
 \end{minipage}
 
 &

@@ -158,7 +158,7 @@ def plot_fuel_usage(year_month,your_gal,their_gal,fname):
              horizontalalignment='center',fontsize=20)
     plt.yticks([])
     plt.xticks([1,2],['You','Your Neighbor$^*$'],fontsize=20)
-    plt.xlabel('\n* Your neighbor is the average of all the other FNSB\nhouseholds participating in this study.',
+    plt.xlabel('\n* Your neighbor is the average of other FNSB\nhouseholds participating in this study.',
                fontsize = 16)
     plt.box(False)
     plt.tight_layout()
@@ -180,7 +180,7 @@ def plot_bar_progress(year_months,gphddpm,fuel_price,fname):
     for i in range(len(date)):
         if gphddpm[i] > 0:
             plt.text(x[i],(gphddpm[i]+.025*np.nanmax(gphddpm)),
-                     str(round(gphddpm[i],4)),horizontalalignment='center',
+                     str(round(gphddpm[i],4)) + 'gal/hdd',horizontalalignment='center',
                      fontsize=18)
             plt.text(x[i],(gphddpm[i]+.175*np.nanmax(gphddpm)),
                      '$ ' + str(round(fuel_price*gphddpm[i],2)),horizontalalignment='center',

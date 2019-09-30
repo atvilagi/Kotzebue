@@ -24,6 +24,9 @@ def monthly_report(unified_nc_file,stove,year_month,begin_year_month,end_year_mo
 
     t_datetime,r_t_datetime,inT,outT,gallons,gph = pre_monthly_data(begin_year_month,end_year_month,unified_nc_file,stove)
     
+#    if stove == 'FBK017':
+#        t_datetime,r_t_datetime,inT,outT,gallons,gph += pre_monthly_data(begin_year_month,end_year_month,unified_nc_file,'FBK018')
+    
     hdd,gphddpm,neighbor_area,neighbor_stoves,days_active,months = calculated_monthly_data(unified_nc_file,stove,year_month,t_datetime,r_t_datetime,outT,gallons)
     
     Stove_ID = stove
