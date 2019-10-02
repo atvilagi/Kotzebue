@@ -31,10 +31,18 @@ def neighbor_gallons_consumed_per_month(year_month,uni_nc_file,neighbor_stoves):
     
     stove_dtime = []
     stove_gal = []
-    for stove in neighbor_stoves:
-        stove_dtime.append(ptime.timestamp2datetime(uni_nc[stove+'/Event/Clicks/time'][:]))
-        stove_gal.append(uni_nc[stove+'/Event/Clicks/fuel_consumption'][:])
+    for i in range(len(neighbor_stoves)):
+        stove_dtime.append(ptime.timestamp2datetime(uni_nc[neighbor_stoves[i]+'/Event/Clicks/time'][:]))
+        stove_gal.append(list(uni_nc[neighbor_stoves[i]+'/Event/Clicks/fuel_consumption'][:]))
         
+        if neighbor_stoves[i] == 'FBK014':
+            stove_dtime[i] += ptime.timestamp2datetime(uni_nc['FBK015/Event/Clicks/time'][:])
+            stove_gal[i] += list(uni_nc['FBK015/Event/Clicks/fuel_consumption'][:])
+            
+        if neighbor_stoves[i] == 'FBK019':
+            stove_dtime[i] += ptime.timestamp2datetime(uni_nc['FBK020/Event/Clicks/time'][:])
+            stove_gal[i] += list(uni_nc['FBK020/Event/Clicks/fuel_consumption'][:])
+            
     result = mp.Manager().Queue()
     pool = mp.Pool(mp.cpu_count())        
     for i in range(len(neighbor_stoves)):
@@ -95,7 +103,7 @@ def run_weather_adjusted_gallons_per_month(raw_t_datetime,t_datetime,gallons,hdd
     for m in months:
         gphddpm.append(weather_adjusted_gallons_consumed_per_month(m,t_datetime,gphdd))
     
-    return months, gphddpm
+    return gphddpm
         
 def weather_adjusted_gallons_per_day_per_month(raw_t_datetime,t_datetime,gallons,hdd):
     
@@ -104,32 +112,8 @@ def weather_adjusted_gallons_per_day_per_month(raw_t_datetime,t_datetime,gallons
     gphddpm = []
     for m in months:
         gphddpm.append(weather_adjusted_gallons_consumed_per_month(m,t_datetime,gphdd))
-    
-    gphddpd = []
-    for i in range(len(gphddpm)):
-        if ptime.days_available_in_month(months[i],raw_t_datetime) <= 0:
-            gphddpd.append(0)
-        else:
-            gphddpd.append(gphddpm[i]/ptime.days_available_in_month(months[i],raw_t_datetime))
         
-    return months, gphddpd
-
-def weather_adjusted_gallons_consumed_range(year_month,months,gphddpd):
-    
-    new_months = []
-    new_gphddpd = []
-    end = 0
-    for i in range(len(months)):
-        if months[i] == year_month:
-            end = i
-    
-    i = 0
-    while i <= end:
-        new_months.append(months[i])
-        new_gphddpd.append(gphddpd[i])
-        i+=1
-        
-    return new_months, new_gphddpd
+    return gphddpm
 
 def find_neighbor_stoves(main_stove,good_stoves):
     

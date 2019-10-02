@@ -4,7 +4,7 @@ TeX File Functions for PuMA
 By Douglas Keller
 """
 
-def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No):
+def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No,Name,Address):
     """
     Writes a tex file with variables for the monthly report.
     
@@ -33,8 +33,11 @@ def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,To
     
     if Prog_Usage > 1:
         PML = 'more'
-    else:
+    elif Prog_Usage > 0:
         PML = 'less'
+    elif Prog_Usage == 0:
+        Prog_Usage = 1
+        PML = 'more/less'
     
     Prog_Usage = abs(1 - Prog_Usage) #percentagizing the progress of usage
     
@@ -58,7 +61,9 @@ def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,To
                  r'\newcommand{\stoveid}{'+Stove_ID+'}',
                  r'\newcommand{\inTave}{'+format(InT_Ave,'.2f')+'}',
                  r'\newcommand{\outTave}{'+format(OutT_Ave,'.2f')+'}',
-                 r'\newcommand{\tips}{'+report_tips(Tip_No)+'}']
+                 r'\newcommand{\tips}{'+report_tips(Tip_No)+'}',
+                 r'\newcommand{\name}{'+Name+'}',
+                 r'\newcommand{\address}{'+Address+'}']
         
         for line in lines:
             tex_file.write(line)
@@ -102,6 +107,7 @@ def write_monthly_tex_report_file():
 \pagestyle{fancy}
 
 \fancyhead[L]{\includegraphics[height = 32pt]{../../logos/acep.pdf}}
+\fancyhead[C]{\name\\ \address}
 \fancyhead[R]{\includegraphics[height = 24pt]{../../logos/uaf_blue_hor.pdf}}
 
 \fancyfoot[C]{\scriptsize{Contact:
@@ -167,7 +173,7 @@ Total Cost: \${\totalcost}\\
 
 Your average fuel consumption for heating was {\fuelperday} gallons per day.\\
 
-Your average fuel cost for heating was \${\fuelcostperday} per day\\
+Your average fuel cost for heating was \${\fuelcostperday} per day.\\
 
 The average indoor temperature for this month was: {\inTave} {\degree}F\\
 

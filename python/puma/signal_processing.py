@@ -97,14 +97,17 @@ def day_average(t_datetime,data,minutes):
     data_ave = []
     for j in range(len(ave)-1): #making a list of windowed data
         data_ave.append([])
-        data_ave.append((ave[j] + ave[j+1])/2)
+        t_datetime_ave.append((ave[j] + ave[j+1])/2)
         for i in range(len(t_datetime)):
             if ave[j] < t_datetime[i] < ave[j+1]:
                 data_ave[j].append(data[i])
                 
     temp = []
     for i in data_ave: #averaging the windowed data
-        temp.append(np.nanmean(i))
+        if len(i) > 0:
+            temp.append(np.nanmean(i))
+        else:
+            temp.append(0)
     data_ave = temp
     
     return t_datetime_ave, data_ave

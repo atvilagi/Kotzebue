@@ -2,8 +2,7 @@
 .ipynb_checkpoints/
 puma-client.json
 client_secret.json
-Python_Packaging/__pycache__/
-Python_Plotting/__pycache__/
+python/puma/__pycache__/
 .pyc
 .lock
 .log
@@ -12,3 +11,5 @@ Python_Plotting/__pycache__/
 PuMA\ Units\ +\ SIMS.pdf
 PuMA\ Units\ +\ SIMS.csv
 PuMA\ Units\ +\ SIMS\ -\ Sheet1.csv
+Treatment_Group.csv
+Fairbanks\ Fuel\ Meter\ Treatment\ and\ Control\ Groups.xlsx

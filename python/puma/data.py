@@ -115,7 +115,7 @@ def data_sort(data_list):
     
     return data_sorted
 
-def remove_duplicates_list(dup_list): 
+def remove_duplicates_list(dup_list):
     #Removes duplicate and NaN inflicted tuples in the data list recieved from 
     #the data_sort function
     

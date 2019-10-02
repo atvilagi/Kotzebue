@@ -260,3 +260,31 @@ def run_year_month2datetime(year_months):
         ymdtime.append(year_month2datetime(m))
         
     return ymdtime
+
+def days_in_month(year_month):
+    """
+    """
+    
+    return monthrange(year_month[0],year_month[1])[1]
+
+def years_months(begin_year_month,end_year_month):
+    
+    year_months = []
+    
+    y = begin_year_month[0]
+    m = begin_year_month[1]
+    while y <= end_year_month[0]:
+        while m <= 12:
+            if (y,m) <= end_year_month:
+                year_months.append((y,m))
+                m += 1
+            else:
+                m = 13
+        m = 1
+        y += 1
+        
+    return year_months
+                    
+                
+    
+        
