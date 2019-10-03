@@ -35,13 +35,10 @@ def neighbor_gallons_consumed_per_month(year_month,uni_nc_file,neighbor_stoves):
         stove_dtime.append(ptime.timestamp2datetime(uni_nc[neighbor_stoves[i]+'/Event/Clicks/time'][:]))
         stove_gal.append(list(uni_nc[neighbor_stoves[i]+'/Event/Clicks/fuel_consumption'][:]))
         
-        if neighbor_stoves[i] == 'FBK014':
-            stove_dtime[i] += ptime.timestamp2datetime(uni_nc['FBK015/Event/Clicks/time'][:])
-            stove_gal[i] += list(uni_nc['FBK015/Event/Clicks/fuel_consumption'][:])
-            
-        if neighbor_stoves[i] == 'FBK019':
-            stove_dtime[i] += ptime.timestamp2datetime(uni_nc['FBK020/Event/Clicks/time'][:])
-            stove_gal[i] += list(uni_nc['FBK020/Event/Clicks/fuel_consumption'][:])
+        if neighbor_stoves[i] in ['FBK014','FBK017','FBK019']:
+            next_stove = 'FBK0' + str(int(neighbor_stoves[i][4:7]) + 1)
+            stove_dtime[i] += ptime.timestamp2datetime(uni_nc[next_stove+'/Event/Clicks/time'][:])
+            stove_gal[i] += list(uni_nc[next_stove+'/Event/Clicks/fuel_consumption'][:])
             
     result = mp.Manager().Queue()
     pool = mp.Pool(mp.cpu_count())        

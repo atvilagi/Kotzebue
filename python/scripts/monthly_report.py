@@ -58,6 +58,8 @@ for stove in control_stoves:
     if stove == 'FBK015' or stove == 'FBK020':
         control_stoves.remove(stove)
 
+neighbor_stoves = control_stoves + report_stoves
+
 names = []
 addresses = []
 treatment_group_file = os.path.join(file_path,'..','..','data','tmp','Treatment_Group.csv')
@@ -70,13 +72,7 @@ with open(treatment_group_file,newline='') as csvfile:
 j = 0
 while j < len(report_stoves):
     if j not in [1]:
-        preport.monthly_report(unified_nc_file,report_stoves[j],year_month,begin_year_month,end_year_month,year_months,fuel_price,control_stoves,tip_no,names[j],addresses[j])
+        neighbor_stoves_mod = neighbor_stoves
+        neighbor_stoves_mod.remove(report_stoves[j])
+        preport.monthly_report(unified_nc_file,report_stoves[j],year_month,begin_year_month,end_year_month,year_months,fuel_price,neighbor_stoves_mod,tip_no,names[j],addresses[j])
     j += 1
-    
-#pool = mp.Pool(mp.cpu_count())
-#for i in range(len(report_stoves)): #creating a report for each desired stove in multiple processes
-#    if i not in [1]:
-#        print(i)
-#        pool.apply_async(preport.monthly_report,args=(unified_nc_file,report_stoves[i],year_month,begin_year_month,end_year_month,year_months,fuel_price,control_stoves,tip_no,names[i],addresses[i])) 
-#pool.close()
-#pool.join()
