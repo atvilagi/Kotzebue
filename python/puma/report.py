@@ -102,7 +102,7 @@ def monthly_report(unified_nc_file,stove,year_month,begin_year_month,end_year_mo
     pplot.polar_flow_plot_average_per_month(stove,year_month,t_datetime,gph,60,'monthly_polar_plot.png')
     
     ptex.write_monthly_tex_var_file(year_month,Total_Usage,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No,Name,Address)
-    ptex.write_monthly_tex_report_file()
+    ptex.write_monthly_tex_report_file(stove,year_month)
     
     os.chdir('..')
     print(Stove_ID)

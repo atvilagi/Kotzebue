@@ -86,7 +86,7 @@ def report_tips(n):
     
     return tips[n]
 
-def write_monthly_tex_report_file():
+def write_monthly_tex_report_file(stove,year_month):
     """
     Autogenerates the tex file for the individual stoves.
     
@@ -213,5 +213,5 @@ You consumed {\progress}\% {\progressmoreless} this month than last month.\\
 \end{document}
 ''' #tex text
 
-    with open('monthly_report.tex','w') as tex_file: #writing the text to the tex file
+    with open('monthly_report_'+str(year_month[1])+'_'+str(year_month[0])+'_'+stove+'.tex','w') as tex_file: #writing the text to the tex file
         tex_file.write(text)
