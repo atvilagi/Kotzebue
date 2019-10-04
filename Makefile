@@ -6,3 +6,6 @@ unified_netcdf:
 monthly_reports:
 	python python/scripts/monthly_report.py
 	cd reports/monthly; chmod +x monthly_reports.sh; ./monthly_reports.sh
+
+clean_monthly_reports:
+	rm -r reports/monthly/*
