@@ -29,9 +29,9 @@ For this command to work properly, the ```ftp-data``` (with all the puma text fi
 .. code-block::
 
 	puma-overarching-directory
-		+-- ftp-data
-		+-- fuelmeter-tools
-				+-- data
+		|-- ftp-data
+		|--- fuelmeter-tools
+				+--- data
 				+-- netcdf
 				+-- puma_unified_data.nc
 
