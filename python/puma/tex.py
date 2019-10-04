@@ -4,7 +4,7 @@ TeX File Functions for PuMA
 By Douglas Keller
 """
 
-def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No,Name,Address):
+def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No):
     """
     Writes a tex file with variables for the monthly report.
     
@@ -61,9 +61,7 @@ def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,To
                  r'\newcommand{\stoveid}{'+Stove_ID+'}',
                  r'\newcommand{\inTave}{'+format(InT_Ave,'.2f')+'}',
                  r'\newcommand{\outTave}{'+format(OutT_Ave,'.2f')+'}',
-                 r'\newcommand{\tips}{'+report_tips(Tip_No)+'}',
-                 r'\newcommand{\name}{'+Name+'}',
-                 r'\newcommand{\address}{'+Address+'}']
+                 r'\newcommand{\tips}{'+report_tips(Tip_No)+'}']
         
         for line in lines:
             tex_file.write(line)
@@ -86,13 +84,17 @@ def report_tips(n):
     
     return tips[n]
 
-def write_monthly_tex_report_file(stove,year_month):
+def write_monthly_tex_report_file(stove,year_month,year_months):
     """
     Autogenerates the tex file for the individual stoves.
     
     This function just writes a tex file through python to allow for an easy and efficient way of producing the custome "nudge" reports quickly.
     """
-
+    if year_month == year_months[0]:
+        comment = '%'
+    else:
+        comment = ''
+        
     text = r'''
 %Monthly report for the PuMA fuel meter project
 %Created by Doug Keller
@@ -107,7 +109,6 @@ def write_monthly_tex_report_file(stove,year_month):
 \pagestyle{fancy}
 
 \fancyhead[L]{\includegraphics[height = 32pt]{../../logos/acep.pdf}}
-\fancyhead[C]{\name\\ \address}
 \fancyhead[R]{\includegraphics[height = 24pt]{../../logos/uaf_blue_hor.pdf}}
 
 \fancyfoot[C]{\scriptsize{Contact:
@@ -177,7 +178,7 @@ Your average fuel cost for heating was \${\fuelcostperday} per day.\\
 
 The average indoor temperature for this month was: {\inTave} {\degree}F\\
 
-The average outdoor temperatures for this month was: {\outTave} {\degree}F\\
+The average outdoor temperature for this month was: {\outTave} {\degree}F\\
 \end{minipage}
 
 &
@@ -194,9 +195,10 @@ The average outdoor temperatures for this month was: {\outTave} {\degree}F\\
 
 \underline{Track Your Progress:}\\
 
-You consumed {\progress}\% {\progressmoreless} this month than last month.\\
+'''+comment+r'''You consumed {\progress}\% {\progressmoreless} this month than last month.\\
 \begin{center}
-\includegraphics[height= 1.875in]{monthly_track_your_progress.png}
+\includegraphics[height= 1.63in]{monthly_track_your_progress.png}\\
+\tiny{*gal/HDD is the gallons of fuel consumed divided by the heating degree day during the time of consumption. Heating degree days for a given day are calculated by subtracting the day's average temperature from the base temperature of 65 {\degree}F.}
 \end{center}
 
 \newpage
@@ -207,7 +209,7 @@ You consumed {\progress}\% {\progressmoreless} this month than last month.\\
 \textbf{\Huge{Tip to Save Fuel}}
 \end{center}
 
-\vspace{36pt}
+\vspace{102pt}
 {\tips}
 
 \end{document}

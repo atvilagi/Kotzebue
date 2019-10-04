@@ -92,7 +92,7 @@ def weather_adjusted_gallons_consumed_per_month(year_month,t_datetime,gphdd):
     
     return np.sum(np.array(gphdd)[gal_ind])
 
-def run_weather_adjusted_gallons_per_month(raw_t_datetime,t_datetime,gallons,hdd):
+def run_weather_adjusted_gallons_per_month(t_datetime,gallons,hdd):
     
     gphdd = gallons_per_heating_degree_day(gallons,hdd)
     months = ptime.months_available(t_datetime)
@@ -102,7 +102,7 @@ def run_weather_adjusted_gallons_per_month(raw_t_datetime,t_datetime,gallons,hdd
     
     return gphddpm
         
-def weather_adjusted_gallons_per_day_per_month(raw_t_datetime,t_datetime,gallons,hdd):
+def weather_adjusted_gallons_per_day_per_month(t_datetime,gallons,hdd):
     
     gphdd = gallons_per_heating_degree_day(gallons,hdd)
     months = ptime.months_available(t_datetime)

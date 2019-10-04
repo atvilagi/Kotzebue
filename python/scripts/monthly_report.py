@@ -12,6 +12,7 @@ sys.path.append(os.path.join(file_path,'..'))
 
 import puma.report as preport
 import puma.time as ptime
+import puma.bash as pbash
 import yaml
 import multiprocessing as mp
 import csv
@@ -34,12 +35,9 @@ with open(control_stoves_file) as control_stoves_file:
     
 os.chdir(os.path.join(file_path,'..','..','reports','monthly')) #moving to the reports/monthly directory
 
-year = int(input('Enter the year of the report: '))
-month = int(input('Enter the month of the report: '))
+year = int(input('Enter the year of the reports: '))
+month = int(input('Enter the month of the reports: '))
 fuel_price = float(input('Current price of fuel: '))
-#year = 2019
-#month = 9
-#fuel_price = 3
 year_month = (year,month) #year and month of the report to print
 
 begin_year_month = (2019,9)
@@ -55,24 +53,17 @@ for stove in report_stoves:
         report_stoves.remove(stove)
         
 for stove in control_stoves:
-    if stove == 'FBK015' or stove == 'FBK020':
+    if stove in ['FBK015','FBK020']:
         control_stoves.remove(stove)
 
 neighbor_stoves = control_stoves + report_stoves
-
-names = []
-addresses = []
-treatment_group_file = os.path.join(file_path,'..','..','data','tmp','Treatment_Group.csv')
-with open(treatment_group_file,newline='') as csvfile:
-    treatment_group = csv.reader(csvfile,delimiter='\t')
-    for line in treatment_group:
-        names.append(line[0])
-        addresses.append(line[1])
 
 j = 0
 while j < len(report_stoves):
     if j not in [1]:
         neighbor_stoves_mod = neighbor_stoves
         neighbor_stoves_mod.remove(report_stoves[j])
-        preport.monthly_report(unified_nc_file,report_stoves[j],year_month,begin_year_month,end_year_month,year_months,fuel_price,neighbor_stoves_mod,tip_no,names[j],addresses[j])
+        preport.monthly_report(unified_nc_file,report_stoves[j],year_month,begin_year_month,end_year_month,year_months,fuel_price,neighbor_stoves_mod,tip_no)
     j += 1
+    
+pbash.bash_monthly_reports(year_month)

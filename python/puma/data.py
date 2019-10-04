@@ -340,6 +340,8 @@ def run_outdoorT(air_temp_file,stove_time):
     at_data = Dataset(air_temp_file,'r') 
     #Assuming air temperature file from NRCS Snotel observations in netCDF form
     air_temp = at_data.variables['air_temperature'][:]
+    if 'C' in at_data['air_temperature'].units or 'c' in at_data['air_temperature'].units: #Checking the unit type if Celsius is used
+        air_temp = air_temp*9/5 + 32
     at_time = at_data.variables['time'][:]
     
     outT = []

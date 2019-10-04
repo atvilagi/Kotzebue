@@ -174,17 +174,12 @@ def plot_bar_progress(year_months,gphddpm,fuel_price,fname):
     
     colors = np.array([155,89,182])/255
     
-    plt.figure(figsize = (12,4))
+    plt.figure(figsize = (14,4))
     plt.subplot(111)
     plt.bar(x,gphddpm,width = .6,color = colors)
     for i in range(len(date)):
         if gphddpm[i] > 0:
-            plt.text(x[i],(gphddpm[i]+.05*np.nanmax(gphddpm)),
-                     '$ ' + str(round(fuel_price*gphddpm[i],2)) + '\n' +str(round(gphddpm[i],4)) + '\ngal/hdd',horizontalalignment='center',
-                     fontsize=18)
-#            plt.text(x[i],(gphddpm[i]+.175*np.nanmax(gphddpm)),
-#                     '$ ' + str(round(fuel_price*gphddpm[i],2)),horizontalalignment='center',
-#                     fontsize=18)
+            plt.text(x[i],(gphddpm[i]+.05*np.nanmax(gphddpm)),str(round(gphddpm[i],4)) + '\ngal/HDD*',horizontalalignment='center',fontsize=18)
         else:
             plt.text(x[i],0.1*max(gphddpm),'No\nData',
                      horizontalalignment='center',fontsize=18)
