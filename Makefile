@@ -1,4 +1,7 @@
-all: monthly_reports
+all: unified_netcdf monthly_reports
+
+unified_netcdf:
+	python python/scripts/puma_text_to_unified.py
 
 monthly_reports:
 	python python/scripts/monthly_report.py
