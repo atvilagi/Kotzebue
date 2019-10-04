@@ -29,11 +29,11 @@ For this command to work properly, the ```ftp-data``` (with all the puma text fi
 .. code-block::
 
 	puma-overarching-directory
-	|-- ftp-data
-	|-- fuelmeter-tools
-		|-- data
-			|-- netcdf
-				|-- puma_unified_data.nc
+		+-- ftp-data
+		+-- fuelmeter-tools
+				+-- data
+				+-- netcdf
+				+-- puma_unified_data.nc
 
 The unified netCDF file is critical to have as all downstream data deliverables depend on it, and therefore must be run before other commands are to be run (to have updated downstream data). The unified netCDF file (puma_unified_data.nc) is found in the ```data/netcdf/``` directory.
 
@@ -51,7 +51,7 @@ This runs the necessary scripts to produce the reports and places them in the ``
 .. code-block::
 
 	fuelmeter-tools
-	|--output
+		+--output
 
 Other tools used
 ================
