@@ -69,7 +69,7 @@ def monthly_report(unified_nc_file,stove,year_month,begin_year_month,end_year_mo
     Tip_No = tip_no
     
     InT_Ave = ptemp.monthly_average_temperature(year_month,t_t_datetime,t_inT)
-    
+
     OutT_Ave = ptemp.monthly_average_temperature(year_month,t_t_datetime,t_outT)    
 
     Neighbor_Usage = pfuel.neighbor_gallons_consumed_per_month(year_month,unified_nc_file,control_stoves)

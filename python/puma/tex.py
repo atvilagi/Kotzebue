@@ -94,6 +94,11 @@ def write_monthly_tex_report_file(stove,year_month,year_months):
         comment = '%'
     else:
         comment = ''
+
+    if stove == 'FBK044':
+        inT_txt = r''
+    else:
+       	inT_txt = r'Your average indoor temperature for this month was: {\inTave} {\degree}F\\'
         
     text = r'''
 %Monthly report for the PuMA fuel meter project
@@ -176,7 +181,7 @@ Your average fuel consumption for heating was {\fuelperday} gallons per day.\\
 
 Your average fuel cost for heating was \${\fuelcostperday} per day.\\
 
-The average indoor temperature for this month was: {\inTave} {\degree}F\\
+'''+inT_txt+r'''
 
 The average outdoor temperature for this month was: {\outTave} {\degree}F\\
 \end{minipage}
@@ -198,7 +203,7 @@ The average outdoor temperature for this month was: {\outTave} {\degree}F\\
 '''+comment+r'''You consumed {\progress}\% {\progressmoreless} this month than last month.\\
 \begin{center}
 \includegraphics[height= 1.63in]{monthly_track_your_progress.png}\\
-\tiny{*gal/HDD is the gallons of fuel consumed divided by the heating degree day during the time of consumption. Heating degree days for a given day are calculated by subtracting the day's average temperature from the base temperature of 65 {\degree}F.}
+\tiny{*gal/HDD is the number of gallons of fuel used in a month divided by the total number of heating degree days in the month. Heating degree days for a given day are calculated by subtracting the day's average temperature from the base temperature of 65 {\degree}F.}
 \end{center}
 
 \newpage

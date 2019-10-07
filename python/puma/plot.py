@@ -179,7 +179,7 @@ def plot_bar_progress(year_months,gphddpm,fuel_price,fname):
     plt.bar(x,gphddpm,width = .6,color = colors)
     for i in range(len(date)):
         if gphddpm[i] > 0:
-            plt.text(x[i],(gphddpm[i]+.05*np.nanmax(gphddpm)),str(round(gphddpm[i],4)) + '\ngal/HDD*',horizontalalignment='center',fontsize=18)
+            plt.text(x[i],(gphddpm[i]+.05*np.nanmax(gphddpm)),str(round(gphddpm[i],6)) + '\ngal/HDD*',horizontalalignment='center',fontsize=18)
         else:
             plt.text(x[i],0.1*max(gphddpm),'No\nData',
                      horizontalalignment='center',fontsize=18)
