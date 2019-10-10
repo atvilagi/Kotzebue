@@ -52,4 +52,6 @@ For Ubuntu, it's a little more involved:
 	
 	~$ sudo apt-get install docker-ce docker-ce-cli containerd.io
 
-For help or more information, go to the 'Docker install help page https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-engine---community-1'_.
+For help or more information, go to the 'Docker install guide'_.
+
+.. _Docker install guide: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-engine---community-1'
