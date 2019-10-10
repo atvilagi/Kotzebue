@@ -21,6 +21,7 @@ For Arch Linux, it's pretty simple:
 Test it with:
 
 .. code-block::
+
 	~$ sudo docker run hello-world
 
 -----------------
@@ -51,7 +52,4 @@ For Ubuntu, it's a little more involved:
 	
 	~$ sudo apt-get install docker-ce docker-ce-cli containerd.io
 
-For help or more information, go to the 'Docker install help page'_.
-
-.. _Docker website: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-engine---community-1
-
+For help or more information, go to the 'Docker install help page https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-engine---community-1'_.
