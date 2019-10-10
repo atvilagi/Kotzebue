@@ -90,13 +90,14 @@ def polar_flow_plot(stove,year_month,t_datetime,data,t_theta,data_theta,fname):
                 3.5*np.nanmax(data)/3), labels = (round((np.nanmax(data)/3),2), 
                 round((2*np.nanmax(data)/3),2), round(np.nanmax(data),2),''),
                 angle = 90, fontsize = 14)
-    plt.title('Hourly Fuel Consumption\n',fontsize = 28)
+    plt.title('Hourly Fuel Consumption Rate\n',fontsize = 28)
     ax.tick_params(pad = 14)
     plt.text(np.pi/4,np.nanmax(data)/6,'Night',fontsize = 14)
     plt.text(5*np.pi/4,np.nanmax(data)/3,'Day',fontsize = 14)
     plt.legend(bbox_to_anchor = (.35,.03),fontsize = 14)
     plt.tight_layout()
     plt.savefig(fname)
+    plt.close()
 
 def plot_heating_degree_days(stove,t_datetime,gph,hdd,fname):
     
@@ -138,6 +139,7 @@ def plot_heating_degree_days(stove,t_datetime,gph,hdd,fname):
     plt.ylabel('Fuel Consumption Rate (gal/hr)',fontsize = 16)
     plt.tight_layout()
     plt.savefig(fname)
+    plt.close()
 
 def plot_fuel_usage(year_month,your_gal,their_gal,fname):
     
@@ -151,7 +153,7 @@ def plot_fuel_usage(year_month,your_gal,their_gal,fname):
     plt.figure(figsize = (9,6), dpi = 200)
     plt.subplot(111)
     plt.bar([1,2],[your_gal,their_gal],color = colors,width = .6)
-    plt.title('Fuel Consumption\n',fontsize = 28)
+    plt.title('Fuel Consumption per Area\n',fontsize = 28)
     plt.text(1,your_gal + .05*bar_text_height,str(round(your_gal,4)) + ' $gal/ft^2$',
              horizontalalignment='center',fontsize=20)
     plt.text(2,their_gal + .05*bar_text_height,str(round(their_gal,4)) + ' $gal/ft^2$',
@@ -163,6 +165,7 @@ def plot_fuel_usage(year_month,your_gal,their_gal,fname):
     plt.box(False)
     plt.tight_layout()
     plt.savefig(fname)
+    plt.close()
     
 def plot_bar_progress(year_months,gphddpm,fuel_price,fname):
     
@@ -179,13 +182,14 @@ def plot_bar_progress(year_months,gphddpm,fuel_price,fname):
     plt.bar(x,gphddpm,width = .6,color = colors)
     for i in range(len(date)):
         if gphddpm[i] > 0:
-            plt.text(x[i],(gphddpm[i]+.05*np.nanmax(gphddpm)),str(round(gphddpm[i],4)) + '\ngal/HDD*',horizontalalignment='center',fontsize=18)
+            plt.text(x[i],(gphddpm[i]+.05*np.nanmax(gphddpm)),str(round(gphddpm[i],6)) + '\ngal/HDD*',horizontalalignment='center',fontsize=18)
         else:
             plt.text(x[i],0.1*max(gphddpm),'No\nData',
                      horizontalalignment='center',fontsize=18)
     plt.yticks([])
     plt.xticks(x,date,fontsize=20)
-    plt.xlabel('\nWeather Adjusted Gallons per Month',fontsize = 20)
+    plt.xlabel('\nTemperature Adjusted Gallons per Month',fontsize = 20)
     plt.box(False)
     plt.tight_layout()
     plt.savefig(fname)
+    plt.close()

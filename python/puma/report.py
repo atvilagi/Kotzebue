@@ -69,7 +69,7 @@ def monthly_report(unified_nc_file,stove,year_month,begin_year_month,end_year_mo
     Tip_No = tip_no
     
     InT_Ave = ptemp.monthly_average_temperature(year_month,t_t_datetime,t_inT)
-    
+
     OutT_Ave = ptemp.monthly_average_temperature(year_month,t_t_datetime,t_outT)    
 
     Neighbor_Usage = pfuel.neighbor_gallons_consumed_per_month(year_month,unified_nc_file,control_stoves)
@@ -89,7 +89,7 @@ def monthly_report(unified_nc_file,stove,year_month,begin_year_month,end_year_mo
     Fuel_Cost_per_Day = Total_Cost/days
     
     if len(gphddpm) > 1:
-        Prog_Usage = gphddpm[-1]/gphddpm[-2]
+        Prog_Usage = (gphddpm[-1] - gphddpm[-2])/gphddpm[-2]
     else:
         Prog_Usage = 0
     
@@ -105,7 +105,7 @@ def monthly_report(unified_nc_file,stove,year_month,begin_year_month,end_year_mo
     pplot.plot_fuel_usage(year_month,Total_Usage_per_Area,Neighbor_Usage_per_Area,'monthly_fuel_usage.png')
     pplot.polar_flow_plot_average_per_month(stove,year_month,t_datetime,gph,60,'monthly_polar_plot.png')
     
-    ptex.write_monthly_tex_var_file(year_month,Total_Usage,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No)
+    ptex.write_monthly_tex_var_file(year_month,Total_Usage,Total_Usage_per_Area,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage_per_Area,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No)
     ptex.write_monthly_tex_report_file(stove,year_month,year_months)
     
     os.chdir('..')
@@ -153,17 +153,3 @@ def calculated_monthly_data(unified_nc_file,stove,year_month,t_datetime,outT,gal
     gphddpm = pfuel.run_weather_adjusted_gallons_per_month(t_datetime,gallons,hdd)
     
     return gphddpm,neighbor_area
-    
-#def calculated_monthly_data(unified_nc_file,stove,year_month,t_datetime,t_t_datetime,outT,gallons):
-#    
-#    stove_comp_months = ptime.run_complete_months(unified_nc_file)
-#    good_stoves = pfuel.good_neighbor_stoves(stove,year_month,stove_comp_months)
-#    neighbor_stoves = pfuel.find_neighbor_stoves(stove,good_stoves)
-#    neighbor_area = pfuel.neighbor_area(neighbor_stoves,unified_nc_file)
-#    
-#    hdd = ptemp.heat_degree_day(t_datetime,outT,65)
-#    months,gphddpm = pfuel.run_weather_adjusted_gallons_per_month(t_t_datetime,t_datetime,gallons,hdd)
-#    months,gphddpm = pfuel.weather_adjusted_gallons_consumed_range(year_month,months,gphddpm)
-#    days_active = ptime.days_available_in_month(year_month,t_t_datetime)
-#    
-#    return hdd,gphddpm,neighbor_area,neighbor_stoves,days_active,months

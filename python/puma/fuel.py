@@ -83,34 +83,36 @@ def gallons_per_heating_degree_day(gallons,hdd):
         
     return gphdd
 
-def weather_adjusted_gallons_consumed_per_month(year_month,t_datetime,gphdd):
+def weather_adjusted_gallons_consumed_per_month(year_month,t_datetime,gallons,hdd):
     
-    gal_ind = []   
+    gal_ind = []
+    hdd_ind = []
     for i in range(len(t_datetime)):
         if (t_datetime[i].year,t_datetime[i].month) == year_month:
             gal_ind.append(i)
+            hdd_ind.append(i)
     
-    return np.sum(np.array(gphdd)[gal_ind])
+    return np.sum(np.array(gallons)[gal_ind])/np.sum(np.array(hdd)[gal_ind])
 
 def run_weather_adjusted_gallons_per_month(t_datetime,gallons,hdd):
     
-    gphdd = gallons_per_heating_degree_day(gallons,hdd)
+    #gphdd = gallons_per_heating_degree_day(gallons,hdd)
     months = ptime.months_available(t_datetime)
     gphddpm = []
     for m in months:
-        gphddpm.append(weather_adjusted_gallons_consumed_per_month(m,t_datetime,gphdd))
+        gphddpm.append(weather_adjusted_gallons_consumed_per_month(m,t_datetime,gallons,hdd))
     
     return gphddpm
         
-def weather_adjusted_gallons_per_day_per_month(t_datetime,gallons,hdd):
-    
-    gphdd = gallons_per_heating_degree_day(gallons,hdd)
-    months = ptime.months_available(t_datetime)
-    gphddpm = []
-    for m in months:
-        gphddpm.append(weather_adjusted_gallons_consumed_per_month(m,t_datetime,gphdd))
-        
-    return gphddpm
+#def weather_adjusted_gallons_per_day_per_month(t_datetime,gallons,hdd):
+#    
+#    gphdd = gallons_per_heating_degree_day(gallons,hdd)
+#    months = ptime.months_available(t_datetime)
+#    gphddpm = []
+#    for m in months:
+#        gphddpm.append(weather_adjusted_gallons_consumed_per_month(m,t_datetime,gallons))
+#        
+#    return gphddpm
 
 def find_neighbor_stoves(main_stove,good_stoves):
     

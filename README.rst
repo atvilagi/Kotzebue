@@ -54,7 +54,7 @@ This runs the necessary scripts to produce the reports and places them in the ``
 		|-- output
 			|-- puma_**_****_monthly_reports_**_**_****.zip
 
-Where puma_**_****_monthly_reports_**_**_****.zip is the created zip file.
+Where ``puma_**_****_monthly_reports_**_**_****.zip`` is the created zip file.
 
 Other tools used
 ================

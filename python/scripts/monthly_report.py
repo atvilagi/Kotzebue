@@ -14,8 +14,6 @@ import puma.report as preport
 import puma.time as ptime
 import puma.bash as pbash
 import yaml
-import multiprocessing as mp
-import csv
 
 unified_nc_file = os.path.join(file_path,'..','..','data','netcdf','puma_unified_data.nc')
 report_stoves_file = os.path.join(file_path,'..','..','data','yaml','puma-monthly-report-inventory.yml')

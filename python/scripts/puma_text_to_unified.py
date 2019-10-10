@@ -16,24 +16,22 @@ import wget
 from zipfile import ZipFile
 
 snotel_file = os.path.join('..','..','data','tmp','snotel.zip')
+os.chdir(os.path.join('data','tmp'))
 
 try:
     os.remove(snotel_file) #removing snotel file if it exists
 except:
     pass
+print(os.getcwd())
+end_time = str(int(datetime.timestamp(datetime.utcnow())))
+file = wget.download('https://sensors.axds.co/stationsensorservice/getSensorNetcdf?stationid=11029&sensorid=6&jsoncallback=false&start_time=1430838000&end_time='+end_time) #downloads the snotel zipfile containing the temperature data
+os.replace(file,snotel_file)
 
-try:
-    end_time = str(int(datetime.timestamp(datetime.utcnow())))
-    wget.download('https://sensors.axds.co/stationsensorservice/getSensorNetcdf?stationid=11029&sensorid=6&jsoncallback=false&start_time=1430838000&end_time='+end_time,
-                  out = snotel_file) #downloads the snotel zipfile containing the temperature data
-    
-    with ZipFile(snotel_file,'r') as zip_file: #expanding the zip file
-        zip_file.extractall(os.path.join('..','..','data','netcdf'))
-        os.remove(os.path.join('..','..','data','netcdf','metadata.txt'))
-        os.replace(os.path.join('..','..','data','netcdf','air_temperature.nc'),
-                   os.path.join('..','..','data','netcdf','aoos_snotel_temp.nc'))
-except:
-    pass
+with ZipFile(snotel_file,'r') as zip_file: #expanding the zip file
+    zip_file.extractall(os.path.join('..','..','data','netcdf'))
+    os.remove(os.path.join('..','..','data','netcdf','metadata.txt'))
+    os.replace(os.path.join('..','..','data','netcdf','air_temperature.nc'),
+               os.path.join('..','..','data','netcdf','aoos_snotel_temp.nc'))
     
 try:
     pdata.puma_inv2yaml() #updating the inventory file

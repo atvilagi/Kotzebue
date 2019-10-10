@@ -4,7 +4,7 @@ TeX File Functions for PuMA
 By Douglas Keller
 """
 
-def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No):
+def write_monthly_tex_var_file(Year_Month,Total_Usage,Total_Usage_per_Area,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage_per_Area,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No):
     """
     Writes a tex file with variables for the monthly report.
     
@@ -25,8 +25,8 @@ def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,To
     This function writes a tex file of all the given arguments as variables in tex format for the monthly report tex file to include and draw from.
     """
     
-    Percent_Usage = abs(1 - Total_Usage/Neighbor_Usage) #determining percent difference in consumption between stove of interest and their neighbors
-    if Total_Usage > Neighbor_Usage:
+    Percent_Usage = abs((Total_Usage_per_Area - Neighbor_Usage_per_Area)/Neighbor_Usage_per_Area) #determining percent difference in consumption between stove of interest and their neighbors
+    if Total_Usage_per_Area > Neighbor_Usage_per_Area:
         ML = 'more'
     else:
         ML = 'less'
@@ -39,7 +39,7 @@ def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,To
         Prog_Usage = 1
         PML = 'more/less'
     
-    Prog_Usage = abs(1 - Prog_Usage) #percentagizing the progress of usage
+    Prog_Usage = abs(Prog_Usage) #percentagizing the progress of usage
     
     with open('monthly_values.tex','w') as tex_file: #opening and writing the tex file
         
@@ -51,7 +51,6 @@ def write_monthly_tex_var_file(Year_Month,Total_Usage,Fuel_Price,Fuel_per_Day,To
                  r'\newcommand{\fuelprice}{'+format(Fuel_Price,'.2f')+'}',
                  r'\newcommand{\totalcost}{'+format(Total_Cost,'.2f')+'}',
                  r'\newcommand{\fuelcostperday}{'+format(Fuel_Cost_per_Day,'.2f')+'}',
-                 r'\newcommand{\neighborusage}{'+format(Neighbor_Usage,'.3f')+'}',
                  r'\newcommand{\percentusage}{'+format(Percent_Usage*100,'.2f')+'}',
                  r'\newcommand{\moreless}{'+ML+'}',
                  r'\newcommand{\reportmonth}{'+months[Year_Month[1]]+'}',
@@ -94,6 +93,11 @@ def write_monthly_tex_report_file(stove,year_month,year_months):
         comment = '%'
     else:
         comment = ''
+
+    if stove == 'FBK044':
+        inT_txt = r''
+    else:
+       	inT_txt = r'Your average indoor temperature for this month was: {\inTave} {\degree}F\\'
         
     text = r'''
 %Monthly report for the PuMA fuel meter project
@@ -136,7 +140,7 @@ at 474-7800 (Fairbanks area) or 1-866-7800 (toll-free outside the Fairbanks area
 \begin{center}
 \fbox{
 \begin{varwidth}{.8\textwidth}
-In {\reportmonth} you consumed {\percentusage}\% {\moreless} than your neighbors.
+In {\reportmonth} you consumed {\percentusage}\% {\moreless} gal/ft$^2$ than your neighbors.
 \end{varwidth}
 }
 \end{center}
@@ -176,7 +180,7 @@ Your average fuel consumption for heating was {\fuelperday} gallons per day.\\
 
 Your average fuel cost for heating was \${\fuelcostperday} per day.\\
 
-The average indoor temperature for this month was: {\inTave} {\degree}F\\
+'''+inT_txt+r'''
 
 The average outdoor temperature for this month was: {\outTave} {\degree}F\\
 \end{minipage}
@@ -198,7 +202,7 @@ The average outdoor temperature for this month was: {\outTave} {\degree}F\\
 '''+comment+r'''You consumed {\progress}\% {\progressmoreless} this month than last month.\\
 \begin{center}
 \includegraphics[height= 1.63in]{monthly_track_your_progress.png}\\
-\tiny{*gal/HDD is the gallons of fuel consumed divided by the heating degree day during the time of consumption. Heating degree days for a given day are calculated by subtracting the day's average temperature from the base temperature of 65 {\degree}F.}
+\tiny{*gal/HDD is the number of gallons of fuel used in a month divided by the total number of heating degree days in the month. Heating degree days for a given day are calculated by subtracting the day's average temperature from the base temperature of 65 {\degree}F.}
 \end{center}
 
 \newpage
@@ -210,7 +214,11 @@ The average outdoor temperature for this month was: {\outTave} {\degree}F\\
 \end{center}
 
 \vspace{102pt}
+\begin{center}
+\begin{minipage}{.85\linewidth}
 {\tips}
+\end{minipage}
+\end{center}
 
 \end{document}
 ''' #tex text

@@ -1,0 +1,7 @@
+pyyaml
+wget
+numpy
+scipy
+netCDF4
+matplotlib
+pandas
