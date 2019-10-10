@@ -152,4 +152,22 @@ def calculated_monthly_data(unified_nc_file,stove,year_month,t_datetime,outT,gal
     hdd = ptemp.heat_degree_day(t_datetime,outT,65)
     gphddpm = pfuel.run_weather_adjusted_gallons_per_month(t_datetime,gallons,hdd)
     
+<<<<<<< HEAD
     return gphddpm,neighbor_area
+=======
+    return gphddpm,neighbor_area
+    
+#def calculated_monthly_data(unified_nc_file,stove,year_month,t_datetime,t_t_datetime,outT,gallons):
+#    
+#    stove_comp_months = ptime.run_complete_months(unified_nc_file)
+#    good_stoves = pfuel.good_neighbor_stoves(stove,year_month,stove_comp_months)
+#    neighbor_stoves = pfuel.find_neighbor_stoves(stove,good_stoves)
+#    neighbor_area = pfuel.neighbor_area(neighbor_stoves,unified_nc_file)
+#    
+#    hdd = ptemp.heat_degree_day(t_datetime,outT,65)
+#    months,gphddpm = pfuel.run_weather_adjusted_gallons_per_month(t_t_datetime,t_datetime,gallons,hdd)
+#    months,gphddpm = pfuel.weather_adjusted_gallons_consumed_range(year_month,months,gphddpm)
+#    days_active = ptime.days_available_in_month(year_month,t_t_datetime)
+#    
+#    return hdd,gphddpm,neighbor_area,neighbor_stoves,days_active,months
+>>>>>>> refs/remotes/origin/master
