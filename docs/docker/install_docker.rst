@@ -70,7 +70,9 @@ You can continue to use the docker commands with ``sudo`` but it's generally eas
 
 .. code-block:: Bash
 
-	~$ gpasswd -a <i>user</i> docker
+	~$ gpasswd -a <user> docker
+
+where ``<user>`` is the placeholder for your username.
 
 ============================
 Installing Docker on Windows
