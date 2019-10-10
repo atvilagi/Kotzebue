@@ -58,9 +58,9 @@ Test it with:
 
 	~$ sudo docker run hello-world
 
-For help or more information, go to the `Docker install guide_`:
+For help or more information, go to the `Docker Install Guide`_.
 
-.. _Docker install guide: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-engine---community-1
+.. _Docker Install Guide: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-engine---community-1
 
 -----------------------------------------
 Adding Your Main User to the Docker Group
@@ -76,7 +76,7 @@ You can continue to use the docker commands with ``sudo`` but it's generally eas
 Installing Docker on Windows
 ============================
 
-Installing Windows is different than Linux, but only minorly. Go to the `Docker Toolbox`_ website and click on the `DockerToolbox-#####.exe` link to download the installer.
+Installing Windows is different than Linux, but only minorly. Go to the `Docker Toolbox`_ website and click on the ``DockerToolbox-#####.exe`` link to download the installer.
 
 .. _Docker Toolbox: https://github.com/docker/toolbox/releases
 
