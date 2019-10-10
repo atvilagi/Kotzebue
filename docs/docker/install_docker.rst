@@ -6,7 +6,7 @@ Installing Docker
 Installing Docker on Linux
 ==========================
 
-To install Docker on Linux, use your distro's package manager and download the 'docker' package.
+To install Docker on Linux, use your distro's package manager and download the `docker` package.
 
 ---------------------
 Install on Arch Linux
@@ -58,13 +58,15 @@ Test it with:
 
 	~$ sudo docker run hello-world
 
-For help or more information, go to the "Docker install guide":https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-engine---community-1'
+For help or more information, go to the Docker install guide_:
+
+.. _Docker install guide: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-engine---community-1
 
 -----------------------------------------
 Adding Your Main User to the Docker Group
 -----------------------------------------
 
-You can continue to use the docker commands with 'sudo' but it's generally easier to add your user to 'docker' group so you don't have to:
+You can continue to use the docker commands with `sudo` but it's generally easier to add your user to `docker` group so you don't have to:
 
 .. code-block:: Bash
 
@@ -74,11 +76,11 @@ You can continue to use the docker commands with 'sudo' but it's generally easie
 Installing Docker on Windows
 ============================
 
-Installing Windows is different than Linux, but only minorly. Go to the 'Docker Toolbox'_ website and click on the 'DockerToolbox-#####.exe' link to download the installer.
+Installing Windows is different than Linux, but only minorly. Go to the `Docker Toolbox`_ website and click on the `DockerToolbox-#####.exe` link to download the installer.
 
 .. _Docker Toolbox: https://github.com/docker/toolbox/releases
 
-Once the installer is downloaded, run it and install the Docker Toolbox. Run the 'Docker Quickstart Terminal' (it will take a few minutes to load on first load-up) and test that it works:
+Once the installer is downloaded, run it and install the Docker Toolbox. Run the `Docker Quickstart Terminal` (it will take a few minutes to load on first load-up) and test that it works:
 
 .. code-block:: Bash
 
