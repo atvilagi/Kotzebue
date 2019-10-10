@@ -14,13 +14,13 @@ Install on Arch Linux
 
 For Arch Linux, it's pretty simple:
 
-.. code-block::
+.. code-block:: Bash
 
 	~$ sudo pacman -S docker
 
 Test it with:
 
-.. code-block::
+.. code-block:: Bash
 
 	~$ sudo docker run hello-world
 
@@ -30,7 +30,7 @@ Install on Ubuntu
 
 For Ubuntu, it's a little more involved:
 
-.. code-block::
+.. code-block:: Bash
 
 	~$ sudo apt-get update
 	
@@ -54,13 +54,11 @@ For Ubuntu, it's a little more involved:
 
 Test it with:
 
-.. code-block::
+.. code-block:: Bash
 
 	~$ sudo docker run hello-world
 
-For help or more information, go to the 'Docker install guide'_.
-
-.. _Docker install guide: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-engine---community-1'
+For help or more information, go to the "Docker install guide":https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-engine---community-1'
 
 -----------------------------------------
 Adding Your Main User to the Docker Group
@@ -68,7 +66,7 @@ Adding Your Main User to the Docker Group
 
 You can continue to use the docker commands with 'sudo' but it's generally easier to add your user to 'docker' group so you don't have to:
 
-.. code-block::
+.. code-block:: Bash
 
 	~$ gpasswd -a *user* docker
 
@@ -82,6 +80,6 @@ Installing Windows is different than Linux, but only minorly. Go to the 'Docker 
 
 Once the installer is downloaded, run it and install the Docker Toolbox. Run the 'Docker Quickstart Terminal' (it will take a few minutes to load on first load-up) and test that it works:
 
-.. code-block::
+.. code-block:: Bash
 
 	~$ docker run hello-world
