@@ -192,7 +192,4 @@ def plot_bar_progress(year_months,gphddpm,fuel_price,fname):
     plt.box(False)
     plt.tight_layout()
     plt.savefig(fname)
-<<<<<<< HEAD
     plt.close()
-=======
->>>>>>> refs/remotes/origin/master
