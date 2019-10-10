@@ -1,0 +1,15 @@
+texlive-core
+texlive-fontsextra
+texlive-formatsextra
+texlive-pictures
+texlive-science
+texlive-latexextra
+python-scipy
+python-numpy
+python-matplotlib
+python-pip
+python-netcdf4
+python-yaml
+python-pandas
+make
+zip
