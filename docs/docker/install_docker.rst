@@ -70,7 +70,7 @@ You can continue to use the docker commands with ``sudo`` but it's generally eas
 
 .. code-block:: Bash
 
-	~$ gpasswd -a *user* docker
+	~$ gpasswd -a <i>user</i> docker
 
 ============================
 Installing Docker on Windows
@@ -80,7 +80,7 @@ Installing Windows is different than Linux, but only minorly. Go to the `Docker 
 
 .. _Docker Toolbox: https://github.com/docker/toolbox/releases
 
-Once the installer is downloaded, run it and install the Docker Toolbox. Run the ``Docker Quickstart Terminal`` (it will take a few minutes to load on first load-up) and test that it works:
+Once the installer is downloaded, run it and install the `Docker Toolbox`_. Run the ``Docker Quickstart Terminal`` (it will take a few minutes to load on first load-up) and test that it works:
 
 .. code-block:: Bash
 
