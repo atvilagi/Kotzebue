@@ -52,6 +52,36 @@ For Ubuntu, it's a little more involved:
 	
 	~$ sudo apt-get install docker-ce docker-ce-cli containerd.io
 
+Test it with:
+
+.. code-block::
+
+	~$ sudo docker run hello-world
+
 For help or more information, go to the 'Docker install guide'_.
 
 .. _Docker install guide: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-engine---community-1'
+
+-----------------------------------------
+Adding Your Main User to the Docker Group
+-----------------------------------------
+
+You can continue to use the docker commands with 'sudo' but it's generally easier to add your user to 'docker' group so you don't have to:
+
+.. code-block::
+
+	~$ gpasswd -a *user* docker
+
+============================
+Installing Docker on Windows
+============================
+
+Installing Windows is different than Linux, but only minorly. Go to the 'Docker Toolbox'_ website and click on the 'DockerToolbox-#####.exe' link to download the installer.
+
+.. _Docker Toolbox: https://github.com/docker/toolbox/releases
+
+Once the installer is downloaded, run it and install the Docker Toolbox. Run the 'Docker Quickstart Terminal' (it will take a few minutes to load on first load-up) and test that it works:
+
+.. code-block::
+
+	~$ docker run hello-world
