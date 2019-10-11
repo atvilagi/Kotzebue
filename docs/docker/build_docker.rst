@@ -9,19 +9,19 @@ PAGE STILL UNDER CONSTRUCTION
 Pulling the Container
 ---------------------
 
-The easiest way to get the ``fuelmeter-tools-docker`` image is ``pull`` it from ``Docker Hub``. You need to create a ``Docker account``_.
+The easiest way to get the ``fuelmeter-tools-docker`` image is ``pull`` it from ``Docker Hub``. You need to create a `Docker account`_.
 
 .. _Docker account: https://hub.docker.com/signup/
 
 Once you create an account, run:
 
-.. code-block: Bash
+.. code-block: 
 
 	~$ docker login
 
 to login. Then ``pull`` the ``acep/fuelmeter-tools-docker`` image with:
 
-.. code-block:: Bash
+.. code-block::
 
 	~$ docker pull acep/fuelmeter-tools-docker
 
@@ -33,7 +33,7 @@ You can build a ``docker container`` with the ``Dockerfile`` and other contents 
 
 Move to the ``docker`` directory and run:
 
-.. code-block:: Bash
+.. code-block::
 
 	fuelmeter-tools/docker$ docker build -t acep/fuelmeter-tools-docker .
 
@@ -46,7 +46,7 @@ If you make any changes to the ``fuelmeter-tools-docker`` container or its ``Doc
 
 Build the new image, like above, and then run:
 
-.. code-block:: Bash
+.. code-block::
 
 	~$ docker push acep/fuelmeter-tools-docker
 
