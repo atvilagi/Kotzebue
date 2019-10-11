@@ -9,7 +9,7 @@ the ACEP Fuel Meter project.
 Licensing
 ---------
 
-The repository, content within, and contributions are licensed under **MIT license**.
+The repository, content within, and contributions are licensed under the **MIT license**.
 
 ------------
 Contributors
@@ -32,9 +32,9 @@ The fuel meter data is stored in the ``ftp-data`` directory. This directory is l
 
 To get the data will you have to get a copy from the server. Ask the contributors of this repository to figure this out.
 
-Once you have the data, place the ``ftp-data`` alongside this repository.
+Once you have the data, place the ``ftp-data`` directory alongside this repository.
 
-.. code-block:: Bash
+.. code-block::
 
 	puma-overarching-directory/
 		|-- ftp-data/
@@ -49,7 +49,7 @@ Then, if you don't have it, install **Docker**, following the instructions in `I
 
 ``pull`` or ``build`` the ``acep/fuelmeter-tools-docker`` container with:
 
-.. code-block:: Bash
+.. code-block:: 
 
 	~$ docker pull acep/fuelmeter-tools-docker
 
@@ -57,7 +57,7 @@ More detailed instructions are `here <docs/docker/run_docker.rst>`_.
 
 Then run the ``acep/fuelmeter-tools-docker`` container and change to the fuelmeter-tools directory:
 
-.. code-block:: Bash
+.. code-block::
 
 	~$ docker run -i -t -v $(pwd)/..:/home acep/fuelmeter-tools-docker bash
 
@@ -70,14 +70,16 @@ Running ``fuelmeter-tools`` Commands
 
 From the ``fuelmeter-tools`` directory, you can run a few ``make`` commands to play with data/reports while in the ``acep/fuelmeter-tools-docker`` container.
 
-.. code-block:: Bash
+.. code-block:: 
 
 	fuelmeter-tools$ make unified_netcdf
 
-Runs the scripts to build the ``puma_unified_data.nc`` file, which is needed to perform downstream commands, such as making reports.
+Runs the scripts to build the ``data/netcdf/puma_unified_data.nc`` file, which is needed to perform downstream commands, such as making reports.
 
-.. code-blocks:: Bash
+.. code-block:: 
 
 	fuelmeter-tools$ make monthly_reports
 
 Runs the scripts to build the monthly reports for the stoves in the ``data/yaml/puma-monthly-report-inventory.yml`` file.
+
+More commands are described `here <docs/fuelmeter-tools/make_commands.rst>`_.
