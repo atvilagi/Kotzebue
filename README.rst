@@ -1,19 +1,19 @@
-=====================
+"""""""""""""""""""""
 ACEP Fuel Meter Tools
-=====================
+"""""""""""""""""""""
 
 This is a collection of the data management and analysis tools developed to support
 the ACEP Fuel Meter project.
 
----------
+=========
 Licensing
----------
+=========
 
 The repository, content within, and contributions are licensed under the **MIT license**.
 
-------------
+============
 Contributors
-------------
+============
 
 Contributors to this project are:
 
@@ -21,10 +21,11 @@ Contributors to this project are:
 * Dayne Broderson
 * Doug Keller
 
---------------------------
+==========================
 Elektron Server Quickstart
---------------------------
+==========================
 
+------------------------
 Creating Monthly Reports
 ------------------------
 
@@ -37,7 +38,7 @@ On the ``elektron`` server, the ``fuelmeter-tools`` git repository and stove dat
             ftp-data/
             fuelmeter-tools/
             
-SSH into the server as ``data`` (this dependent on your setup).
+``ssh`` into the server as ``data`` (this dependent on your setup).
 
 .. code-block::
 
