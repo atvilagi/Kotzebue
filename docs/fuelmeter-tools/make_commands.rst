@@ -2,11 +2,13 @@
 Make Commands
 """""""""""""
 
+===========================
 Data Packaging Output Files
 ===========================
 
 Some scripts in the ``python/scripts`` folder package all the data as a time series and an event series.
 
+-------------------
 Unified netCDF File
 -------------------
 
@@ -21,14 +23,15 @@ For this command to work properly, the ``ftp-data`` (with all the puma text file
 .. code-block::
 
 	puma-overarching-directory/
-		|-- ftp-data/
-		|-- fuelmeter-tools/
-			|-- data/
-				|-- netcdf/
-					|-- puma_unified_data.nc
+		ftp-data/
+		fuelmeter-tools/
+			data/
+				netcdf/
+					puma_unified_data.nc
 
 The unified netCDF file is critical to have as all downstream data deliverables depend on it, and therefore must be run before other commands are to be run (to have updated downstream data). The unified netCDF file (puma_unified_data.nc) is found in the ``data/netcdf/`` directory.
 
+===============
 Monthly Reports
 ===============
 
@@ -43,12 +46,13 @@ This runs the necessary scripts to produce the reports and places them in the ``
 .. code-block::
 
 	fuelmeter-tools/
-		|-- output/
-			|-- puma_**_****_monthly_reports_**_**_****.zip
+		output/
+			puma_**_****_monthly_reports_**_**_****.zip
 
 Where ``puma_**_****_monthly_reports_**_**_****.zip`` is the created zip file.
 
-Other tools used
+================
+Other Tools Used
 ================
 
 * jupyter notebooks - data examples 

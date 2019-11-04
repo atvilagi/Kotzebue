@@ -1,0 +1,21 @@
+% Encoding: UTF-8
+
+@Article{Brock86,
+  author  = {Fred V. Brock},
+  title   = {{A Nonlinear Filter to Remove Impulse Noise from Meteorological Data}},
+  journal = {Journal of Atmospheric and Oceanic Technology},
+  year    = {1986},
+  volume  = {3},
+  pages   = {51-58},
+}
+
+@Article{Starkenburg16,
+  author  = {Derek Starkenburg and Stefan Metzger and Gilberto J. Fochesatto and Joseph G. Alfieri and Rudiger Gens and Anupma Prakash and Jordi Cristobal},
+  title   = {{Assessment of Despiking Methods for Turbulence Data in Micrometeorology}},
+  journal = {Journal of Atmospheric and Oceanic Technology},
+  year    = {2016},
+  volume  = {33},
+  pages   = {2001-2013},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}
