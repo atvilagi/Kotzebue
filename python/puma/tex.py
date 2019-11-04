@@ -31,9 +31,9 @@ def write_monthly_tex_var_file(Year_Month,Total_Usage,Total_Usage_per_Area,Fuel_
     else:
         ML = 'less'
     
-    if Prog_Usage > 1:
+    if Prog_Usage > 0:
         PML = 'more'
-    elif Prog_Usage > 0:
+    elif Prog_Usage < 0:
         PML = 'less'
     elif Prog_Usage == 0:
         Prog_Usage = 1

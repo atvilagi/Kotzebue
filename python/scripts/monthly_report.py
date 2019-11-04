@@ -24,14 +24,19 @@ with open(report_stoves_file) as report_stoves_file:
     yams = yaml.load(report_stoves_file) #getting stoves that reports will be made for
     for i in yams:
         report_stoves.append(i)
-    
+
+#report_stoves.remove('FBK041')
+#print('FBK041 has been removed')
+
 control_stoves = []
 with open(control_stoves_file) as control_stoves_file:
     yams = yaml.load(control_stoves_file) #getting stoves that reports will be made for
     for i in yams:
         control_stoves.append(i)
     
-os.chdir(os.path.join(file_path,'..','..','reports','monthly')) #moving to the reports/monthly directory
+working_dir = os.path.join(file_path,'..','..','reports','monthly') #moving to the reports/monthly directory
+os.chdir(working_dir)
+#work_dir = os.path.join(file_path,'..','..','..','reports','monthly')
 
 year = int(input('Enter the year of the reports: '))
 month = int(input('Enter the month of the reports: '))
@@ -58,10 +63,20 @@ neighbor_stoves = control_stoves + report_stoves
 
 j = 0
 while j < len(report_stoves):
-    if j not in [1]:
+    try:
+        print("starting stove: ", report_stoves[j])
         neighbor_stoves_mod = neighbor_stoves
         neighbor_stoves_mod.remove(report_stoves[j])
         preport.monthly_report(unified_nc_file,report_stoves[j],year_month,begin_year_month,end_year_month,year_months,fuel_price,neighbor_stoves_mod,tip_no)
-    j += 1
-    
+        print("ending stove: ", report_stoves[j])
+        j += 1
+    except:
+        print("failed stove: ", report_stoves[j])
+        os.chdir(working_dir)
+        report_stoves.remove(report_stoves[j])
+#   j += 1
+
+
+#os.chdir('..')    
 pbash.bash_monthly_reports(year_month)
+print('bash file made')
