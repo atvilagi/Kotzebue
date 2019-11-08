@@ -165,12 +165,15 @@ def raw2time(air_temp_file,year_data):
 #### Event Arrays
     
 def raw_time2event(year_data,time_data,stove_type_dict,fuel_click_file):
-    #Turning raw and time data arrays to event data arrays
+    # Turning raw and time data arrays to event data arrays
+    # note: data = [ stime,state,cumulative_clicks,inT,outT,dT ]
     data = year_data[0:-1] + time_data[1::]
     event_data = []
     for i in range(len(data)):
         event_data.append([])
         
+    # what is state -1? Why do this?
+    # is this a potential area of data loss?
     for i in range(len(data[0])):
         if data[1][i] != -1:
             for j in range(len(data)):
