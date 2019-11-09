@@ -9,4 +9,4 @@ monthly_reports:
 
 clean_monthly_reports:
 	rm -r reports/monthly/*
-	rm -r output/*
+	#rm -r output/*

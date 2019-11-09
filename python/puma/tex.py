@@ -145,7 +145,7 @@ In {\reportmonth} you consumed {\percentusage}\% {\moreless} gal/ft$^2$ than you
 }
 \end{center}
 
-\vspace{12pt}
+\vspace{8pt}
 
 \begin{tabu}[c]{llX[m,c]}
 
@@ -201,7 +201,7 @@ The average outdoor temperature for this month was: {\outTave} {\degree}F\\
 
 '''+comment+r'''You consumed {\progress}\% {\progressmoreless} this month than last month.\\
 \begin{center}
-\includegraphics[height= 1.63in]{monthly_track_your_progress.png}\\
+\includegraphics[height= 1.5in]{monthly_track_your_progress.png}\\
 \tiny{*gal/HDD is the number of gallons of fuel used in a month divided by the total number of heating degree days in the month. Heating degree days for a given day are calculated by subtracting the day's average temperature from the base temperature of 65 {\degree}F.}
 \end{center}
 
@@ -213,7 +213,7 @@ The average outdoor temperature for this month was: {\outTave} {\degree}F\\
 \textbf{\Huge{Tip to Save Fuel}}
 \end{center}
 
-\vspace{102pt}
+\vspace{75pt}
 \begin{center}
 \begin{minipage}{.85\linewidth}
 {\tips}

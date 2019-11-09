@@ -1,3 +1,10 @@
+TST001:
+  Location:
+  - 64.89163
+  - -147.674
+  Square Footage: '792'
+  Stove Type: Laser 73/730
+  Note: This is a copy of FBX004 for testing purposes
 FBK004:
   Location:
   - 64.89163

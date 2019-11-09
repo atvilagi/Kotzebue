@@ -75,7 +75,15 @@ def monthly_report(unified_nc_file,stove,year_month,begin_year_month,end_year_mo
     Neighbor_Usage = pfuel.neighbor_gallons_consumed_per_month(year_month,unified_nc_file,control_stoves)
     
     Neighbor_Usage_per_Area = pfuel.gallons_consumed_per_area(Neighbor_Usage,neighbor_area)
-    
+   
+    # TODO just puts out the total sum of the gallons here
+    print("--------GALLONS - DEBUG")
+    print( "np.sum(np.array(gallons)) = ", np.sum(np.array(gallons)) )
+    print( "len(gallons) = ", len(gallons) )
+    print( "# what gallons looks like: ") 
+    print( np.array(gallons) )
+    print("--------END GALLONS-----------######")
+
     Total_Usage = pfuel.gallons_consumed_per_month(year_month,t_datetime,gallons)
     
     Total_Usage_per_Area = pfuel.gallons_consumed_per_area(Total_Usage,stove_area)
