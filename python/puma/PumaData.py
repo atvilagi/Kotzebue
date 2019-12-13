@@ -10,6 +10,7 @@ import os
 import multiprocessing as mp
 import yaml
 import pandas as pd
+import pytz
 
 from puma.Stove import Stove
 
@@ -423,9 +424,13 @@ class PumaData:
             os.chdir('..')
 
             [self.fill_nc(merged_file[stove.name+'/Raw'],v, stove_data) for v in raw_variables]
+            #make the end date the end of the month
+            timezone = pytz.timezone('UTC')
+            enddate = timezone.localize(max(stove_data.index).to_period('M').to_timestamp(), timezone)
 
             #add in air_temperature for timed records
-            air_temp = self.getAirTemp(min(stove_data.index),(max(stove_data.index).to_period('M').to_timestamp('M')))
+            air_temp = self.getAirTemp(min(stove_data.index),enddate)
+
             stove_data = self.raw2time(air_temp,stove_data)
             #fill in event data metrics
             stove_data = self.raw_time2event(stove_data,stove)
