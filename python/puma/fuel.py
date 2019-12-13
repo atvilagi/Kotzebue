@@ -1,143 +1,68 @@
 #Fuel Consumption Rate Functions for PuMA
 
-#By Douglas Keller
+#By T. Morgan
 
-import numpy as np
-from netCDF4 import Dataset
-import multiprocessing as mp
-import puma.time as ptime
 
-def gallons_consumed_per_month(year_month,t_datetime,gallons):
-    
-    gal_ind = []   
-    for i in range(len(t_datetime)):
-        if (t_datetime[i].year,t_datetime[i].month) == year_month:
-            gal_ind.append(i)
-    
-    return np.sum(np.array(gallons)[gal_ind])
-    
-def gallons_consumed_per_month_mp(stove,year_month,t_datetime,gallons,result):
-    
-    gal_ind = []   
-    for i in range(len(t_datetime)):
-        if (t_datetime[i].year,t_datetime[i].month) == year_month:
-            gal_ind.append(i)
-    
-    result.put((stove,np.sum(np.array(gallons)[gal_ind])))
+def gallons_consumed_per_month(df):
+    gpm = df.groupby(df.index.to_period('M')).agg({'gallons': 'sum'})
+    return gpm
 
-def neighbor_gallons_consumed_per_month(year_month,uni_nc_file,neighbor_stoves):
-    
-    uni_nc = Dataset(uni_nc_file,'r')
-    
-    stove_dtime = []
-    stove_gal = []
-    for i in range(len(neighbor_stoves)):
-        stove_dtime.append(ptime.timestamp2datetime(uni_nc[neighbor_stoves[i]+'/Event/Clicks/time'][:]))
-        stove_gal.append(list(uni_nc[neighbor_stoves[i]+'/Event/Clicks/fuel_consumption'][:]))
-        
-        if neighbor_stoves[i] in ['FBK014','FBK017','FBK019']:
-            next_stove = 'FBK0' + str(int(neighbor_stoves[i][4:7]) + 1)
-            stove_dtime[i] += ptime.timestamp2datetime(uni_nc[next_stove+'/Event/Clicks/time'][:])
-            stove_gal[i] += list(uni_nc[next_stove+'/Event/Clicks/fuel_consumption'][:])
-            
-    result = mp.Manager().Queue()
-    pool = mp.Pool(mp.cpu_count())        
-    for i in range(len(neighbor_stoves)):
-        pool.apply_async(gallons_consumed_per_month_mp,
-                         args=(neighbor_stoves[i],year_month,stove_dtime[i],stove_gal[i],result))
-    pool.close()
-    pool.join()
-    results = []
-    
-    while not result.empty():
-        results.append(result.get())
-    
-    neighbor_gal = []
-    for res in results:
-        neighbor_gal.append(res[1])
-    
-    return np.nanmean(np.array(neighbor_gal))
+def gallonsPerHour(fuelConsumption):
+    '''
+    calculates gallons consumed for each hour monitored
+    :param fuelConsumption: A pandas Series with datetime index
+    :return: dataframe with 1 column containing gallons per hour with datetime index
+    '''
+    return fuelConsumption.groupby(fuelConsumption.index.to_period('H')).sum()
 
-def gallons_consumed_per_area(gallons,area):
-    
-    return gallons/area
+def gallons_consumed_per_area(df,galColumn,area):
+    '''calculates total gallons consumed per area
+    :param: df is a pandas dataframe including a column representing gallons
+    :param: galColumn is a string name of the column containing gallons
+    :param: area float or int representing the area
+    :return: float value representing the sum of gallons divided by area'''
 
-def gallons_per_day_per_month(t_datetime,gallons):
-    
-    months = ptime.months_available(t_datetime)    
-    gpm = []
-    for m in months:
-        gpm.append(gallons_consumed_per_month(m,t_datetime,gallons))
-    
-    gpd = []
-    for i in range(len(gpm)):
-        gpd.append(gpm[i]/ptime.days_available_in_month(months[i],t_datetime))
-        
-    return months, gpd
+    return df[galColumn].sum()/area
 
-def gallons_per_heating_degree_day(gallons,hdd):
-    
-    gphdd = []
-    for i in range(len(gallons)):
-        gphdd.append(gallons[i]/hdd[i])
-        
-    return gphdd
+def gallons_per_day_and_per_month(df, galColumn):
+    '''gallons consumed per day per month
+     :param: df is a pandas dataframe including a column representing gallons and a datetime index
+     :param: galColumn is a string name of the column containing gallons
+     :return: pandas.Series of total gallons consumed each data and pandas.series of total gallons per month
+    '''
+    gpd = df.groupby(df.index.to_period('D')).agg({galColumn: 'sum'})
+    gpm = gpd.groupby(gpd.index.month).agg({galColumn:'sum'})
+    return gpd, gpm
 
-def weather_adjusted_gallons_consumed_per_month(year_month,t_datetime,gallons,hdd):
-    
-    gal_ind = []
-    hdd_ind = []
-    for i in range(len(t_datetime)):
-        if (t_datetime[i].year,t_datetime[i].month) == year_month:
-            gal_ind.append(i)
-            hdd_ind.append(i)
-    
-    return np.sum(np.array(gallons)[gal_ind])/np.sum(np.array(hdd)[gal_ind])
+def gallons_per_heating_degree_day(dailydf,galColumn, hddColumn):
+    '''Calculates the gallons per hdd for each day
+    :param: dailydf is a dataframe with date index (one row for each date) and columns for gallons consumed and hdd
+    :param: galColumn is the string name of the column containing fuel consumption in gallons
+    :param: hddColumn is the string name of the column containing hdd
+    :return: dataframe with date index of gallons per heat degree day'''
 
-def run_weather_adjusted_gallons_per_month(t_datetime,gallons,hdd):
+    dailydf['gphdd']=dailydf[galColumn]/dailydf[hddColumn]
+    return dailydf
+
+def weather_adjusted_gallons_consumed_per_month(df,temperatureColumn, galColumn):
+    '''Weather adjusted gallons per month is the total gallons by day/ divided by the total temperature degree days.
+    :param df is a dataframe with temperature and fuel_consumption columns
+    :param temperatureCoumn is the string name of the column containing temperature in F
+    :param galColumn is the string name of the column containing fuel consumption in gallons'''
+
+    dailydf = df.groupby(df.index.to_period('D')).agg({temperatureColumn: 'mean'}) #daily outside temperature
+    dailydf[galColumn] = df.groupby(df.index.to_period('D')).agg({galColumn:'sum'}) #daily fuel consumption
+
+    dailydf['hdd'] = 65 - dailydf[temperatureColumn]#put hdd in the daily dataframe
+    dailydf['gphhd'] = dailydf[galColumn]/dailydf['hdd'] #gallons per hdd
+
+    gphddpm = dailydf.groupby(dailydf.index.month).agg({'gphhd': 'mean'}) #average by month
     
-    #gphdd = gallons_per_heating_degree_day(gallons,hdd)
-    months = ptime.months_available(t_datetime)
-    gphddpm = []
-    for m in months:
-        gphddpm.append(weather_adjusted_gallons_consumed_per_month(m,t_datetime,gallons,hdd))
+    return gphddpm['gphhd'] #return the series
+
+def run_weather_adjusted_gallons_per_month(df):
+    '''calls weather_adjusted_gallons_per_month with appropriate column names'''
+    gphddpm = weather_adjusted_gallons_consumed_per_month(df,'outT','fuel_consumption')
     
     return gphddpm
-        
-#def weather_adjusted_gallons_per_day_per_month(t_datetime,gallons,hdd):
-#    
-#    gphdd = gallons_per_heating_degree_day(gallons,hdd)
-#    months = ptime.months_available(t_datetime)
-#    gphddpm = []
-#    for m in months:
-#        gphddpm.append(weather_adjusted_gallons_consumed_per_month(m,t_datetime,gallons))
-#        
-#    return gphddpm
 
-def find_neighbor_stoves(main_stove,good_stoves):
-    
-    neighbor_stoves = []
-    for stove in good_stoves:
-        if stove != main_stove:
-            neighbor_stoves.append(stove)
-    
-    return neighbor_stoves
-
-def good_neighbor_stoves(stove,month,stove_comp_months):
-    
-    good_stoves = []
-    for scm in stove_comp_months:
-        if month in scm[1]:
-            good_stoves.append(scm[0])
-            
-    return good_stoves
-
-def neighbor_area(neighbor_stoves,uni_nc_file):
-    
-    uni_nc = Dataset(uni_nc_file,'r')
-    
-    area = []
-    for stove in neighbor_stoves:
-        area.append(float(uni_nc[stove].getncattr('Square Footage')))
-        
-    return np.nanmean(np.array(area))

@@ -4,13 +4,14 @@ TeX File Functions for PuMA
 By Douglas Keller
 """
 
-def write_monthly_tex_var_file(Year_Month,Total_Usage,Total_Usage_per_Area,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage_per_Area,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No):
+def write_monthly_tex_var_file(reportRange,Total_Usage,Total_Usage_per_Area,Fuel_Price,Fuel_per_Day,Total_Cost,Fuel_Cost_per_Day,Neighbor_Usage_per_Area,Prog_Usage,Stove_ID,InT_Ave,OutT_Ave,Tip_No,flagValue,daysMonitored):
     """
     Writes a tex file with variables for the monthly report.
     
     Arguments:
         Year_Month -- year and month tuple
         Total_Usage -- total fuel usage in gallons
+        Total_Usage_per_Area -- fuel per square ft
         Fuel_Price -- current fuel price
         Fuel_per_Day -- fuel consumed per day
         Total_Cost -- total cost of fuel usage in dollars
@@ -40,27 +41,35 @@ def write_monthly_tex_var_file(Year_Month,Total_Usage,Total_Usage_per_Area,Fuel_
         PML = 'more/less'
     
     Prog_Usage = abs(Prog_Usage) #percentagizing the progress of usage
-    
+
+    if flagValue == 1:
+         flag = '**'
+         qualifier = (' Total gallons extrapolated from {} days of measured data').format(str(daysMonitored))
+    else:
+        flag=''
+        qualifier = ''
+
     with open('monthly_values.tex','w') as tex_file: #opening and writing the tex file
         
         months = ['','January','February','March','April','May','June','July',
               'August','September','October','November','December']
         
-        lines = [r'\newcommand{\totalusage}{'+format(Total_Usage,'.3f')+'}',
+        lines = [r'\newcommand{\totalusage}{'+format(Total_Usage,'.3f') + flag + '}',
                  r'\newcommand{\fuelperday}{'+format(Fuel_per_Day,'.3f')+'}',
                  r'\newcommand{\fuelprice}{'+format(Fuel_Price,'.2f')+'}',
                  r'\newcommand{\totalcost}{'+format(Total_Cost,'.2f')+'}',
                  r'\newcommand{\fuelcostperday}{'+format(Fuel_Cost_per_Day,'.2f')+'}',
                  r'\newcommand{\percentusage}{'+format(Percent_Usage*100,'.2f')+'}',
                  r'\newcommand{\moreless}{'+ML+'}',
-                 r'\newcommand{\reportmonth}{'+months[Year_Month[1]]+'}',
-                 r'\newcommand{\reportyear}{'+str(Year_Month[0])+'}',
+                 r'\newcommand{\reportmonth}{'+months[reportRange[0].month]+'}',
+                 r'\newcommand{\reportyear}{'+months[reportRange[0].month]+'}',
                  r'\newcommand{\progress}{'+format(Prog_Usage*100,'.2f')+'}',
                  r'\newcommand{\progressmoreless}{'+PML+'}',
                  r'\newcommand{\stoveid}{'+Stove_ID+'}',
                  r'\newcommand{\inTave}{'+format(InT_Ave,'.2f')+'}',
                  r'\newcommand{\outTave}{'+format(OutT_Ave,'.2f')+'}',
-                 r'\newcommand{\tips}{'+report_tips(Tip_No)+'}']
+                 r'\newcommand{\tips}{'+report_tips(Tip_No)+'}',
+                 r'\newcommand{\qualify}{' + flag + qualifier + '}',]
         
         for line in lines:
             tex_file.write(line)
@@ -83,18 +92,23 @@ def report_tips(n):
     
     return tips[n]
 
-def write_monthly_tex_report_file(stove,year_month,year_months):
-    """
+def write_monthly_tex_report_file(stove,current,previous=None):
+    '''
     Autogenerates the tex file for the individual stoves.
     
     This function just writes a tex file through python to allow for an easy and efficient way of producing the custome "nudge" reports quickly.
-    """
-    if year_month == year_months[0]:
+    :param: house the name of the house that metrics are based on
+    :param: current is a pandas time range that the report covers
+
+    :previous is a time range to compare to or None
+    '''
+
+    if previous is None:
         comment = '%'
     else:
         comment = ''
 
-    if stove == 'FBK044':
+    if stove == 'FBK044': #no inT data?
         inT_txt = r''
     else:
        	inT_txt = r'Your average indoor temperature for this month was: {\inTave} {\degree}F\\'
@@ -163,6 +177,8 @@ Total Usage: {\totalusage} gal\\
 Price of Fuel: \${\fuelprice}/gal\\
 
 Total Cost: \${\totalcost}\\
+\newline
+\tiny{\qualify}
 \end{minipage}
 
 
@@ -223,5 +239,5 @@ The average outdoor temperature for this month was: {\outTave} {\degree}F\\
 \end{document}
 ''' #tex text
 
-    with open('monthly_report_'+str(year_month[1])+'_'+str(year_month[0])+'_'+stove+'.tex','w') as tex_file: #writing the text to the tex file
+    with open('monthly_report_'+str(current[0].strftime("%Y_%b"))+'_'+str(current[-1].strftime("%Y_%b"))+'_'+stove+'.tex','w') as tex_file: #writing the text to the tex file
         tex_file.write(text)

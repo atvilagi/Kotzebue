@@ -3,95 +3,89 @@ TST001:
   - 64.89163
   - -147.674
   Square Footage: '792'
-  Stove Type: Laser 73/730
+  Stove: 'TST001'
   Note: This is a copy of FBX004 for testing purposes
 FBK004:
   Location:
   - 64.89163
   - -147.674
   Square Footage: '792'
-  Stove Type: Laser 73/730
+  Stove: 'FBK004'
 FBK009:
   Location:
   - 64.57072
   - -147.045
   Square Footage: '672'
-  Stove Type: Laser 73/730
+  Stove: 'FBK009'
 FBK010:
   Location:
   - 64.92074
   - -147.918
   Square Footage: '552'
-  Stove Type: Laser 56/560
+  Stove: 'FBK010'
 FBK014:
   Location:
   - 64.83723
   - -148.027
   Square Footage: '1830'
-  Stove Type: M422
+  Stove: 'FBK014'
 FBK016:
   Location:
   - 64.76378
   - -148.083
   Square Footage: '572'
-  Stove Type: Laser 530
-FBK017:
+  Stove: 'FBK016'
+FBK017-FBK018:
   Location:
   - 64.81606
   - -148.002
   Square Footage: '1360'
-  Stove Type: Laser 73/730
-FBK018:
-  Location:
-  - 64.81606
-  - -148.002
-  Square Footage: '1360'
-  Stove Type: Laser 73/730
+  Stove: 'FBK017,FBK018'
 FBK023:
   Location:
   - 64.8388
   - -148.064
   Square Footage: '900'
-  Stove Type: Laser 530
+  Stove: 'FBK023'
 FBK027:
   Location:
   - 64.89892
   - -147.738
   Square Footage: '864'
-  Stove Type: Laser 73/730
+  Stove: 'FBK027'
 FBK031:
   Location:
   - 64.8873
   - -147.475
   Square Footage: '288'
-  Stove Type: Laser 56/560
+  Stove: 'FBK031'
 FBK037:
   Location:
   - 64.86302
   - -147.888
   Square Footage: '576'
-  Stove Type: Laser 56/560
+  Stove: 'FBK037'
 FBK039:
   Location:
   - 64.89185
   - -147.755
   Square Footage: '760'
-  Stove Type: Laser 73/730
+  Stove: 'FBK039'
 FBK040:
   Location:
   - 64.84648
   - -147.826
   Square Footage: '960'
-  Stove Type: Laser 73/730
+  Stove: 'FBK040'
 FBK041:
   Location:
   - 64.90553
   - -147.879
   Square Footage: '448'
-  Stove Type: Laser 56/560
+  Stove: 'FBK041'
 FBK044:
   Location:
   - 64.80454
   - -147.449
   Square Footage: '576'
-  Stove Type: Laser 73/730
+  Stove: 'FBK044'
