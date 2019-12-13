@@ -9,15 +9,15 @@ import sys
 
 import pytz
 
-from puma.House import House
-from puma.Stove import Stove
-from puma.Neigborhood import Neighborhood
-from puma.Report import MonthlyReport
+from ..puma.Stove import Stove
+from ..puma.House import House
+from ..puma.Neigborhood import Neighborhood
+from ..puma.Report import MonthlyReport
 
 file_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(file_path,'..'))
 
-import puma.bash as pbash
+from ..puma import bash as pbash
 import datetime
 import yaml
 

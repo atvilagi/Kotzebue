@@ -12,7 +12,8 @@ import yaml
 import pandas as pd
 import pytz
 
-from puma.Stove import Stove
+
+from .Stove import Stove
 
 class PumaData:
 
