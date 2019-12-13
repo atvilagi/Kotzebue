@@ -16,18 +16,12 @@ FBK013:
   - -147.755
   Square Footage: '936'
   Stove: 'FBK013'
-FBK014:
+FBK014-FBK015:
   Location:
   - 64.83723
   - -148.027
   Square Footage: '1830'
-  Stove: 'FBK014'
-FBK015:
-  Location:
-  - 64.83723
-  - -148.027
-  Square Footage: '1830'
-  Stove: 'FBK015'
+  Stove: 'FBK014, FBK015'
 FBK019:
   Location:
   - 64.87386

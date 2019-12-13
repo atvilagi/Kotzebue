@@ -89,18 +89,12 @@ FBK013:
   - -147.755
   Square Footage: '936'
   Stove: 'FBK013'
-FBK014:
+FBK014-FBK015:
   Location:
   - 64.83723
   - -148.027
   Square Footage: '1830'
-  Stove: 'FBK014'
-FBK015:
-  Location:
-  - 64.83723
-  - -148.027
-  Square Footage: '1830'
-  Stove: 'FBK015'
+  Stove: 'FBK014,FBK015'
 FBK016:
   Location:
   - 64.76378
@@ -113,18 +107,12 @@ FBK017-FBK018:
   - -148.002
   Square Footage: '1360'
   Stove: 'FBK017,FBK018'
-FBK019:
+FBK019-FBK020:
   Location:
   - 64.87386
   - -147.813
   Square Footage: '1080'
-  Stove: 'FBK019'
-FBK020:
-  Location:
-  - 64.87386
-  - -147.813
-  Square Footage: '1080'
-  Stove: 'FBK020'
+  Stove: 'FBK019,FBK020'
 FBK021:
   Location:
   - 64.85657
@@ -143,18 +131,13 @@ FBK023:
   - -148.064
   Square Footage: '900'
   Stove: 'FBK023'
-FBK024:
+FBK024-FBK025:
   Location:
   - 64.92216
   - -147.931
   Square Footage: '1264'
-  Stove: 'FBK024'
-FBK025:
-  Location:
-  - 64.92216
-  - -147.931
-  Square Footage: '1264'
-  Stove: 'FBK025'
+  Stove: 'FBK024,FBK025'
+
 FBK026:
   Location:
   - 64.9112

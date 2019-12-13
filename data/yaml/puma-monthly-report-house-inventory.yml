@@ -1,34 +1,15 @@
-TST001:
-  Location:
-  - 64.89163
-  - -147.674
-  Square Footage: '792'
-  Stove: 'TST001'
-  Note: This is a copy of FBX004 for testing purposes
 FBK004:
   Location:
   - 64.89163
   - -147.674
   Square Footage: '792'
   Stove: 'FBK004'
-FBK009:
-  Location:
-  - 64.57072
-  - -147.045
-  Square Footage: '672'
-  Stove: 'FBK009'
 FBK010:
   Location:
   - 64.92074
   - -147.918
   Square Footage: '552'
   Stove: 'FBK010'
-FBK014:
-  Location:
-  - 64.83723
-  - -148.027
-  Square Footage: '1830'
-  Stove: 'FBK014'
 FBK016:
   Location:
   - 64.76378
