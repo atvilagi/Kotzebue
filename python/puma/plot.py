@@ -3,7 +3,7 @@ Plotting Module for PuMA
 
 By Douglas Keller and T. Morgan
 """
-
+import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 #from pandas.plotting import register_matplotlib_converters #this is here to shutup matplotlib warnings
@@ -117,13 +117,6 @@ def plot_bar_progress(gphddpm, fname):
     plt.figure(figsize=(14, 6))
     plt.subplot(111)
     bars = plt.bar(x, gphddpm[gphddpm > 0], width=.6, color=colors)
-    # for i in gphddpm.index:
-    #     if gphddpm[i] > 0:
-    #         plt.text(i, (gphddpm[i] + .06 * np.nanmax(gphddpm)), str(round(gphddpm[i], 6)) + '\ngal/HDD*',
-    #                  horizontalalignment='center', verticalalignment = 'bottom', fontsize=18)
-    #     else:
-    #         plt.text(i, 0.6 * np.nanmax(gphddpm), 'No\nData',
-    #                  horizontalalignment='center',verticalalignment = 'bottom', fontsize=18)
     for rect in bars:
         height = rect.get_height()
         if height > 0:
@@ -133,9 +126,9 @@ def plot_bar_progress(gphddpm, fname):
             plt.text(rect.get_x() + rect.get_width()/2, height + (np.nanmax(gphddpm) * 0.5), 'No\nData',
                      horizontalalignment='center',verticalalignment = 'bottom', fontsize=18)
     plt.yticks([])
-    plt.xticks(x, x, fontsize=20)
+    xticks = [datetime.date(1900, j, 1).strftime('%B') for j in x]
+    plt.xticks(x,xticks , fontsize=20)
     plt.xlabel('\nTemperature Adjusted Gallons per Month', fontsize=20)
     plt.box(False)
-    #plt.tight_layout()
     plt.savefig(fname,bbox_inches='tight')
     plt.close()
