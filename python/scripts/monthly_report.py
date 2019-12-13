@@ -9,15 +9,18 @@ import sys
 
 import pytz
 
-from ..puma.Stove import Stove
-from ..puma.House import House
-from ..puma.Neigborhood import Neighborhood
-from ..puma.Report import MonthlyReport
-
+#allowing sister path imports
 file_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(file_path,'..'))
 
-from ..puma import bash as pbash
+from puma.Stove import Stove
+from puma.House import House
+from puma.Neigborhood import Neighborhood
+from puma.Report import MonthlyReport
+
+
+
+import puma.bash as pbash
 import datetime
 import yaml
 
@@ -126,5 +129,5 @@ for r in neighborhood.reports.keys():
     print("monitored days: ", neighborhood.reports[r].days_monitored[1])
 
 
-pbash.bash_monthly_reports(str(year) + "_" + str(month))
+pbash.bash_monthly_reports((str(year),str(month)))
 print('bash file made')
