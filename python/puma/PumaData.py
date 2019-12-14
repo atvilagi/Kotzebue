@@ -149,12 +149,13 @@ class PumaData:
         :return original dataframe with additional clicks column'''
 
         df.loc[pd.notnull(df['cumulative_clicks']), 'clicks'] = (
-                    df[pd.notnull(df['cumulative_clicks'])]['cumulative_clicks'].shift(-1) -
-                    df[pd.notnull(df['cumulative_clicks'])]['cumulative_clicks']).shift()
+                    df.loc[pd.notnull(df['cumulative_clicks'])]['cumulative_clicks'].shift(-1) -
+                    df.loc[pd.notnull(df['cumulative_clicks'])]['cumulative_clicks']).shift()
 
         df.loc[(df['clicks'].shift(1) < 0) | (
                     (df['state'].shift(1) == 5) & pd.isnull(df['clicks'].shift(1))), 'clicks'] = 0 #records where it changes from state 5 -indicating a new click count or gap in count
-        df=df.loc[df['state']!=5] #get rid of state 5 now we don't need it anymore
+        df=df[df.state !=5] #get rid of state 5 now we don't need it anymore
+        df.is_copy = False #suppress SettingWithCopyWarning - we know its a copy
         return df
 
     def clicks2gallons(self, df, rate):
@@ -433,6 +434,7 @@ class PumaData:
             air_temp = self.getAirTemp(min(stove_data.index),enddate)
 
             stove_data = self.raw2time(air_temp,stove_data)
+            #becomes copy here
             #fill in event data metrics
             stove_data = self.raw_time2event(stove_data,stove)
             #remove duplicate indices, incomplete rows of data and sort
