@@ -229,28 +229,35 @@ class Report:
         uni_nc = Dataset(self.unified_nc_file,'r')
         if not self.stoves:
             self.mergeStoves()
-
+        timezone = pytz.timezone('US/Alaska')
         #list of dataframes generated from each stove read in
         def makeCombinedDataframe(s):
-            event_df = pd.DataFrame({
-                          'fuel_consumption': uni_nc[s + '/Event/Clicks']['fuel_consumption'][:],
-                          'gph': uni_nc[s + '/Event/Clicks']['fuel_consumption_rate'][:],
-                          'clicks': uni_nc[s + '/Event/Clicks']['clicks'][:],
-                            'inT': uni_nc[s + '/Event/Clicks']['indoor_temp'][:],
-                          'stove': [s] * len(uni_nc[s + '/Event/Clicks']['time'][:])
-                          },
-                         index=pd.to_datetime(uni_nc[s + '/Event/Clicks']['time'][:],utc=True))
-
-            timed_df = pd.DataFrame({'outT': uni_nc[s + '/Time']['outdoor_temp'][:],
-                            'inT': uni_nc[s + '/Time']['indoor_temp'][:],
-                            'deltaT':uni_nc[s + '/Time']['delta_temp'][:],
-                            'stove': [s] * len(uni_nc[s + '/Time']['time'][:])},
-                                    index=pd.to_datetime(uni_nc[s + '/Time']['time'][:], utc=True))
+            try:
+                event_df = pd.DataFrame({
+                              'fuel_consumption': uni_nc[s + '/Event/Clicks']['fuel_consumption'][:],
+                              'gph': uni_nc[s + '/Event/Clicks']['fuel_consumption_rate'][:],
+                              'clicks': uni_nc[s + '/Event/Clicks']['clicks'][:],
+                                'inT': uni_nc[s + '/Event/Clicks']['indoor_temp'][:],
+                              'stove': [s] * len(uni_nc[s + '/Event/Clicks']['time'][:])
+                              },
+                             index=pd.to_datetime(uni_nc[s + '/Event/Clicks']['time'][:],utc=True))
+            except KeyError as e:
+                print(e)
+                event_df = pd.DataFrame()
+            try:
+                timed_df = pd.DataFrame({'outT': uni_nc[s + '/Time']['outdoor_temp'][:],
+                                'inT': uni_nc[s + '/Time']['indoor_temp'][:],
+                                'deltaT':uni_nc[s + '/Time']['delta_temp'][:],
+                                'stove': [s] * len(uni_nc[s + '/Time']['time'][:])},
+                                        index=pd.to_datetime(uni_nc[s + '/Time']['time'][:], utc=True))
+            except KeyError as e:
+                print(e)
+                timed_df = pd.DataFrame()
 
             df = pd.concat([event_df,timed_df],axis=0)
-            timezone = pytz.timezone('US/Alaska')
-            df.index = df.index.tz_convert(timezone) #convert to Alaska time so report reflects metrics based on local conditions
-            df = df.sort_index(0)
+            if len(df)>0:
+                df.index = df.index.tz_convert(timezone) #convert to Alaska time so report reflects metrics based on local conditions
+                df = df.sort_index(0)
 
             return df
 
@@ -258,7 +265,9 @@ class Report:
 
         filtered_df = pd.concat(filtered_df_list)
         filtered_df = filtered_df.sort_index(0)
-        return filtered_df[self.start:self.end], filtered_df['2019-09-01':self.end] #all records up to end date
+        studyStart = datetime.datetime.strptime('2019-09-01 00:00:00',"%Y-%m-%d %H:%M:%S")
+        studyStart = timezone.localize(studyStart, timezone)
+        return filtered_df[self.start:self.end], filtered_df[studyStart:self.end] #all records up to end date
 
 
 
@@ -283,6 +292,7 @@ class MonthlyReport(Report):
             return True
     def writeReport(self):
         os.chdir(self.name)
+
         ptex.write_monthly_tex_var_file(pd.date_range(self.start, self.end, freq = 'D'),
                                         self.total_gallons,
                                         self.gallons_per_ft,

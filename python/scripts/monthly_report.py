@@ -6,8 +6,12 @@ By Douglas Keller and T. Morgan
     
 import os
 import sys
-
+import pandas as pd
 import pytz
+import warnings
+# warnings.simplefilter("error")
+# warnings.simplefilter("ignore",SyntaxError)
+# warnings.simplefilter("ignore",ImportWarning)
 
 #allowing sister path imports
 file_path = os.path.abspath(os.path.dirname(__file__))
@@ -72,6 +76,7 @@ if month == 12:
 endDate = datetime.datetime(year,month + 1,1,0,0,0,0)
 endDate = timezone.localize(endDate,timezone)
 
+dateRange = pd.date_range(startDate, endDate, freq='D')
 fuel_price = float(input('Current price of fuel: '))
 year_month = (year,month) #year and month of the report to print
 
@@ -129,5 +134,5 @@ for r in neighborhood.reports.keys():
     print("monitored days: ", neighborhood.reports[r].days_monitored[1])
 
 
-pbash.bash_monthly_reports((str(year),str(month)))
+pbash.bash_monthly_reports(dateRange)
 print('bash file made')
