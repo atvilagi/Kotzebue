@@ -685,6 +685,7 @@ class PumaData:
                 product_file.close()
                 #Closing the netCDF4 file
                 print(group_dir)
+
     def generateRateDictionary(self,csvpath):
         rate_dict = {}
         with open(csvpath, 'r') as csvfile:

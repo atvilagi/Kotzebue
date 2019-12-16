@@ -97,8 +97,8 @@ for house in neighborhood.houses:
     try:
         print("starting house: ", house.name)
 
-        neighborhood.reports[house.name] = MonthlyReport(startDate,endDate,None,unified_nc_file,[house],fuel_price)
-        neighborhood.reports[house.name].generateMetrics() #generate metrics but not text for report and control houses
+        house.report = MonthlyReport(startDate,endDate,None,unified_nc_file,[house],fuel_price)
+        house.report.generateMetrics() #generate metrics but not text for report and control houses
         print("ending house: ", house.name)
 
     except Exception as e:
@@ -110,28 +110,28 @@ for house in neighborhood.houses:
 #reports only have house metrics at this point
 #add in neighborhood metrics
 for house in report_houses:
-    try:
-        neighborhood.reports[house.name].setNeighborhood(neighborhood)
-        neighborhood.reports[house.name].compare2Neighbors()#report function to add neighborhood comparisons
-    except Exception as e:
-        print(e)
-        print("unable to provide neighbor metrics for: ",house.name)
-    finally:
-        if not os.path.exists(house.name):
-            os.mkdir(house.name)
-        neighborhood.reports[house.name].makePlots()
-        neighborhood.reports[house.name].writeReport()
+        try:
+            house.report.setNeighborhood(neighborhood)
+            house.report.compare2Neighbors()#report function to add neighborhood comparisons
+        except Exception as e:
+            print(e)
+            print("unable to provide neighbor metrics for: ",house.name)
+        finally:
+            if not os.path.exists(house.name):
+                os.mkdir(house.name)
+            house.report.makePlots()
+            house.report.writeReport()
 
 
 #TODO remove test metric printing
-for r in neighborhood.reports.keys():
-    print(neighborhood.reports[r].name)
-    print("total gallons: ",neighborhood.reports[r].total_gallons)
-    print("gallons per ft: ", neighborhood.reports[r].gallons_per_ft)
-    print("gallons per hdd: ",neighborhood.reports[r].gphddpm)
-    print("neighborhood gallons: ",neighborhood.reports[r].neighbor_usage_per_area)
-    print("report duration: ", neighborhood.reports[r].report_duration)
-    print("monitored days: ", neighborhood.reports[r].days_monitored[1])
+for r in neighborhood.houses:
+    print(house.name)
+    print("total gallons: ",house.report.total_gallons)
+    print("gallons per ft: ", house.report.gallons_per_ft)
+    print("gallons per hdd: ",house.report.gphddpm)
+    print("neighborhood gallons: ",house.report.neighbor_usage_per_area)
+    print("report duration: ", house.report.report_duration)
+    print("monitored days: ", house.report.days_monitored[1])
 
 
 pbash.bash_monthly_reports(dateRange)

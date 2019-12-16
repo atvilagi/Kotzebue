@@ -6,7 +6,12 @@ By Douglas Keller
 
 import sys
 import os
+import warnings
+warnings.simplefilter("error")
+warnings.simplefilter("ignore",SyntaxError)
+warnings.simplefilter("ignore",ImportWarning)
 
+#allowing relative sister path imports
 file_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(file_path,'..'))
 
@@ -15,6 +20,8 @@ from datetime import datetime
 import wget
 from zipfile import ZipFile
 
+#TODO remove local test
+os.chdir('D:\\PUMA\\fuelmeter-tools\\') #temporary fix for testing locally
 snotel_file = os.path.join('..','..','data','tmp','snotel.zip')
 os.chdir(os.path.join('data','tmp'))
 

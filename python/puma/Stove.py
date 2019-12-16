@@ -12,14 +12,15 @@ class Stove:
 
     def __init__(self,name):
         self.location = [] #lat,long as list
-        self.stove_type = None
+        self.stoveType = None
         self.dataFolder
         self.rate = 0 #rate of fuel consumption per click
         self.name = name
+
     def __init__(self,name,location,stove_type):
         self.location = location
-        self.stove_type = stove_type
-        self.data_folder = None
+        self.stoveType = stove_type
+        self.dataFolder = None
         self.rate = 0
         self.name = name
 
@@ -34,7 +35,7 @@ class Stove:
             reader = csv.reader(infile,delimiter=',')
             mydict = {rows[0]: rows[1] for rows in reader}
 
-        return mydict[self.stove_type]
+        return mydict[self.stoveType]
 
     def setRate(self,rate):
         self.rate = rate

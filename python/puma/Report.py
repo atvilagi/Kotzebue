@@ -7,13 +7,14 @@ import datetime
 
 from netCDF4 import Dataset
 import pandas as pd
+import sys
 import puma.plot as pplot
 import puma.tex as ptex
 import puma.fuel as pfuel
 import puma.temperature as ptemp
 
-# file_path = os.path.abspath(os.path.dirname(__file__))
-# sys.path.append(os.path.join(file_path,'..'))
+file_path = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.join(file_path,'..'))
 
 class Report:
     '''Report class contains metric attributes ported to the report document and the functions to generate them from a unified netcdf
