@@ -23,8 +23,8 @@ class Neighborhood:
         area = sum([h.report.gallons_per_ft for h in self.houses if h.name not in excludeHouses])
         return area
     def getMeanGallonsPerFt(self,excludeHouses):
-        mg =  np.mean([h.report.gallons_per_ft for h in self.houses if h.name not in excludeHouses])
-        std= np.std([h.report.gallons_per_ft for h in self.houses if h.name not in excludeHouses])
+        mg =  np.nanmean([h.report.gallons_per_ft for h in self.houses if h.name not in excludeHouses])
+        std= np.nanstd([h.report.gallons_per_ft for h in self.houses if h.name not in excludeHouses])
         #TODO implement confidence intervals -stdev is not meaninful
         return mg,std
 

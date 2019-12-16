@@ -11,14 +11,12 @@ class Stove:
     """
 
     def __init__(self,name):
-        self.location = [] #lat,long as list
         self.stoveType = None
         self.dataFolder
         self.rate = 0 #rate of fuel consumption per click
         self.name = name
 
-    def __init__(self,name,location,stove_type):
-        self.location = location
+    def __init__(self,name,stove_type):
         self.stoveType = stove_type
         self.dataFolder = None
         self.rate = 0

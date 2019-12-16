@@ -29,31 +29,28 @@ import datetime
 import yaml
 
 unified_nc_file = os.path.join(file_path,'..','..','data','netcdf','puma_unified_data.nc')
-report_stoves_file = os.path.join(file_path,'..','..','data','yaml','puma-monthly-report-inventory.yml')
-control_stoves_file = os.path.join(file_path,'..','..','data','yaml','puma-monthly-report-control-inventory.yml')
-report_houses_file = os.path.join(file_path,'..','..','data','yaml','puma-monthly-report-house-inventory.yml')
-control_houses_file = os.path.join(file_path,'..','..','data','yaml','puma-monthly-report-control-house-inventory.yml')
+stoves_file = os.path.join(file_path,'..','..','data','yaml','puma-inventory.yml')
+houses_file = os.path.join(file_path,'..','..','data','yaml','puma-houses.yml')
 
-with open(report_houses_file) as report_houses_file:
+with open(stoves_file) as stoveFile:
+    yams = yaml.load(stoveFile)
+
+
+def makeStoves(stoveNameList):
+    splitNames = stoveNameList.split(",") #make a list
+    return [Stove(name,yams.get(name)['Stove Type']) for name in splitNames]
+
+
+
+with open(houses_file) as report_houses_file:
     yamh = yaml.load(report_houses_file)
 
-    report_houses = [House(i,yamh.get(i)['Square Footage']) for i in yamh]
-with open(report_stoves_file) as report_stoves_file:
-    yams = yaml.load(report_stoves_file)
-    for h in report_houses:
-        stoves = h.name.split("-")
-        h.stoves = [Stove(s, yams.get(s)['Location'], yams.get(s)['Stove Type']) for s in stoves]
+    report_houses = [House(i,yamh.get(i)['Square Footage'],yamh.get(i)['Location'], makeStoves(yamh.get(i)['Stove'])) for i in yamh if yamh.get(i)['Report'] is True]
+    control_houses = [House(i, yamh.get(i)['Square Footage'], yamh.get(i)['Location'], makeStoves(yamh.get(i)['Stove']))
+                     for i in yamh if yamh.get(i)['Report'] is False]
 
-with open(control_houses_file) as control_houses_file:
-    yamh = yaml.load(control_houses_file)
+neighborhood = Neighborhood('FBK',report_houses + control_houses)
 
-    control_houses = [House(i, yamh.get(i)['Square Footage']) for i in yamh]
-with open(control_stoves_file) as control_stoves_file:
-    yams = yaml.load(control_stoves_file)
-    for h in control_houses:
-        # for now house names are the combined stove names - could use address
-        stoves = h.name.split("-")
-        h.stoves = [Stove(s, yams.get(s)['Location'], yams.get(s)['Stove Type']) for s in stoves]
 
 working_dir = os.path.join(file_path,'..','..','reports','monthly') #moving to the reports/monthly directory
 
@@ -90,7 +87,7 @@ except:
     pass
 
 
-neighborhood = Neighborhood('FBK',report_houses + control_houses)
+
 
 
 for house in neighborhood.houses:
