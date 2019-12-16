@@ -20,6 +20,7 @@ Contributors to this project are:
 * Bax Bond
 * Dayne Broderson
 * Doug Keller
+* Tawna Morgan
 
 ==========================
 Elektron Server Quickstart
@@ -85,6 +86,6 @@ To create the monthly reports, run:
 .. code-block::
 
     [root@####### fuelmeter-tools]# make monthly_reports
-    
-This will build the monthly reports and put them in the ``fuelmeter-tools/output`` directory, in a directory and zip file. For calculation
-methods view [\reports\report_methods.rst]
+
+This will build the monthly reports and put them in the ``fuelmeter-tools/output`` directory, in a directory and zip file.
+
