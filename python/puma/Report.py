@@ -106,8 +106,8 @@ class Report:
 
             # if the monitored days is within 12 hours of the total report duration then use the actual total_gallons
             # otherwise produces a hdd corrected estimate.
-            if (self.days_monitored[0] < (self.report_duration + datetime.timedelta(hours=12))) & (
-                    self.days_monitored[0] > (self.report_duration - datetime.timedelta(hours=12))):
+            if (datetime.timedelta(self.days_monitored[1]) < (self.report_duration + datetime.timedelta(hours=12))) & (
+                    datetime.timedelta(self.days_monitored[1]) > (self.report_duration - datetime.timedelta(hours=12))):
                 self.total_gallons = self.gallons
             else:
                 self.total_gallons = self.estimated_total_gallons

@@ -116,7 +116,7 @@ def plot_bar_progress(gphddpm, fname):
 
     plt.figure(figsize=(14, 6))
     plt.subplot(111)
-    bars = plt.bar(x, gphddpm[gphddpm > 0], width=.6, color=colors)
+    bars = plt.bar(x, gphddpm[gphddpm > 0], width=0.6, color=colors)
     for rect in bars:
         height = rect.get_height()
         if height > 0:

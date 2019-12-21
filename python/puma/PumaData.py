@@ -63,7 +63,7 @@ class PumaData:
         df.columns = ['time', 'state', 'cumulative_clicks', 'thermistor']
 
         #remove incomplete rows of data
-        df.dropna(axis=0, how='any')
+        df = df.dropna(axis=0, how='any')
 
         #cumulative clicks and state set to NA for off states
         df.loc[df.state == 'X','cumulative_clicks'] = np.nan
