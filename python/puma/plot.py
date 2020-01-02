@@ -6,9 +6,8 @@ By Douglas Keller and T. Morgan
 import datetime
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 #from pandas.plotting import register_matplotlib_converters #this is here to shutup matplotlib warnings
-
-
 
 """
 colors:
@@ -32,41 +31,47 @@ def polar_flow_plot_per_month_df(label,data,fname):
     Plots the hourly flow rate of a month of flow rate data in a polar plot and saves the plot to a png
     file with the polar_flow_plot function.
     """
-    if len(data) > 0:
-        #each hour is 1/24 of 360 degrees (15 degrees)
-        t_theta = np.radians([15] * (len(data) + 1)).cumsum()
-        #daily average  = 360 degrees
-        #hourly value is proportion of daily average scaled to 360 converted to radians
-        dailyAve = data.sum()
-        data_theta = np.radians((data/dailyAve) * 360)
-        data_theta.loc[24] = data_theta.loc[0]
-        t_theta[24] = t_theta[0]
-        data_theta.index = t_theta
+    if len(data) < 24:
+        fillData = pd.Series([0] * 24, pd.Index(range(0, 24, 1)))
+        data1 = pd.concat([data, fillData], axis=1)
+        data1.loc[pd.isnull(data1[0]), 0] = data1[1]
+        data = data1.drop(1, axis=1)
+        data = data.iloc[0:, 0]
+    #each hour is 1/24 of 360 degrees (15 degrees)
+    t_theta = np.radians([15] * (len(data) + 1)).cumsum()
+    #daily average  = 360 degrees
+    #hourly value is proportion of daily average scaled to 360 converted to radians
+    dailyAve = data.sum()
+    data_theta = np.radians((data/dailyAve) * 360)
+    data_theta.loc[24] = data_theta.loc[0]
+    t_theta[24] = t_theta[0]
+    data_theta.index = t_theta
 
-        polar_flow_plot(data,t_theta,data_theta, fname) #plotting using the polar_flow_plot function
-            
+    polar_flow_plot(data,t_theta,data_theta, fname) #plotting using the polar_flow_plot function
+
 def polar_flow_plot(data,t_theta,data_theta,fname):
     """
     Polar plot 
     """
     fig = plt.figure(figsize = (7,7), dpi = 200)
     ax = fig.add_subplot(111, polar=True)
-    #adding break line
-    plt.polar([-5*np.pi/4,-5*np.pi/4],[0,3.5*np.nanmax(data_theta)/3],linewidth = 4, color = [0,0,0])
-    #adding break line
-    plt.polar([-np.pi/4,-np.pi/4],[0,3.5*np.nanmax(data_theta)/3],linewidth = 4, color = [0,0,0])
-
-    plt.polar(t_theta,data_theta, linewidth = 3, color = np.array([230,126,34])/255, label = '$gal/hr$')
-    plt.thetagrids((0,45,90,135,180,225,270,315), ('6:00','3:00','12:00 PM','9:00',
-                   '6:00','3:00','12:00 AM','9:00'), fontsize = 20)
-    plt.rgrids((np.nanmax(data_theta)/3, 2*np.nanmax(data_theta)/3, np.nanmax(data_theta),
+    if data_theta.sum() > 0:
+        #adding break line
+        plt.polar([-5*np.pi/4,-5*np.pi/4],[0,3.5*np.nanmax(data_theta)/3],linewidth = 4, color = [0,0,0])
+        #adding break line
+        plt.polar([-np.pi/4,-np.pi/4],[0,3.5*np.nanmax(data_theta)/3],linewidth = 4, color = [0,0,0])
+        plt.polar(t_theta,data_theta, linewidth = 3, color = np.array([230,126,34])/255, label = '$gal/hr$')
+        plt.rgrids((np.nanmax(data_theta)/3, 2*np.nanmax(data_theta)/3, np.nanmax(data_theta),
                 3.5*np.nanmax(data_theta)/3), labels = (round((np.nanmax(data)/3),2),
                 round((2*np.nanmax(data)/3),2), round(np.nanmax(data),2),''),
                 angle = 90, fontsize = 14)
+        plt.text(np.pi / 4, np.nanmax(data_theta) / 3, 'Day', fontsize=14)
+        plt.text(3.92699, np.nanmax(data_theta) / 3, 'Night', fontsize=14)
+    plt.thetagrids((0,45,90,135,180,225,270,315), ('6:00','3:00','12:00 PM','9:00',
+                   '6:00','3:00','12:00 AM','9:00'), fontsize = 20)
     plt.title('Hourly Fuel Consumption Rate\n',fontsize = 28)
     ax.tick_params(pad = 14)
-    plt.text(np.pi/4,np.nanmax(data_theta)/ 3,'Day',fontsize = 14)
-    plt.text(3.92699,np.nanmax(data_theta)/ 3,'Night',fontsize = 14)
+
 
     plt.legend(bbox_to_anchor = (.35,.03),fontsize = 14)
     plt.tight_layout()

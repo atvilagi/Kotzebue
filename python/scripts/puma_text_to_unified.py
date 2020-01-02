@@ -7,9 +7,7 @@ By Douglas Keller
 import sys
 import os
 import warnings
-warnings.simplefilter("error")
-warnings.simplefilter("ignore",SyntaxError)
-warnings.simplefilter("ignore",ImportWarning)
+
 
 #allowing relative sister path imports
 file_path = os.path.abspath(os.path.dirname(__file__))

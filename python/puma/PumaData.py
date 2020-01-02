@@ -13,7 +13,7 @@ import pandas as pd
 import pytz
 
 
-from .Stove import Stove
+from puma.Stove import Stove
 
 class PumaData:
 
@@ -174,7 +174,7 @@ class PumaData:
         :param stove: A Stove object with attribute stove_type
         :return: original dataframe with additional gallons column
         '''
-        rate = self.rate_dict[stove.stove_type]
+        rate = self.rate_dict[stove.stoveType]
         df = self.clicks2gallons(df,rate)
         return df
 
@@ -462,14 +462,14 @@ class PumaData:
         :return list of Stove objects
         :return dictionary from yaml file'''
 
-        file = open(yaml_file, 'r')
-        # Opening the inventory file of the stoves in the project
-        yams = yaml.load(file)
-        file.close()
+        with open(yaml_file, 'r') as file:
+            # Opening the inventory file of the stoves in the project
+            yams = yaml.load(file)
+
         stove_list = []
         # Making a list of the stove names
         for i in yams:
-            stove_list.append(Stove(i, yams.get(i)['Location'], yams.get(i)['Stove Type']))
+            stove_list.append(Stove(i,yams.get(i)['Stove Type']))
         return stove_list,yams
 
     def getStoveFiles(self):

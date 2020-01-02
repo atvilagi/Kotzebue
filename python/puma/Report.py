@@ -68,12 +68,13 @@ class Report:
         self.report_duration = self.end - self.start
         #filter the dataset to the portion required for this report
         self.filtered_df,self.unfiltered_df = self.filterDataset()
+        self.getTip()  # set a tip to display
         if len(self.filtered_df) > 0:
             self.date_duration = pd.to_timedelta(self.filtered_df.index[-1] - self.filtered_df.index[0],
                                                  unit='day')
             self.days_monitored  =self.getDaysMonitored() #this is actual duration that there is data for
 
-            self.getTip() #set a tip to display
+
 
             self.ave_indoorT = self.getAveTemperature('inT') #average of indoor Temperature for report time period
 
@@ -90,19 +91,9 @@ class Report:
 
             self.cost_per_day = self.ave_fuel_per_day[0] * self.fuel_price
 
-
-
-            self.gphddpm = pfuel.weather_adjusted_gallons_consumed_per_month(self.unfiltered_df,'outT','fuel_consumption')
-
             # estimated total gallons takes into account days that were not monitored (no data)
             self.estimated_total_gallons = self.getEstimatedGallons()
 
-            if len(self.gphddpm) > 1:
-                #progress is defined as the difference between the last value and the previous value divided by the previous value
-                #proportion of last value that the current value is
-                self.prog_usage = (self.gphddpm.iloc[-1] - self.gphddpm.iloc[-2]) / self.gphddpm.iloc[-2]
-            else:
-                self.prog_usage = 0
 
             # if the monitored days is within 12 hours of the total report duration then use the actual total_gallons
             # otherwise produces a hdd corrected estimate.
@@ -116,9 +107,18 @@ class Report:
             #metrics based on total gallons
             self.gallons_per_ft = self.total_gallons / self.area # use total gallons
             self.total_cost = self.total_gallons * self.fuel_price #estimated cost (actual if no missing data)
+        if len(self.unfiltered_df) > 0:
+            self.gphddpm = pfuel.weather_adjusted_gallons_consumed_per_month(self.unfiltered_df, 'outT',
+                                                                             'fuel_consumption')
 
-            if self.neighborhood:  # if a neighborhood is provided use it to create comparison metrics
-                self.compareNeighbors()
+            if len(self.gphddpm) > 1:
+                # progress is defined as the difference between the last value and the previous value divided by the previous value
+                # proportion of last value that the current value is
+                self.prog_usage = (self.gphddpm.iloc[-1] - self.gphddpm.iloc[-2]) / self.gphddpm.iloc[-2]
+            else:
+                self.prog_usage = 0
+        if self.neighborhood:  # if a neighborhood is provided use it to create comparison metrics
+            self.compareNeighbors()
 
         return
     def getAveTemperature(self, t_field):
@@ -324,17 +324,17 @@ class MonthlyReport(Report):
 
     def getMonthlyTip(self):
         #assuming month 9 was tip 0
-        self.tip_no = self.filtered_df.index[-1].month -9
+        self.tip_no = self.start.month -9
 
     def makePlots(self):
         '''produces pngs of plots specific to this report'''
         os.chdir(self.name)
         pplot.plot_bar_progress(self.gphddpm,
                                 'monthly_track_your_progress.png')
-        if self.neighbor_usage_per_area !=0:
 
-            pplot.plot_fuel_usage(self.gallons_per_ft, self.neighbor_usage_per_area[0], 'monthly_fuel_usage.png')
-        if len(self.ave_gallons_by_hour)>0:
-            pplot.polar_flow_plot_per_month_df(self.name,self.ave_gallons_by_hour,
+
+        pplot.plot_fuel_usage(self.gallons_per_ft, self.neighbor_usage_per_area[0], 'monthly_fuel_usage.png')
+
+        pplot.polar_flow_plot_per_month_df(self.name,self.ave_gallons_by_hour,
                                                 'monthly_polar_plot.png')
         os.chdir("..")
