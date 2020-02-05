@@ -89,3 +89,10 @@ To create the monthly reports, run:
 
 This will build the monthly reports and put them in the ``fuelmeter-tools/output`` directory, in a directory and zip file.
 
+The final step will be to copy the resulting reports to your local machine to either archive or deliver. To do this use the scp command to copy the entire monthly report folder contents:
+
+.. code-block::
+
+    scp  -r data@#########:~/puma/fuelmeter-tools/reports/monthly fuelmeter-tools/reports
+
+
