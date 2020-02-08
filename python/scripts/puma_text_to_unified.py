@@ -19,7 +19,7 @@ import wget
 from zipfile import ZipFile
 
 #TODO remove local test
-#os.chdir('D:\\PUMA\\fuelmeter-tools\\') #temporary fix for testing locally
+#os.chdir('E:\\PUMA\\fuelmeter-tools\\') #temporary fix for testing locally
 snotel_file = os.path.join('..','..','data','tmp','snotel.zip')
 os.chdir(os.path.join('data','tmp'))
 

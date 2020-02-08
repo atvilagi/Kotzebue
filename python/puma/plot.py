@@ -31,12 +31,15 @@ def polar_flow_plot_per_month_df(label,data,fname):
     Plots the hourly flow rate of a month of flow rate data in a polar plot and saves the plot to a png
     file with the polar_flow_plot function.
     """
-    if len(data) < 24:
+    if (len(data) < 24) & (len(data) >0):
         fillData = pd.Series([0] * 24, pd.Index(range(0, 24, 1)))
         data1 = pd.concat([data, fillData], axis=1)
-        data1.loc[pd.isnull(data1[0]), 0] = data1[1]
-        data = data1.drop(1, axis=1)
-        data = data.iloc[0:, 0]
+        data1.loc[pd.isnull(data1.iloc[:, 0]), 0] = data1.iloc[:1]
+        #data1.loc[pd.isnull(data1['fuel_consumption']), 0] = data1[0]
+        data = data1.iloc[:,0]
+
+    elif (len(data) <= 0):
+        data = pd.Series(np.zeros(24))
     #each hour is 1/24 of 360 degrees (15 degrees)
     t_theta = np.radians([15] * (len(data) + 1)).cumsum()
     #daily average  = 360 degrees
@@ -114,14 +117,18 @@ def plot_bar_progress(gphddpm, fname):
     :return:
     '''
     #ym.strftime('%b %y'))
+    order = pd.Series(gphddpm[gphddpm > 0].index, index=gphddpm[gphddpm > 0].index)
+    df = pd.DataFrame({'gphddpm':gphddpm[gphddpm > 0],'sort_order':order})
+    customMonthOrder = {9:1, 10:2, 11:3, 12:4, 1:5,2:6,3:7,4:8,5:9,6:10}
+    df['sort_order'] = df['sort_order'].replace(customMonthOrder)
 
-    x = gphddpm[gphddpm > 0].index
-
+    x =df.sort_values('sort_order', 0).index
+    x = pd.Series(x)
     colors = np.array([155, 89, 182]) / 255
 
     plt.figure(figsize=(14, 6))
     plt.subplot(111)
-    bars = plt.bar(x, gphddpm[gphddpm > 0], width=0.6, color=colors)
+    bars = plt.bar(df['sort_order'].values, df['gphddpm'], width=0.6, color=colors)
     for rect in bars:
         height = rect.get_height()
         if height > 0:
@@ -131,8 +138,9 @@ def plot_bar_progress(gphddpm, fname):
             plt.text(rect.get_x() + rect.get_width()/2, height + (np.nanmax(gphddpm) * 0.5), 'No\nData',
                      horizontalalignment='center',verticalalignment = 'bottom', fontsize=18)
     plt.yticks([])
-    xticks = [datetime.date(1900, j, 1).strftime('%B') for j in x]
-    plt.xticks(x,xticks , fontsize=20)
+    xticks = [datetime.date(1900, [key for key, value in customMonthOrder.items() if value == j][0], 1).strftime('%B')
+              for j in range(min(df['sort_order']), max(df['sort_order']) + 1)]
+    plt.xticks(df.sort_values('sort_order',0)['sort_order'],xticks , fontsize=20,rotation=45)
     plt.xlabel('\nTemperature Adjusted Gallons per Month', fontsize=20)
     plt.box(False)
     plt.savefig(fname,bbox_inches='tight')

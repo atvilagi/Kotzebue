@@ -116,6 +116,7 @@ for house in report_houses:
         finally:
             if not os.path.exists(house.name):
                 os.mkdir(house.name)
+
             house.report.makePlots()
             house.report.writeReport()
 
