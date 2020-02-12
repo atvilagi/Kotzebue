@@ -1,3 +1,7 @@
+.idea/
+.idea
+data/
+reports/
 .env
 .ipynb_checkpoints/
 puma-client.json

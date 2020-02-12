@@ -114,7 +114,12 @@ class Report:
             if len(self.gphddpm) > 1:
                 # progress is defined as the difference between the last value and the previous value divided by the previous value
                 # proportion of last value that the current value is
-                self.prog_usage = (self.gphddpm.iloc[-1] - self.gphddpm.iloc[-2]) / self.gphddpm.iloc[-2]
+                thisMonth = self.start.month
+                if (thisMonth == 1):
+                    lastMonth = 12
+                else:
+                    lastMonth = thisMonth -1
+                self.prog_usage = (self.gphddpm[thisMonth] - self.gphddpm[:lastMonth].iloc[-1]) / self.gphddpm[:lastMonth].iloc[-1]
             else:
                 self.prog_usage = 0
         if self.neighborhood:  # if a neighborhood is provided use it to create comparison metrics
