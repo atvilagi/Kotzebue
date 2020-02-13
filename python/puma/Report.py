@@ -329,7 +329,7 @@ class MonthlyReport(Report):
 
     def getMonthlyTip(self):
         #assuming month 9 was tip 0
-        self.tip_no = self.start.month + 2
+        self.tip_no = self.start.month + 3
 
     def makePlots(self):
         '''produces pngs of plots specific to this report'''

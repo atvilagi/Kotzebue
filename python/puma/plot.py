@@ -140,8 +140,8 @@ def plot_bar_progress(gphddpm, fname):
     plt.yticks([])
     xticks = [datetime.date(1900, [key for key, value in customMonthOrder.items() if value == j][0], 1).strftime('%B')
               for j in range(min(df['sort_order']), max(df['sort_order']) + 1)]
-    plt.xticks(df.sort_values('sort_order',0)['sort_order'],xticks , fontsize=20,rotation=45)
-    plt.xlabel('\nTemperature Adjusted Gallons per Month', fontsize=20)
+    plt.xticks(df.sort_values('sort_order',0)['sort_order'],xticks , fontsize=22,rotation=45)
+    plt.xlabel('\nTemperature Adjusted Gallons per Month', fontsize=22)
     plt.box(False)
     plt.savefig(fname,bbox_inches='tight')
     plt.close()
