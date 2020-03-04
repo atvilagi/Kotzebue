@@ -1,25 +1,12 @@
-TST001:
-  Stove Type: Laser 73/730
-  Note: This is a copy of FBX004 for testing purposes
-FBK000:
-  Stove Type: Laser 73/730
 FBK001:
-  Stove Type: Laser 56/560
-FBK002:
-  Stove Type: M2200
-FBK003:
   Stove Type: Laser 56/560
 FBK004:
   Stove Type: Laser 73/730
 FBK005:
   Stove Type: Laser 56/560
-FBK006:
- Stove Type: Laser 73/730
 FBK007:
   Stove Type: Laser 73/730
 FBK008:
-  Stove Type: Laser 73/730
-FBK009:
   Stove Type: Laser 73/730
 FBK010:
   Stove Type: Laser 56/560
@@ -29,8 +16,6 @@ FBK012:
   Stove Type: Laser 73/730
 FBK013:
   Stove Type: Laser 73/730
-FBK014:
-  Stove Type: M441
 FBK015:
   Stove Type: M422
 FBK016:
@@ -43,10 +28,6 @@ FBK019:
   Stove Type: M441
 FBK020:
   Stove Type: M422
-FBK021:
-  Stove Type: M2200
-FBK022:
-  Stove Type: Laser 530
 FBK023:
   Stove Type: Laser 530
 FBK024:
@@ -57,8 +38,6 @@ FBK026:
   Stove Type: Laser 56/560
 FBK027:
   Stove Type: Laser 73/730
-FBK028:
-  Stove Type: Laser 73/730
 FBK029:
   Stove Type: Laser 530
 FBK030:
@@ -67,8 +46,6 @@ FBK031:
   Stove Type: Laser 56/560
 FBK032:
   Stove Type: Laser 56/560
-FBK033:
-  Stove Type: M2200
 FBK034:
   Stove Type: Laser 73/730
 FBK035:
@@ -79,17 +56,11 @@ FBK037:
   Stove Type: Laser 56/560
 FBK038:
   Stove Type: Laser 73/730
-FBK039:
-  Stove Type: Laser 73/730
 FBK040:
   Stove Type: Laser 73/730
 FBK041:
   Stove Type: Laser 56/560
-FBK042:
-  Stove Type: Laser 56/560
 FBK043:
-  Stove Type: Laser 73/730
-FBK044:
   Stove Type: Laser 73/730
 FBK045:
   Stove Type: Laser 73/730
