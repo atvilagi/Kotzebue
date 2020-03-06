@@ -122,7 +122,7 @@ for house in report_houses:
 
 
 #TODO remove test metric printing
-for r in neighborhood.houses:
+for house in neighborhood.houses:
     print(house.name)
     print("total gallons: ",house.report.total_gallons)
     print("gallons per ft: ", house.report.gallons_per_ft)
