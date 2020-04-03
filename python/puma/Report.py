@@ -27,6 +27,7 @@ class Report:
         :param title: title to use to name pdf
         :param nc: Unified netcdf
         :param houses: A list of houses to calculate metrics for
+        :param fuel_price can be a float value or pd.Series with datetime index
         '''
         self.start = start #start date for the report period
         self.end = end  #end date for the report period
@@ -73,8 +74,6 @@ class Report:
             self.date_duration = pd.to_timedelta(self.filtered_df.index[-1] - self.filtered_df.index[0],
                                                  unit='day')
             self.days_monitored  =self.getDaysMonitored() #this is actual duration that there is data for
-
-
 
             self.ave_indoorT = self.getAveTemperature('inT') #average of indoor Temperature for report time period
 
@@ -276,11 +275,12 @@ class Report:
         return filtered_df[self.start:self.end], filtered_df[studyStart:self.end] #all records up to end date
 
 
-
 class MonthlyReport(Report):
     '''Monthly Report is a subclass of Report with custom functions for writing report text and calculating month specific metrics'''
     def __init__(self,start,end,title,nc,houses,fuel_price):
         super(MonthlyReport, self).__init__(start,end,title,nc,houses,fuel_price)
+        if isinstance(fuel_price,pd.Series):
+            self.fuel_price = fuel_price[start:end].mean()
     def calculated_monthly_data(self):
 
         self.filtered_df.hdd = ptemp.heat_degree_day(pd.filtered_df,65)
@@ -343,3 +343,21 @@ class MonthlyReport(Report):
         pplot.polar_flow_plot_per_month_df(self.name,self.ave_gallons_by_hour,
                                                 'monthly_polar_plot.png')
         os.chdir("..")
+
+class MultiMonthReport(Report):
+    def __init__(self,start,end,title,nc,houses,monthly_fuel_price):
+        super(MultiMonthReport, self).__init__(start,end,title,nc,houses,monthly_fuel_price)
+
+    # def calculateMonthlyData(self):
+    #     ranges = pd.DataFrame(index = pd.date_range(self.start,self.end,freq='M'))
+    #     ranges['start'] = pd.Series(pd.to_datetime(ranges.index), index=ranges.index).apply(
+    #         lambda dt: dt.replace(day=1))
+    #     ranges['end'] = ranges['start'].apply(lambda st: st.replace(day=st.days_in_month))
+    #
+    #     for month,i in enumerate(ranges):
+    #         self.collection.append()
+    def getAveTemperature(self, t_field):
+        grouped = self.filtered_df.groupby(pd.Grouper(freq="M"))
+        ave = grouped[t_field].mean()
+        sem = grouped[t_field].sem()
+        return ave, sem
