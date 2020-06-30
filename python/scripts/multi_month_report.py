@@ -20,7 +20,9 @@ sys.path.append(os.path.join(file_path,'..'))
 from puma.Stove import Stove
 from puma.House import House
 from puma.Neigborhood import Neighborhood
-from puma.Report import MonthlyReport, MultiMonthReport
+from puma.MultiMonthReport import MultiMonthReport
+
+import numpy as np
 
 
 
@@ -33,7 +35,7 @@ stoves_file = os.path.join(file_path,'..','..','data','yaml','puma-inventory.yml
 houses_file = os.path.join(file_path,'..','..','data','yaml','puma-houses.yml')
 
 with open(stoves_file) as stoveFile:
-    yams = yaml.load(stoveFile)
+    yams = yaml.safe_load(stoveFile)
 
 
 def makeStoves(stoveNameList):
@@ -43,16 +45,19 @@ def makeStoves(stoveNameList):
 
 
 with open(houses_file) as report_houses_file:
-    yamh = yaml.load(report_houses_file)
+    yamh = yaml.safe_load(report_houses_file)
 
     report_houses = [House(i,yamh.get(i)['Square Footage'],yamh.get(i)['Location'], makeStoves(yamh.get(i)['Stove'])) for i in yamh if yamh.get(i)['Report'] is True]
     control_houses = [House(i, yamh.get(i)['Square Footage'], yamh.get(i)['Location'], makeStoves(yamh.get(i)['Stove']))
                      for i in yamh if yamh.get(i)['Report'] is False]
-#TODO remove temporary filter for house FBK004
-report_houses = [house for house in report_houses if house.name == 'FBK004']
-neighborhood = Neighborhood('FBK',report_houses + control_houses)
 
-working_dir = os.path.join(file_path,'..','..','reports','monthly') #moving to the reports/monthly directory
+report_houses = report_houses + control_houses
+#TODO remove temporary filter for house FBK004
+#report_houses = [house for house in report_houses if (house.name == 'FBK004') | (house.name == 'FBK044')]
+
+#neighborhood = Neighborhood('FBK',report_houses + control_houses)
+neighborhood = Neighborhood('FBK',report_houses.copy())
+working_dir = os.path.join(file_path,'..','..','reports','multiyear') #moving to the reports/monthly directory
 
 #check if the folder exists and make it if it doesn't
 if not os.path.exists(working_dir):
@@ -88,7 +93,7 @@ try:
     [control_houses.remove(h) for h in control_houses if h.name in excludeControlList]
 except:
     pass
-monthly_fuel_price = pd.Series([3.2] *28,index=pd.date_range(startDate,endDate,freq='M'))
+monthly_fuel_price = pd.Series([3.5] *28,index=pd.date_range(startDate,endDate,freq='M'))
 #for house in neighborhood.houses:
 for house in report_houses:
     try:
@@ -101,11 +106,16 @@ for house in report_houses:
     except Exception as e:
         print(e)
         print("failed stove: ", house.name)
+        neighborhood.houses.remove(house)
+        print("House dropped from neighborhood")
         os.chdir(working_dir)
+
 
 
 #reports only have house metrics at this point
 #add in neighborhood metrics
+neighborhood.applyStatsModels()
+
 for house in report_houses:
         try:
             house.report.setNeighborhood(neighborhood)
@@ -116,21 +126,11 @@ for house in report_houses:
         finally:
             if not os.path.exists(house.name):
                 os.mkdir(house.name)
-
-            house.report.makePlots()
-            house.report.writeReport()
-
-
-#TODO remove test metric printing
-for house in neighborhood.houses:
-    print(house.name)
-    print("total gallons: ",house.report.total_gallons)
-    print("gallons per ft: ", house.report.gallons_per_ft)
-    print("gallons per hdd: ",house.report.gphddpm)
-    print("neighborhood gallons: ",house.report.neighbor_usage_per_area)
-    print("report duration: ", house.report.report_duration)
-    print("monitored days: ", house.report.days_monitored[1])
+            if house in neighborhood.houses:
+                house.report.moveModelImages(house.name)
+                house.report.makePlots()
+                house.report.writeReport()
 
 
-pbash.bash_monthly_reports(dateRange)
+pbash.bash_multimonth_reports(dateRange)
 print('bash file made')

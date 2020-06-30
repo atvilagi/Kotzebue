@@ -8,7 +8,10 @@ import datetime
 from netCDF4 import Dataset
 import pandas as pd
 import sys
+import shutil
+
 import puma.plot as pplot
+
 import puma.tex as ptex
 import puma.fuel as pfuel
 import puma.temperature as ptemp
@@ -44,17 +47,17 @@ class Report:
         self.ave_gallons_by_hour = pd.Series() #average gallons per hour for each our in a 24 hour period
         self.ave_gph = (0,0)    #average and standard error of gallons per hour during report time period
         self.gallons_per_ft = 0     #total gallons (estimate or actual) for entire report time period per square ft
-        self.neighbor_usage = 0     #total gallons used by entire neighborhood (exlcuding report houses)
+        self.neighborhoodTotalUsage = 0     #total gallons used by entire neighborhood (exlcuding report houses)
         self.neighbor_usage_per_area = (0,0) #mean and standard deviation - should be CI and standard error
-        self.ave_indoorT = (0,0)    #average indoor temperature for entire report time period
-        self.ave_outdoorT = (0,0)   #average outdoor temperature for entire report time period
+        self.ave_MonthlyindoorT = (0, 0)    #average indoor temperature for entire report time period
+        self.ave_MonthlyoutdoorT = (0, 0)   #average outdoor temperature for entire report time period
         self.fuel_price = fuel_price    #fuel price, set by user
         self.date_duration = 0      #time delta of the report time period
         self.days_monitored = (0,0) #tuple actual time and time in days covered by actual dataset (less than duration if there are missing values)
         self.neighborhood = []  #list of Houses in the neighborhood
         self.total_gallons = 0  #the total gallons consumed in the report time period. If dataset has missing data this value is extrapolated from average consumption rates
-        self.gphddpm = pd.Series()  #gallons per hour per hdd by month for all months included in dataset (including prior to report period)
-        self.cost_per_day=0     #average cost per day based on gallons (not extrapolated), days monitored and fuel price
+        self.gphddBym = pd.Series()  #gallons per hour per hdd by month for all months included in dataset (including prior to report period)
+        self.ave_cost_per_day=0     #average cost per day based on gallons (not extrapolated), days monitored and fuel price
         self.prog_usage = 0     #proportion of usage compared to previous time interval
         self.dataFlag = 0       #0, or 1. 1 indicates total gallons is an estimate because data was missing
     def mergeStoves(self):
@@ -65,70 +68,103 @@ class Report:
         return self.stoves
     def generateMetrics(self):
         '''create a dataframe for the report time period and generate report metrics based on the dataset'''
+
         self.area = sum([float(house.area) for house in self.houses])  # total area metrics are being calculated for
         self.report_duration = self.end - self.start
         #filter the dataset to the portion required for this report
         self.filtered_df,self.unfiltered_df = self.filterDataset()
+
         self.getTip()  # set a tip to display
         if len(self.filtered_df) > 0:
             self.date_duration = pd.to_timedelta(self.filtered_df.index[-1] - self.filtered_df.index[0],
-                                                 unit='day')
+                                                 unit='day') #range that data was actually collected for
             self.days_monitored  =self.getDaysMonitored() #this is actual duration that there is data for
 
-            self.ave_indoorT = self.getAveTemperature('inT') #average of indoor Temperature for report time period
+            #in the case of multi month report temperatures will be by month
+            self.ave_MonthlyindoorT, self.ave_DailyIndoorT = self.getAveTemperature('inT') #average of indoor Temperature for report time period
+            self.ave_MonthlyoutdoorT,self.ave_DailyOutdoorT = self.getAveTemperature('outT') #average of outdoor Temperature for report time period
 
-            self.ave_outdoorT = self.getAveTemperature('outT') #average of outdoor Temperature for report time period
+            self.gallons = self.filtered_df.fuel_consumption.sum() #recorded total consumption in gallons
 
-            self.gallons = self.filtered_df.fuel_consumption.sum() #recorded consumption in gallons
-
-            self.gph = pfuel.gallonsPerHour(self.filtered_df.fuel_consumption) #gph for all hours in the month
+            self.gph = pfuel.gallonsPerHour(self.filtered_df.fuel_consumption) #gph for all hours in the data range
             self.ave_gph = self.getAveGPH()  #overall average gph, and standard error
             self.ave_gallons_by_hour = self.getAveGPH_byHour() #average gph, and standard error by hour of day
-            self.ave_fuel_per_day = self.getAveFuelPerDay() #average and standard error per day
+            self.fuel_by_day = self.getFuelByDay()
+            self.ave_fuel_per_day = self.getAveFuelPerDay() #average and standard error per day over data range
 
             # days_monitored is a tuple, first arg is timedelta , sencond is days integer
-
-            self.cost_per_day = self.ave_fuel_per_day[0] * self.fuel_price
+            self.ave_cost_per_day = self.getAveCostPerDay() #average of data range
 
             # estimated total gallons takes into account days that were not monitored (no data)
-            self.estimated_total_gallons = self.getEstimatedGallons()
-
+            self.estimated_total_gallons = self.getEstimatedTotalGallons()
 
             # if the monitored days is within 12 hours of the total report duration then use the actual total_gallons
             # otherwise produces a hdd corrected estimate.
-            if (datetime.timedelta(self.days_monitored[1]) < (self.report_duration + datetime.timedelta(hours=12))) & (
-                    datetime.timedelta(self.days_monitored[1]) > (self.report_duration - datetime.timedelta(hours=12))):
-                self.total_gallons = self.gallons
-            else:
-                self.total_gallons = self.estimated_total_gallons
-                self.dataFlag = 1 #if flag is one then gallons is an estimate and not measured value
+
+            self.setTotals()
 
             #metrics based on total gallons
-            self.gallons_per_ft = self.total_gallons / self.area # use total gallons
-            self.total_cost = self.total_gallons * self.fuel_price #estimated cost (actual if no missing data)
-        if len(self.unfiltered_df) > 0:
-            self.gphddpm = pfuel.weather_adjusted_gallons_consumed_per_month(self.unfiltered_df, 'outT',
-                                                                             'fuel_consumption')
+            self.gallons_per_ft = self.getGallonsPerFt()  # use total gallons for entire report period
 
-            if len(self.gphddpm) > 1:
-                # progress is defined as the difference between the last value and the previous value divided by the previous value
-                # proportion of last value that the current value is
-                thisMonth = self.start.month
-                if (thisMonth == 1):
-                    lastMonth = 12
-                else:
-                    lastMonth = thisMonth -1
-                self.prog_usage = (self.gphddpm[thisMonth] - self.gphddpm[:lastMonth].iloc[-1]) / self.gphddpm[:lastMonth].iloc[-1]
-            else:
-                self.prog_usage = 0
+
+        if len(self.unfiltered_df) > 0:
+            self.gphddBym = self.getGphddBym()
+
+            self.setProgUsage()
         if self.neighborhood:  # if a neighborhood is provided use it to create comparison metrics
             self.compareNeighbors()
 
         return
+
+    def setTotals(self):
+        if (datetime.timedelta(self.days_monitored[1]) < (self.report_duration + datetime.timedelta(hours=12))) & (
+                datetime.timedelta(self.days_monitored[1]) > (self.report_duration - datetime.timedelta(hours=12))):
+            self.total_gallons = self.gallons
+            self.total_cost = self.getTotalCost()  # estimated cost (actual if no missing data)
+        else:
+            self.total_gallons = self.getEstimatedTotalGallons()
+            self.total_cost = self.getEstimatedTotalCost()  # estimated cost (actual if no missing data)
+            self.dataFlag = 1  # if flag is one then gallons is an estimate and not measured value
+
+    def setProgUsage(self):
+        if len(self.gphddBym) > 1:
+            # progress is defined as the difference between the last value and the previous value divided by the previous value
+            # proportion of last value that the current value is
+            current = self.gphddBym[(self.gphddBym.index.month == self.start.month) & (self.gphddBym.index.year == self.start.year)]
+
+            previousMonth = self.gphddBym[(self.gphddBym.index.month == (self.start - pd.to_timedelta('1 d')).month) & (self.gphddBym.index.year == (self.start - pd.to_timedelta('1 d')).year)]
+            try:
+                self.prog_usage = float((previousMonth.values - current.values) / previousMonth.values)
+            except:
+                self.prog_usage = 0
+        else:
+            self.prog_usage = 0
+
+    def getGphddBym(self):
+
+
+        return pfuel.weather_adjusted_gallons_consumed_per_month(self.unfiltered_df, 'outT',
+                                                                 'fuel_consumption')
+
+    def getTotalCost(self):
+        return self.total_gallons * self.fuel_price
+    def getEstimatedTotalCost(self):
+        return self.estimated_total_gallons * self.fuel_price
+    def getGallonsPerFt(self):
+        return self.total_gallons / self.area
+    def getFuelByDay(self):
+       #return self.filtered_df.fuel_consumption.groupby(pd.Grouper(freq="D")).sum()
+        return self.filtered_df.fuel_consumption.groupby(self.filtered_df.index.to_period("D")).sum()
+    def getAveCostPerDay(self):
+        return self.ave_fuel_per_day[0] * self.fuel_price
     def getAveTemperature(self, t_field):
-        ave = self.filtered_df[t_field].mean()
-        sem = self.filtered_df[t_field].sem()
-        return ave, sem
+        dg = self.filtered_df[t_field].groupby(self.filtered_df.index.to_period("D")).mean()
+        mg = self.filtered_df.groupby(pd.Grouper(freq='M'))
+        ave = mg[t_field].mean()
+        sem = mg[t_field].sem()
+        df = pd.concat([ave, sem], axis=1)
+        df.columns = ['ave','sem']
+        return df, dg
     def getAveGPH_byHour(self):
         '''average gallons per hour for each hour interval in a day - hours 0-23
         :return pandas series with hour index'''
@@ -174,7 +210,7 @@ class Report:
     def compare2Neighbors(self):
         '''Generate neighborhood metrics based on Neighborhood defined in self.neighborhood
         self.houses are excluded from the neighborhood metrics'''
-        self.neighbor_usage = self.neighborhood.getTotalGallons(self.houses)
+        self.neighborhoodTotalUsage = self.neighborhood.getTotalGallons(self.houses)
         self.neighbor_usage_per_area = self.neighborhood.getMeanGallonsPerFt(self.houses) #self.houses are not included in neighborhood
         self.neighbor_area = self.neighborhood.getTotalArea(self.houses)
     def setNeighborhood(self,neighborhood):
@@ -194,6 +230,13 @@ class Report:
         actualTime = dailydf.sum()
         days = len(dailydf[dailydf > pd.to_timedelta(0.25, unit='day')]) #threshhold of 6 hours of data to be included in metrics
         return actualTime,days
+    def getEstimatedTotalGallons(self):
+        self.gpd_hdd = self.getEstimatedGallons()
+        return self.gpd_hdd['fuel_consumption'].sum()  # the total is the sum of all days (actual and estimated)
+    def getEstimatedTotalCost(self):
+        self.gpd_hdd = self.getEstimatedGallons()
+        self.total_gallons = self.gpd_hdd['fuel_consumption'].sum()
+        return self.getTotalCost()
     def getEstimatedGallons(self):
         '''estimate gallons for days without data
           and sum both the actual and estimated to produce an estimated total
@@ -218,10 +261,8 @@ class Report:
                 # fill missing fuel consumption days with average fuel/day
                 gpd_hdd.loc[pd.isnull(gpd_hdd['fuel_consumption']), 'fuel_consumption'] = self.ave_fuel_per_day[0]
 
+        return gpd_hdd
 
-        eg = gpd_hdd['fuel_consumption'].sum() #the total is the sum of all days (actual and estimated)
-
-        return eg
     def filterDataset(self):
         '''
         Read in the unified netcdf and generate dataframes of the necessary report data
@@ -245,7 +286,7 @@ class Report:
                                 'inT': uni_nc[s + '/Event/Clicks']['indoor_temp'][:],
                               'stove': [s] * len(uni_nc[s + '/Event/Clicks']['time'][:])
                               },
-                             index=pd.to_datetime(uni_nc[s + '/Event/Clicks']['time'][:],utc=True))
+                             index=pd.to_datetime(uni_nc[s + '/Event/Clicks']['time'][:],unit='s',utc=True))
             except KeyError as e:
                 print(e)
                 event_df = pd.DataFrame()
@@ -254,12 +295,13 @@ class Report:
                                 'inT': uni_nc[s + '/Time']['indoor_temp'][:],
                                 'deltaT':uni_nc[s + '/Time']['delta_temp'][:],
                                 'stove': [s] * len(uni_nc[s + '/Time']['time'][:])},
-                                        index=pd.to_datetime(uni_nc[s + '/Time']['time'][:], utc=True))
+                                        index=pd.to_datetime(uni_nc[s + '/Time']['time'][:], unit='s',utc=True))
             except KeyError as e:
                 print(e)
                 timed_df = pd.DataFrame()
 
             df = pd.concat([event_df,timed_df],axis=0)
+
             if len(df)>0:
                 df.index = df.index.tz_convert(timezone) #convert to Alaska time so report reflects metrics based on local conditions
                 df = df.sort_index(0)
@@ -269,10 +311,38 @@ class Report:
         filtered_df_list = [makeCombinedDataframe(s.name) for s in self.stoves]
 
         filtered_df = pd.concat(filtered_df_list)
+
         filtered_df = filtered_df.sort_index(0)
-        studyStart = datetime.datetime.strptime('2019-09-01 00:00:00',"%Y-%m-%d %H:%M:%S")
+        studyStart = datetime.datetime.strptime('2017-09-01 00:00:00',"%Y-%m-%d %H:%M:%S")
         studyStart = timezone.localize(studyStart, timezone)
+        dataStart = min(filtered_df[studyStart:][pd.notnull(filtered_df.deltaT)].index) #drop records that are earlier than our actual data collection
+        filtered_df = filtered_df[dataStart:]
         return filtered_df[self.start:self.end], filtered_df[studyStart:self.end] #all records up to end date
+
+    def findImage(self,path,name):
+        filenames = [f for f in os.listdir(path) if (name in f) & (f[-3:] == "png")]
+        if (len(filenames) > 0):
+            filename = filenames[0]
+            return os.path.join(path, filename)
+        return
+    def findSpatialImage(self, name):
+        path = os.path.join(*["..","..","R","Spatial"])
+        return self.findImage(path,name)
+
+    def findTemperatureImage(self, name):
+        path = os.path.join(*["..", "..", "R"])
+        return self.findImage(path, name)
+
+    def copyfile(self,source, destination):
+        shutil.move(source,destination)
+        return
+    def moveModelImages(self, ReportDirectory):
+        spatial_image = self.findSpatialImage(self.name)
+        temperature_image = self.findTemperatureImage(self.name)
+        newName = os.path.join(ReportDirectory, os.path.basename(spatial_image)[len(self.name):])
+        self.copyfile(spatial_image,newName)
+        newName = os.path.join(ReportDirectory, os.path.basename(temperature_image)[len(self.name):])
+        self.copyfile(temperature_image, newName)
 
 
 class MonthlyReport(Report):
@@ -281,6 +351,12 @@ class MonthlyReport(Report):
         super(MonthlyReport, self).__init__(start,end,title,nc,houses,fuel_price)
         if isinstance(fuel_price,pd.Series):
             self.fuel_price = fuel_price[start:end].mean()
+
+    def getAveTemperature(self, t_field):
+        allMonths = super().getAveTemperature(t_field) #allMonths is a tuple with dataframe as first record
+
+        return allMonths[0], allMonths[1] #the ave and sem for month of report
+
     def calculated_monthly_data(self):
 
         self.filtered_df.hdd = ptemp.heat_degree_day(pd.filtered_df,65)
@@ -305,15 +381,16 @@ class MonthlyReport(Report):
                                         self.fuel_price,
                                         self.ave_fuel_per_day[0],
                                         self.total_cost,
-                                        self.cost_per_day,
+                                        self.ave_cost_per_day,
                                         self.neighbor_usage_per_area[0],
                                         self.prog_usage,
                                         self.name,
-                                        self.ave_indoorT[0],
-                                        self.ave_outdoorT[0],
+                                        self.ave_MonthlyindoorT['ave'],
+                                        self.ave_MonthlyoutdoorT['ave'],
                                         self.tip_no,
                                         self.dataFlag,
-                                        self.days_monitored[1]
+                                        self.days_monitored[1],
+                                        len(self.neighborhood.houses)
                                         )
 
         #if this is the first report for the dataset don't compare to anything
@@ -334,7 +411,7 @@ class MonthlyReport(Report):
     def makePlots(self):
         '''produces pngs of plots specific to this report'''
         os.chdir(self.name)
-        pplot.plot_bar_progress(self.gphddpm,
+        pplot.plot_bar_progress(self.gphddBym,
                                 'monthly_track_your_progress.png')
 
 
@@ -344,20 +421,3 @@ class MonthlyReport(Report):
                                                 'monthly_polar_plot.png')
         os.chdir("..")
 
-class MultiMonthReport(Report):
-    def __init__(self,start,end,title,nc,houses,monthly_fuel_price):
-        super(MultiMonthReport, self).__init__(start,end,title,nc,houses,monthly_fuel_price)
-
-    # def calculateMonthlyData(self):
-    #     ranges = pd.DataFrame(index = pd.date_range(self.start,self.end,freq='M'))
-    #     ranges['start'] = pd.Series(pd.to_datetime(ranges.index), index=ranges.index).apply(
-    #         lambda dt: dt.replace(day=1))
-    #     ranges['end'] = ranges['start'].apply(lambda st: st.replace(day=st.days_in_month))
-    #
-    #     for month,i in enumerate(ranges):
-    #         self.collection.append()
-    def getAveTemperature(self, t_field):
-        grouped = self.filtered_df.groupby(pd.Grouper(freq="M"))
-        ave = grouped[t_field].mean()
-        sem = grouped[t_field].sem()
-        return ave, sem

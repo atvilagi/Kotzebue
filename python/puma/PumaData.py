@@ -11,6 +11,7 @@ import multiprocessing as mp
 import yaml
 import pandas as pd
 import pytz
+import datetime
 
 
 from puma.Stove import Stove
@@ -241,6 +242,7 @@ class PumaData:
 
     def fill_nc(self,nc_file,v,data):
         #Filling the netCDF4 files
+        print(v)
         nc_file[v][:] = data[v].values
 
     def nc_transfer_variables(self,old_nc,new_nc,variables):
@@ -325,7 +327,6 @@ class PumaData:
 
         #read and merge all datafiles per stove
         for stove in stoves:
-
             merged_file.createGroup(stove.name)
 
             #Creating a netCDF4 group for each stove
@@ -424,7 +425,7 @@ class PumaData:
             # recursively read the stove data into a dataframe
             stove_data = self.dir2data()
             os.chdir('..')
-
+            print(stove.name)
             [self.fill_nc(merged_file[stove.name+'/Raw'],v, stove_data) for v in raw_variables]
             #make the end date the end of the month
             timezone = pytz.timezone('UTC')
@@ -447,7 +448,9 @@ class PumaData:
             #these values can be identified as records with NA for cumulative_clicks (this will include temperature only records)
             #as a cautionary note both temperature and stove data can be missing chunks of time
             #if there is no stove time, temperature timestamp is used as a substitute
+            stove_data['time'] = (stove_data['time'] - datetime.datetime(1970, 1, 1, tzinfo=pytz.timezone('UTC'))).dt.total_seconds()
             stove_data.loc[pd.isnull(stove_data['time']),'time'] = stove_data.loc[pd.isnull(stove_data['time']),'outTime']
+            print(stove.name)
             [self.fill_nc(merged_file[stove.name+'/Time'],v,stove_data[pd.isnull(stove_data['cumulative_clicks'])]) for v in time_variables]
 
             #events are records with cumulative click values

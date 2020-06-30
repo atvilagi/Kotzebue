@@ -88,8 +88,6 @@ except:
 
 
 
-
-
 for house in neighborhood.houses:
     try:
         print("starting house: ", house.name)
@@ -120,16 +118,6 @@ for house in report_houses:
             house.report.makePlots()
             house.report.writeReport()
 
-
-#TODO remove test metric printing
-for house in neighborhood.houses:
-    print(house.name)
-    print("total gallons: ",house.report.total_gallons)
-    print("gallons per ft: ", house.report.gallons_per_ft)
-    print("gallons per hdd: ",house.report.gphddpm)
-    print("neighborhood gallons: ",house.report.neighbor_usage_per_area)
-    print("report duration: ", house.report.report_duration)
-    print("monitored days: ", house.report.days_monitored[1])
 
 
 pbash.bash_monthly_reports(dateRange)

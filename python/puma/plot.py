@@ -7,18 +7,12 @@ import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from scipy.interpolate import make_interp_spline, BSpline
+import puma.stats as stats
 #from pandas.plotting import register_matplotlib_converters #this is here to shutup matplotlib warnings
 
-"""
-colors:
-    
-green [46,204,113]
-orange [230,126,34]
-blue [52,152,219]
-purple [155,89,182]
-red [231,76,60]
-"""
-
+colors = np.array([[255,16,16],[174, 19, 67],[94, 22, 119],[25, 25, 164],[4, 4, 89]])/255
+#colors = np.array([[255,16,16],[174, 19, 67],[94, 22, 119],[25, 25, 164],[4, 4, 89]])
 def polar_flow_plot_per_month_df(label,data,fname):
     """
     Plots a polar flow plot of the hourly flow rate of a month.
@@ -51,6 +45,65 @@ def polar_flow_plot_per_month_df(label,data,fname):
     data_theta.index = t_theta
 
     polar_flow_plot(data,t_theta,data_theta, fname) #plotting using the polar_flow_plot function
+def seasonal_polar_flow_plot(ave_gal_by_hour_by_season,fname):
+    seasons =[None,'Winter','Spring','Summer','Fall']
+    fig = plt.figure(figsize=(7, 7), dpi=200)
+    ax = fig.add_subplot(111, polar=True)
+    dtMax = 0
+    maxI = (1,0)
+    dailyMax = max(ave_gal_by_hour_by_season['fuel_consumption'].groupby('season').sum())
+    for season in set(ave_gal_by_hour_by_season.index.levels[0]):
+        data = ave_gal_by_hour_by_season[np.in1d(ave_gal_by_hour_by_season.index.get_level_values(0), [season])]
+        if (len(data) < 24) & (len(data) > 0):
+            fillData = pd.Series([0] * 24, pd.Index(range(0, 24, 1)))
+            data1 = pd.concat([data, fillData], axis=1)
+            data1.loc[pd.isnull(data1.iloc[:, 0]), 0] = data1.iloc[:1]
+            # data1.loc[pd.isnull(data1['fuel_consumption']), 0] = data1[0]
+            data = data1.iloc[:, 0]
+        elif (len(data) <= 0):
+            data = pd.Series(np.zeros(24))
+        #each hour is 1/24 of 360 degrees (15 degrees)
+        t_theta = np.radians([15] * (len(data) + 1)).cumsum()
+        #daily average  = 360 degrees
+        #hourly value is proportion of daily average scaled to 360 converted to radians
+
+        data_theta = np.radians((data/dailyMax) * 360)
+        data_theta.index = data_theta.index.levels[1]
+        data_theta.loc[24] = data_theta.loc[0]
+
+        t_theta[24] = t_theta[0]
+        data_theta.index = t_theta
+        data_theta = data_theta['fuel_consumption']
+
+        if (data_theta.sum() > 0):
+
+            plt.polar(t_theta, data_theta, linewidth=3, color=colors[season - 1], label=seasons[season])
+            if np.nanmax(data_theta) > dtMax:
+                dtMax = np.nanmax(data_theta)
+                maxI = (season, int(np.where(data_theta == dtMax)[0]))
+
+    plt.rgrids((dtMax / 3, 2 * dtMax / 3, dtMax,
+                3.5 * dtMax / 3), labels=(float(round((ave_gal_by_hour_by_season.loc[maxI] / 3), 2)),
+                                                          float(round((2 * ave_gal_by_hour_by_season.loc[maxI] / 3), 2)),
+                                                          float(round(ave_gal_by_hour_by_season.loc[maxI], 2)), ''),
+               angle=90, fontsize=14)
+    plt.polar([-5 * np.pi / 4, -5 * np.pi / 4], [0, 3.5 * dtMax / 3], linewidth=4, color=[0, 0, 0])
+    # adding break line
+    plt.polar([-np.pi / 4, -np.pi / 4], [0, 3.5 * dtMax / 3], linewidth=4, color=[0, 0, 0])
+    # plt.polar(t_theta, data_theta, linewidth=3, color=colors[season-1], label='$gal/hr$')
+    plt.text(np.pi / 4, dtMax / 3, 'Night', fontsize=14)
+    plt.text(3.92699, dtMax / 3, 'Day', fontsize=14)
+    plt.thetagrids((0, 45, 90, 135, 180, 225, 270, 315), ('00:00', '03:00', '06:00', '09:00',
+                                                          '12:00', '15:00', '18:00', '21:00'), fontsize=20)
+    plt.title('Hourly Fuel Consumption Rate\n', fontsize=28)
+    ax.tick_params(pad=14)
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 - 0.1, box.width, box.height])
+    # Put a legend to the right of the current axis
+    plt.legend(bbox_to_anchor=(1.1, -0.1), fontsize=14,ncol=4)
+    plt.tight_layout()
+    plt.savefig(fname)
+    plt.close('all')
 
 def polar_flow_plot(data,t_theta,data_theta,fname):
     """
@@ -79,15 +132,51 @@ def polar_flow_plot(data,t_theta,data_theta,fname):
     plt.legend(bbox_to_anchor = (.35,.03),fontsize = 14)
     plt.tight_layout()
     plt.savefig(fname)
-    plt.close()
+    plt.close('all')
+def plot_annual_fuel_usage(gal_by_year,fname):
+    plt.figure(figsize=(9, 6), dpi=200)
+    WIDTH = 0.8
+    adjWidth = WIDTH/len(list(set(gal_by_year.index.tolist())))
+    textDrop = min(gal_by_year.min() *0.12)
+    plt.subplot(111)
+    tickCollection = []
+    for i,year in enumerate(list(set(gal_by_year.index.tolist()))):
+        bars = plt.bar([year-(adjWidth * 0.5), year + (adjWidth * 0.5)],
+                [gal_by_year.loc[year, 'you'],gal_by_year.loc[year, 'fuelPerMonthPerArea']],
+                color=[colors[0],colors[2]], width=adjWidth,label=('you','neighbors'))
+
+        plt.text(year-(adjWidth * 0.5), gal_by_year.loc[year, 'you'] - textDrop,
+                        str(round(gal_by_year.loc[year, 'you'], 4)),
+                        horizontalalignment='center', fontsize=20)
+        plt.text(year +(adjWidth * 0.5), gal_by_year.loc[year, 'fuelPerMonthPerArea'] - textDrop,
+                 str(round(gal_by_year.loc[year, 'fuelPerMonthPerArea'], 4)),
+                 horizontalalignment='center', fontsize=20)
+        tickCollection=tickCollection + [year-(adjWidth * 0.5), year + (adjWidth * 0.5)]
+        plt.yticks([])
+
+    plt.xticks(tickCollection, ['You', 'Your Neighbor$^*$'], fontsize=20)
+    plt.title('Fuel Consumption per Area\n', fontsize=28)
+    plt.ylabel('Average Monthly $gal/ft^2$',fontsize=20)
+    plt.yticks([])
+    plt.xticks(list(set(gal_by_year.index.tolist())), list(set(gal_by_year.index.tolist())), fontsize=20)
+    plt.xlabel('\n* Your neighbor is the average of other FNSB\nhouseholds participating in this study.',
+               fontsize=16)
+    plt.box(True)
+    #plt.legend(iter(bars), ('you', 'neighbor'), loc='upper center', fontsize=14)
+    ax = plt.axes()
+    box = ax.get_position()
+
+    ax.set_position([box.x0, box.y0 + textDrop, box.width, box.height])
+    # Put a legend to the right of the current axis
+    plt.legend(iter(bars), ('you', 'neighbor'),loc='lower center',bbox_to_anchor=(0.5, -0.1),ncol=2)
+    plt.tight_layout()
+    plt.savefig(fname)
+    plt.close('all')
 
 def plot_fuel_usage(your_gal,their_gal,fname):
-    
-    colors = np.array([[46,204,113],[52,152,219]])/255
     bar_text_height = their_gal
-    
     if your_gal > their_gal:
-        colors = np.array([[231,76,60],[52,152,219]])/255
+        #colors = np.array([[231,76,60],[52,152,219]])/255
         bar_text_height = your_gal
         
     plt.figure(figsize = (9,6), dpi = 200)
@@ -105,9 +194,52 @@ def plot_fuel_usage(your_gal,their_gal,fname):
     plt.box(False)
     plt.tight_layout()
     plt.savefig(fname)
+    plt.close('all')
+
+def plot_multiyear_bar_progress_with_temperature(gphddpm,monthlyMeanTemperature, fname):
+    '''plots gallons per hour for each month and each year with mean monthy tempearture.
+    Each year is its own series.'''
+
+    gphddpm.loc[pd.isnull(gphddpm)] = 0
+    monthlyMeanTemperature = monthlyMeanTemperature.interpolate()
+
+    plt.figure(figsize=(14, 6))
+
+    fig, ax1 = plt.subplots()
+    WIDTH = 0.8
+
+    widthRatio = WIDTH/len(set(gphddpm.index.year))
+    for i,y in enumerate(list(set(gphddpm.index.year))):
+        X = (gphddpm[gphddpm.index.year == y].index.month + (i+1) * widthRatio) - WIDTH *0.5
+        bars = ax1.bar(X, gphddpm[gphddpm.index.year == y], width=widthRatio, color=colors[i])
+
+
+    ax1.set_ylim(0, max(gphddpm) * 1.2)
+    ax1.set_ylabel('\ngal/HDD*', fontsize=14)
+    # now monthly outside temperature
+    axes2 = ax1.twinx()
+    axes2.set_ylabel('Average Temperature $^\circ$F',fontsize=14)
+    axes2.set_ylim(min(monthlyMeanTemperature), max(monthlyMeanTemperature) * 1.1)
+    l, r = [(2, 0)], [(2, 0)]
+    for i,y in enumerate(list(set(gphddpm.index.year))):
+        T = monthlyMeanTemperature[monthlyMeanTemperature.index.year == y].index.month.tolist()
+        power = monthlyMeanTemperature[monthlyMeanTemperature.index.year == y]
+        xnew = np.linspace(min(monthlyMeanTemperature[monthlyMeanTemperature.index.year == y].index.month.tolist()), max(monthlyMeanTemperature[monthlyMeanTemperature.index.year == y].index.month.tolist()),
+                           len(monthlyMeanTemperature[monthlyMeanTemperature.index.year == y])*10)
+        if (len(T) > 1):
+            spl = make_interp_spline(T, power, k=3,bc_type=(l, r))  # type: BSpline
+            smoothed = spl(xnew)
+            #smoothed = spline(monthlyMeanTemperature[monthlyMeanTemperature.index.year == y].index.month.tolist(), monthlyMeanTemperature[monthlyMeanTemperature.index.year == y], xnew)
+            line = axes2.plot(xnew,smoothed, label=y,c=colors[i])
+
+    xticks = [datetime.date(1900, j, 1).strftime('%b') for j in range(min(gphddpm.index.month), max(gphddpm.index.month) + 1)]
+    plt.xticks([j for j in range(min(gphddpm.index.month), max(gphddpm.index.month) + 1)], xticks, fontsize=22, rotation=0)
+    plt.xlabel('\nTemperature Adjusted Gallons per Month', fontsize=22)
+
+    plt.box(False)
+    plt.legend(bbox_to_anchor=(.73, 0.98), fontsize=14)
+    plt.savefig(fname, bbox_inches='tight')
     plt.close()
-
-
 
 def plot_bar_progress(gphddpm, fname):
     '''
@@ -117,31 +249,32 @@ def plot_bar_progress(gphddpm, fname):
     :return:
     '''
     #ym.strftime('%b %y'))
-    order = pd.Series(gphddpm[gphddpm > 0].index, index=gphddpm[gphddpm > 0].index)
-    df = pd.DataFrame({'gphddpm':gphddpm[gphddpm > 0],'sort_order':order})
-    customMonthOrder = {9:1, 10:2, 11:3, 12:4, 1:5,2:6,3:7,4:8,5:9,6:10}
-    df['sort_order'] = df['sort_order'].replace(customMonthOrder)
-
-    x =df.sort_values('sort_order', 0).index
-    x = pd.Series(x)
-    colors = np.array([155, 89, 182]) / 255
+    data = pd.DataFrame({'value':gphddpm.values,'month':gphddpm.index.month}, index = gphddpm.index)
 
     plt.figure(figsize=(14, 6))
     plt.subplot(111)
-    bars = plt.bar(df['sort_order'].values, df['gphddpm'], width=0.6, color=colors)
-    for rect in bars:
-        height = rect.get_height()
-        if height > 0:
-            plt.text(rect.get_x() + rect.get_width()/2, height, str(round(height,4)) + '\ngal/HDD*',
-                     horizontalalignment='center', verticalalignment = 'bottom', fontsize=18)
-        else:
-            plt.text(rect.get_x() + rect.get_width()/2, height + (np.nanmax(gphddpm) * 0.5), 'No\nData',
-                     horizontalalignment='center',verticalalignment = 'bottom', fontsize=18)
+    WIDTH = 0.8
+    widthRatio = WIDTH / len(set(data.index.year))
+    for i, y in enumerate(list(set(gphddpm.index.year))):
+        X = (data[data.index.year == y].index.month + (i + 1) * widthRatio) - WIDTH * 0.5
+        bars = plt.bar(X, data.loc[data.index.year == y,'value'].values, width=widthRatio, color=colors[i])
+
+        for rect in bars:
+            height = rect.get_height()
+            if height > 0:
+                plt.text(rect.get_x() + rect.get_width()/2, height, str(round(height,3)),
+                         horizontalalignment='center', verticalalignment = 'bottom', fontsize=12)
+            else:
+                plt.text(rect.get_x() + rect.get_width()/2, height + (np.nanmax(data) * 0.5), 'N\A',
+                         horizontalalignment='center',verticalalignment = 'bottom', fontsize=12)
     plt.yticks([])
-    xticks = [datetime.date(1900, [key for key, value in customMonthOrder.items() if value == j][0], 1).strftime('%b')
-              for j in range(min(df['sort_order']), max(df['sort_order']) + 1)]
-    plt.xticks([j for j in range(min(df['sort_order']), max(df['sort_order']) + 1)],xticks , fontsize=22,rotation=0)
+    #xticks = [datetime.date(1900, [key for key, value in customMonthOrder.items() if value == j][0], 1).strftime('%b')
+      #        for j in range(min(df['sort_order']), max(df['sort_order']) + 1)]
+    xticks = [datetime.date(1900, h, 1).strftime('%b') for h in range(1,13)]
+    #plt.xticks([j for j in range(min(df['sort_order']), max(df['sort_order']) + 1)],xticks , fontsize=22,rotation=90)
+    plt.xticks([j for j in range(1, 13)], xticks, fontsize=18, rotation=90)
     plt.xlabel('\nTemperature Adjusted Gallons per Month', fontsize=22)
+    plt.ylabel( '\ngal/HDD*',fontsize=22)
     plt.box(False)
-    plt.savefig(fname,bbox_inches='tight')
+    plt.savefig(fname)
     plt.close()

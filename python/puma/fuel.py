@@ -1,7 +1,7 @@
 #Fuel Consumption Rate Functions for PuMA
 
 #By T. Morgan
-
+import pandas as pd
 
 def gallons_consumed_per_month(df):
     gpm = df.groupby(df.index.to_period('M')).agg({'gallons': 'sum'})
@@ -23,6 +23,11 @@ def gallons_consumed_per_area(df,galColumn,area):
     :return: float value representing the sum of gallons divided by area'''
 
     return df[galColumn].sum()/area
+def gallons_per_hour_per_month_year(fuelConsomption):
+    ''':param: fuelConsumption pandas series with datetime index and numeric data'''
+    grouped = fuelConsomption.groupby(pd.Grouper(freq="M"))
+
+    gph_my = pd.concat([gallonsPerHour(grouped)])
 
 def gallons_per_day_and_per_month(df, galColumn):
     '''gallons consumed per day per month
@@ -46,17 +51,17 @@ def gallons_per_heating_degree_day(dailydf,galColumn, hddColumn):
 
 def weather_adjusted_gallons_consumed_per_month(df,temperatureColumn, galColumn):
     '''Weather adjusted gallons per month is the total gallons by day/ divided by the total temperature degree days.
-    :param df is a dataframe with temperature and fuel_consumption columns
+    :param df is a dataframe with temperature and fuel_consumption columns and datetime.index
     :param temperatureCoumn is the string name of the column containing temperature in F
     :param galColumn is the string name of the column containing fuel consumption in gallons'''
 
-    dailydf = df.groupby(df.index.to_period('D')).agg({temperatureColumn: 'mean'}) #daily outside temperature
-    dailydf[galColumn] = df.groupby(df.index.to_period('D')).agg({galColumn:'sum'}) #daily fuel consumption
+    dailydf = df.groupby(pd.Grouper(freq='D')).agg({temperatureColumn: 'mean'}) #daily outside temperature
+    dailydf[galColumn] = df.groupby(pd.Grouper(freq='D')).agg({galColumn:'sum'}) #daily fuel consumption
 
     dailydf['hdd'] = 65 - dailydf[temperatureColumn]#put hdd in the daily dataframe
     dailydf['gphhd'] = dailydf[galColumn]/dailydf['hdd'] #gallons per hdd
 
-    gphddpm = dailydf.groupby(dailydf.index.month).agg({'gphhd': 'mean'}) #average by month
+    gphddpm = dailydf.groupby(dailydf.index.to_period('M')).agg({'gphhd': 'mean'}) #Monthly means
     
     return gphddpm['gphhd'] #return the series
 

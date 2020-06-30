@@ -19,10 +19,9 @@ import wget
 from zipfile import ZipFile
 
 #TODO remove local test
-#os.chdir('E:\\PUMA\\fuelmeter-tools\\') #temporary fix for testing locally
+os.chdir('e:\\PUMA\\fuelmeter-tools\\') #temporary fix for testing locally
 snotel_file = os.path.join('..','..','data','tmp','snotel.zip')
 os.chdir(os.path.join('data','tmp'))
-
 
 if __name__ == '__main__':
 
@@ -52,5 +51,6 @@ if __name__ == '__main__':
     except:
         pass
 
-    myData = PumaData() #using default data locations
+    myData= PumaData("e:\\PUMA\\ftp-data")
+    #myData = PumaData() #using default data locations
     myData.puma2uni_nc()
