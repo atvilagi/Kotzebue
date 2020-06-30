@@ -159,13 +159,6 @@ FBK038:
   Square Footage: '624'
   Report: False
   Stove: 'FBK038'
-FBK039:
-  Location:
-  - 64.89185
-  - -147.755
-  Square Footage: '760'
-  Report: True
-  Stove: 'FBK039'
 FBK040:
   Location:
   - 64.84648
