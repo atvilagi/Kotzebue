@@ -36,7 +36,7 @@ class Neighborhood:
         subprocess.call(["C:\\Program Files\\R\\R-4.0.0\\bin\\x64\\RScript", "--vanilla", rsource], shell=True) #images are placed in report folders
 
         # generate the glmm spatial pngs
-        processPath = "E:\\PUMA\\fuelmeter-tools\\R"
+        processPath = "..\\..\\R"
         rscript = "spatial_model.R"
         rsource = os.path.join(processPath, rscript)
 
