@@ -1,10 +1,10 @@
 # Projet: fuelmeter-tools
 # Created by: # Created on: 5/7/2020
-from python.puma.Report import Report
+from puma.Report import Report
 import pandas as pd
 import numpy as np
-import python.puma.plot as pplot
-import python.puma.tex as ptex
+import puma.plot as pplot
+import puma.tex as ptex
 import datetime
 #import python.puma.stats as stats
 import os
@@ -47,9 +47,10 @@ class MultiMonthReport(Report):
             else:
                 self.cost_per_day = self.getCostPerDay(self.fuel_by_day)
         self.cost_per_month = self.cost_per_day.groupby(pd.Grouper(freq="M")).sum()
-    def getTotalCost(self, galByDay):
+    def getTotalCost(self):
         #get a hdd corrected estimate
-        costPerDay = self.getCostPerDay(galByDay)
+
+        costPerDay = self.getCostPerDay(self.gpd_hdd)
         return costPerDay.sum()
     def compare2Neighbors(self):
         super().compare2Neighbors()
@@ -77,18 +78,18 @@ class MultiMonthReport(Report):
 
         # #outDoor = pd.concat([self.ave_outdoorT[0],self.gphddpm], axis=1,join = 'outer')
         outDoor = self.ave_MonthlyoutdoorT['ave']
-        if len(set(self.gphddBym.index.year))> 2:
-            pplot.plot_multiyear_bar_progress_with_temperature(self.gphddBym, outDoor,
+        # if len(set(self.gphddBym.index.year))> 2:
+        pplot.plot_multiyear_bar_progress_with_temperature(self.gphddBym, outDoor,
                                     'monthly_track_your_progress.png')
-        else:
-            pplot.plot_bar_progress(self.gphddBym, 'monthly_track_your_progress.png')
+        # else:
+        #     pplot.plot_bar_progress(self.gphddBym, 'monthly_track_your_progress.png')
 
-        if 'yearly_neighbor_usage_per_area' in self.__dict__:
-            you = self.getMeanGallonsPerMonthPerAreaByYear()
-            you.index = self.gallons_per_ft.index.year
-            you.name = 'you'
-            df = pd.concat([you, self.yearly_neighbor_ave_monthly_usage_per_area], join='inner', axis=1)
-            pplot.plot_annual_fuel_usage(df, 'monthly_fuel_usage.png')
+
+        you = self.getMeanGallonsPerMonthPerAreaByYear()
+
+        you.name = 'you'
+        df = pd.concat([you, self.yearly_neighbor_ave_monthly_usage_per_area], join='inner', axis=1)
+        pplot.plot_annual_fuel_usage(df, 'fuel_usage.png')
 
         gph = pd.DataFrame(self.gph,index = self.gph.index)
         gph['season'] = 0
@@ -99,6 +100,7 @@ class MultiMonthReport(Report):
         ave_gal_by_hour_by_season = gph.groupby([gph.season, gph.index.hour]).mean()
         pplot.seasonal_polar_flow_plot(ave_gal_by_hour_by_season,
                                                 'seasonal_polar_plot.png')
+
 
         os.chdir("..")
     def getAveCostPerYear(self):

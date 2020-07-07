@@ -32,6 +32,8 @@ def write_multimonth_tex_var_file(reportRange,Total_Usage,meanMonthly_Usage_per_
 
     if len(highMonths) <1:
         highMonthString = ""
+    elif (len(highMonths) == 1):
+        highMonthString = 'Your highest consumption month was ' + highMonths[0]
     elif len(highMonths) == 2:
         highMonthString = histString + str(highMonths[0]) + ' and ' + str(highMonths[1]) + "."
     else:
@@ -46,6 +48,8 @@ def write_multimonth_tex_var_file(reportRange,Total_Usage,meanMonthly_Usage_per_
     resultTable = []
     for row in tableRows:  # table rows is a list of tuples
         myList = [v.replace('nan', '--') for v in row]
+        if '--' in myList:
+            myList = [myList[0]] + ['--' for v in myList[1:]]
         newRow= tuple(myList)
         resultTable.append(" & ".join(newRow))
     rows = r"\\".join(resultTable) + r"\\"
@@ -152,8 +156,7 @@ def write_multimonth_tex_report_file(stove,current):
       Fuel Usage Report}}
        \end{center}
 
-    \begin{center}
-  
+    \begin{center}  
    
    \vspace{8pt}
 
@@ -173,18 +176,18 @@ def write_multimonth_tex_report_file(stove,current):
  
    &&  
   \begin{minipage}{\linewidth}
-\underline{ Summary:}\\
-
-
+ \vspace{2pt}  
+\underline{ Summary:}\vspace{4pt}  \\
+   \vspace{2pt}
 Total Usage: {\totalusage} gal\\
-
+   \vspace{2pt}
 Total Days Monitored: {\daysmonitored}\\
-
+   \vspace{2pt}
 Average Indoor Temperature: {\inTave} {\degree}F\\
-
+   \vspace{2pt}
 Total Cost: \${\totalcost}\\
-
-Average Annual Cost: \${\annualcost}\\
+   \vspace{2pt}
+\underline{Average Annual Cost: \${\annualcost}}\\
 
 \tiny{\qualify}
 
@@ -193,21 +196,24 @@ Average Annual Cost: \${\annualcost}\\
  \end{tabu} 
    \end{center}
    
-   \begin{center}
-   \vspace{8pt}
+  \vspace{8pt}
+\begin{center}
     \textbf{\large{Mean Daily Fuel Consumption During Cold Weather Months}\textsuperscript{*}}\\
-   
-     \includegraphics[height= 4.5in]{spatial_fuel.png}\\
-      \end{center}
-      \tiny{*Months used to calculate average fuel consumption were September through April }
-  
+     \includegraphics[height= 2.5in]{spatial_fuel.png}\\       
+      \tiny{*Months used to calculate average fuel consumption were September through April. }
+  \end{center}  
+\vspace{4pt}
+\begin{center} 
+  \textbf{\large{Mean Fuel Consumption per Area}\textsuperscript{*}}\\     
+       \includegraphics[height= 2.5in]{fuel_usage.png}\\
+         \tiny{*Your Neigthbor is the average of other FNSB households participating in this study. }
+\end{center}  
   \newpage 
     \vspace{8pt}
-    \small
+    
     \begin{center}
    
-    {\highmonths}\\
-     \vspace{8pt}
+   
     \textbf{\large{Annual Fuel Consumption and Mean Monthly Temperature}}\\
     \vspace{8pt}
     \includegraphics[height= 3in]{monthly_track_your_progress.png}\\
@@ -216,6 +222,9 @@ Average Annual Cost: \${\annualcost}\\
     
     \vspace{16pt}
     \begin{center}
+    \small
+     {\highmonths}\\
+     \vspace{8pt}
     \textbf{\large{Your Home's Fuel Usage for the Duration of This Study}}\\
     \vspace{16pt}
     {\resultTable}\\
@@ -223,8 +232,11 @@ Average Annual Cost: \${\annualcost}\\
     \vspace{4pt}
     \tiny{*cost estimates are based on a static fuel price of \${\fuelprice} per gallon}
     \newpage
-    
-
+    \begin{center} 
+   \textbf{\large{Your Seasonal Diurnal Fuel Consumption Pattern}}\\
+  \textbf{\small{  (Gallons per Hour)  }}\\       
+       \includegraphics[height= 3in]{seasonal_polar_plot.png}\\
+\end{center}  
        \begin{minipage}{\linewidth}
        \begin{varwidth}{1\textwidth}
 

@@ -80,7 +80,7 @@ def seasonal_polar_flow_plot(ave_gal_by_hour_by_season,fname):
             plt.polar(t_theta, data_theta, linewidth=3, color=colors[season - 1], label=seasons[season])
             if np.nanmax(data_theta) > dtMax:
                 dtMax = np.nanmax(data_theta)
-                maxI = (season, int(np.where(data_theta == dtMax)[0]))
+                maxI = (season, int(np.where(data_theta == dtMax)[0][0]))
 
     plt.rgrids((dtMax / 3, 2 * dtMax / 3, dtMax,
                 3.5 * dtMax / 3), labels=(float(round((ave_gal_by_hour_by_season.loc[maxI] / 3), 2)),
@@ -133,34 +133,34 @@ def polar_flow_plot(data,t_theta,data_theta,fname):
     plt.tight_layout()
     plt.savefig(fname)
     plt.close('all')
+
 def plot_annual_fuel_usage(gal_by_year,fname):
     plt.figure(figsize=(9, 6), dpi=200)
     WIDTH = 0.8
     adjWidth = WIDTH/len(list(set(gal_by_year.index.tolist())))
-    textDrop = min(gal_by_year.min() *0.12)
+    textDrop = min(gal_by_year.min() * 0.12)
     plt.subplot(111)
     tickCollection = []
     for i,year in enumerate(list(set(gal_by_year.index.tolist()))):
-        bars = plt.bar([year-(adjWidth * 0.5), year + (adjWidth * 0.5)],
-                [gal_by_year.loc[year, 'you'],gal_by_year.loc[year, 'fuelPerMonthPerArea']],
+        bars = plt.bar([year.year-(adjWidth * 0.5), year.year + (adjWidth * 0.5)],
+                [gal_by_year.loc[year, 'you'],gal_by_year.loc[year, 'meanfuelPerMonthPerArea']],
                 color=[colors[0],colors[2]], width=adjWidth,label=('you','neighbors'))
 
-        plt.text(year-(adjWidth * 0.5), gal_by_year.loc[year, 'you'] - textDrop,
+        plt.text(year.year-(adjWidth * 0.5), gal_by_year.loc[year, 'you'],
                         str(round(gal_by_year.loc[year, 'you'], 4)),
                         horizontalalignment='center', fontsize=20)
-        plt.text(year +(adjWidth * 0.5), gal_by_year.loc[year, 'fuelPerMonthPerArea'] - textDrop,
-                 str(round(gal_by_year.loc[year, 'fuelPerMonthPerArea'], 4)),
+        plt.text(year.year +(adjWidth * 0.5), gal_by_year.loc[year, 'meanfuelPerMonthPerArea'],
+                 str(round(gal_by_year.loc[year, 'meanfuelPerMonthPerArea'], 4)),
                  horizontalalignment='center', fontsize=20)
-        tickCollection=tickCollection + [year-(adjWidth * 0.5), year + (adjWidth * 0.5)]
+        tickCollection=tickCollection + [year.year-(adjWidth * 0.5), year.year + (adjWidth * 0.5)]
         plt.yticks([])
 
     plt.xticks(tickCollection, ['You', 'Your Neighbor$^*$'], fontsize=20)
-    plt.title('Fuel Consumption per Area\n', fontsize=28)
+
     plt.ylabel('Average Monthly $gal/ft^2$',fontsize=20)
     plt.yticks([])
-    plt.xticks(list(set(gal_by_year.index.tolist())), list(set(gal_by_year.index.tolist())), fontsize=20)
-    plt.xlabel('\n* Your neighbor is the average of other FNSB\nhouseholds participating in this study.',
-               fontsize=16)
+    plt.xticks([y.year for y in list(set(gal_by_year.index.tolist()))], [y.year for y in list(set(gal_by_year.index.tolist()))], fontsize=20)
+
     plt.box(True)
     #plt.legend(iter(bars), ('you', 'neighbor'), loc='upper center', fontsize=14)
     ax = plt.axes()
@@ -168,7 +168,7 @@ def plot_annual_fuel_usage(gal_by_year,fname):
 
     ax.set_position([box.x0, box.y0 + textDrop, box.width, box.height])
     # Put a legend to the right of the current axis
-    plt.legend(iter(bars), ('you', 'neighbor'),loc='lower center',bbox_to_anchor=(0.5, -0.1),ncol=2)
+    plt.legend(iter(bars), ('you', 'neighbor'),loc='upper center',bbox_to_anchor=(0.5, -0.1),ncol=2)
     plt.tight_layout()
     plt.savefig(fname)
     plt.close('all')
@@ -182,15 +182,12 @@ def plot_fuel_usage(your_gal,their_gal,fname):
     plt.figure(figsize = (9,6), dpi = 200)
     plt.subplot(111)
     plt.bar([1,2],[your_gal,their_gal],color = colors,width = .6)
-    plt.title('Fuel Consumption per Area\n',fontsize = 28)
     plt.text(1,your_gal + .05*bar_text_height,str(round(your_gal,4)) + ' $gal/ft^2$',
              horizontalalignment='center',fontsize=20)
     plt.text(2,their_gal + .05*bar_text_height,str(round(their_gal,4)) + ' $gal/ft^2$',
              horizontalalignment='center',fontsize=20)
     plt.yticks([])
     plt.xticks([1,2],['You','Your Neighbor$^*$'],fontsize=20)
-    plt.xlabel('\n* Your neighbor is the average of other FNSB\nhouseholds participating in this study.',
-               fontsize = 16)
     plt.box(False)
     plt.tight_layout()
     plt.savefig(fname)

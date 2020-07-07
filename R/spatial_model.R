@@ -94,7 +94,7 @@ rfuel<-rasterize(spatialLandscape,r)
 for (stove in houses$stove){
 
   png(paste(stove,"spatial_fuel.png", sep = ""),width=800, height=500)
-  par(mar=c(0,0,0,4), oma=c(1,0,0,4))
+  par(mar=c(0,0,0,4), oma=c(0,4,0,4))
   plot(myhillshade,ylim=c(e[3]-1000,e[4]+ 1000),xlim=c(e[1]-1000,e[2]+1000), axes=FALSE, legend=FALSE,box = FALSE, col = grey(1:100/100))
 
   plot(rfuel$newValues,ylim=c(e[3]-1000,e[4]+ 1000),xlim=c(e[1]-1000,e[2]+1000), axes=FALSE, box = FALSE, legend=TRUE, legend.args=list(text=expression(paste("gallons per ft"^"2", sep = "")), side=4, font=2, line=4, cex=1),col = heat.colors(5, rev=TRUE), add=TRUE, alpha=0.4)

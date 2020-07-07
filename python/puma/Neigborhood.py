@@ -75,10 +75,9 @@ class Neighborhood:
         return mg,std
     def getMeanMonthlyGPFByYear(self,excludeHouses):
         mg = pd.concat([h.report.getMeanGallonsPerMonthPerAreaByYear() for h in self.houses if (h.name not in excludeHouses) & (h.report is not None)])
-
-        mgy = mg.groupby(mg.index.year).mean()
-        std = mg.groupby(mg.index.year).std()
-        mg.name = 'meanfuelPerMonthPerArea'
+        mgy = mg.groupby(pd.Grouper(freq="Y")).mean()
+        std = mg.groupby(pd.Grouper(freq="Y")).std()
+        mgy.name = 'meanfuelPerMonthPerArea'
         std.name = 'stdfuelPerMonthPerArea'
         return mgy,std
     def calculateSpatialFuelConsumptionModel(self):

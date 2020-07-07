@@ -69,6 +69,7 @@ class PumaData:
         #cumulative clicks and state set to NA for off states
         df.loc[df.state == 'X','cumulative_clicks'] = np.nan
         df.loc[df.state == 'X','state'] = np.nan
+        df.loc[df.state == '5', 'cumulative_clicks'] = np.nan #state 5 indicates a reset to cum clicks = 0
 
         #make the time field and index and drop it as a column
         df['time'] = pd.to_datetime(df['time'],unit ='s', utc=True) #Time is recorded and stored as UTC time
@@ -133,6 +134,7 @@ class PumaData:
 
     #### Events
 
+
     def raw_time2event(self, df,stove):
         '''calculate metrics associated with event data.
         :param df is a dataframe with datetime index and cumulative click column
@@ -148,13 +150,34 @@ class PumaData:
         '''calculates the number of clicks between sequential click records
         :param df is a dataframe with cumulative_clicks column and datetime index
         :return original dataframe with additional clicks column'''
+        #flag bad data and don't use it to calculate clicks
 
         df.loc[pd.notnull(df['cumulative_clicks']), 'clicks'] = (
                     df.loc[pd.notnull(df['cumulative_clicks'])]['cumulative_clicks'].shift(-1) -
                     df.loc[pd.notnull(df['cumulative_clicks'])]['cumulative_clicks']).shift()
+        # negative clicks occurr when two input txt files condain overlapping dates, but different cumulative click values
+        # the entire day with messed up values gets dropped
+        badDays = df[df['clicks'] < 0].index
+        for d in badDays:
+            baddate = d.date()
+            df = df[df.index.date != baddate]
+        #clicks need to be recalculated then
+        df.loc[pd.notnull(df['cumulative_clicks']), 'clicks'] = (
+                df.loc[pd.notnull(df['cumulative_clicks'])]['cumulative_clicks'].shift(-1) -
+                df.loc[pd.notnull(df['cumulative_clicks'])]['cumulative_clicks']).shift()
 
-        df.loc[(df['clicks'].shift(1) < 0) | (
-                    (df['state'].shift(1) == 5) & pd.isnull(df['clicks'].shift(1))), 'clicks'] = 0 #records where it changes from state 5 -indicating a new click count or gap in count
+        df.loc[pd.notnull(df['cumulative_clicks']), 'timediff'] = ((
+                df.loc[pd.notnull(df['cumulative_clicks'])]['time'].shift(-1) -
+                df.loc[pd.notnull(df['cumulative_clicks'])]['time']).shift()) / pd.to_timedelta(1, 'h')
+
+
+
+        df['clicksperhour'] = df['clicks'] / df['timediff']
+
+        #outliers get dropped
+        df=df[(df['clicksperhour'] <= df['clicksperhour'].mean() + (3 * df['clicksperhour'].std())) | (pd.isnull(df['cumulative_clicks']))]
+        df = df.drop(['clicksperhour','timediff'], axis=1)
+
         df=df[df.state !=5] #get rid of state 5 now we don't need it anymore
         df.is_copy = False #suppress SettingWithCopyWarning - we know its a copy
         return df
@@ -436,6 +459,7 @@ class PumaData:
 
             stove_data = self.raw2time(air_temp,stove_data)
             #becomes copy here
+
             #fill in event data metrics
             stove_data = self.raw_time2event(stove_data,stove)
             #remove duplicate indices, incomplete rows of data and sort

@@ -143,7 +143,7 @@ class Report:
     def getGphddBym(self):
 
 
-        return pfuel.weather_adjusted_gallons_consumed_per_month(self.unfiltered_df, 'outT',
+        return pfuel.weather_adjusted_gallons_consumed_per_month(self.filtered_df, 'outT',
                                                                  'fuel_consumption')
 
     def getTotalCost(self):
@@ -317,7 +317,17 @@ class Report:
         studyStart = timezone.localize(studyStart, timezone)
         dataStart = min(filtered_df[studyStart:][pd.notnull(filtered_df.deltaT)].index) #drop records that are earlier than our actual data collection
         filtered_df = filtered_df[dataStart:]
-        return filtered_df[self.start:self.end], filtered_df[studyStart:self.end] #all records up to end date
+        d = filtered_df[pd.notnull(filtered_df['fuel_consumption'])] #only days with fuel data
+        dsum = d['fuel_consumption'].groupby(d.index.to_period("D")).sum()
+        dcount = dsum.groupby(pd.Grouper(freq="M")).count() #if there are fewer than 20 days we don't want to extrapolate month long information
+        dcount.name = 'day_count'
+        dcount.index = dcount.index.to_timestamp()
+        dcount.index = dcount.index.tz_localize(filtered_df.index.tz)
+        filtered_df = filtered_df.join(dcount, how="outer")
+        filtered_df['day_count'] = filtered_df['day_count'].ffill()
+        cleaned = filtered_df[filtered_df['day_count'] > 19] #drop months with fewer than 19 days of data
+        cleaned = cleaned.drop('day_count', axis = 1)
+        return cleaned[self.start:self.end], filtered_df[studyStart:self.end] #all records up to end date
 
     def findImage(self,path,name):
         filenames = [f for f in os.listdir(path) if (name in f) & (f[-3:] == "png")]
