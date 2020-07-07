@@ -52,10 +52,7 @@ with open(houses_file) as report_houses_file:
                      for i in yamh if yamh.get(i)['Report'] is False]
 
 report_houses = report_houses + control_houses
-#TODO remove temporary filter for house FBK004
-#report_houses = [house for house in report_houses if (house.name == 'FBK004') | (house.name == 'FBK044')]
 
-#neighborhood = Neighborhood('FBK',report_houses + control_houses)
 neighborhood = Neighborhood('FBK',report_houses.copy())
 working_dir = os.path.join(file_path,'..','..','reports','multiyear') #moving to the reports/monthly directory
 

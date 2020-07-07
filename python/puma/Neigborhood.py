@@ -39,7 +39,7 @@ class Neighborhood:
         processPath = "E:\\PUMA\\fuelmeter-tools\\R"
         rscript = "spatial_model.R"
         rsource = os.path.join(processPath, rscript)
-        # subprocess.call(["C:\\Program Files\\R\\R-3.5.2\\bin\\x64\\Rscript", "--vanilla", rsource],shell=True)
+
         subprocess.call(["C:\\Program Files\\R\\R-4.0.0\\bin\\x64\\RScript", "--vanilla", rsource], shell=True)
 
         return
