@@ -1,5 +1,5 @@
 """
-Script to create a monthly report for each stove of interest
+Script to create a multiyear report for each stove of interest
 
 T. Morgan
 """
@@ -9,9 +9,6 @@ import sys
 import pandas as pd
 import pytz
 import warnings
-# warnings.simplefilter("error")
-# warnings.simplefilter("ignore",SyntaxError)
-# warnings.simplefilter("ignore",ImportWarning)
 
 #allowing sister path imports
 file_path = os.path.abspath(os.path.dirname(__file__))
@@ -54,7 +51,7 @@ with open(houses_file) as report_houses_file:
 report_houses = report_houses + control_houses
 
 neighborhood = Neighborhood('FBK',report_houses.copy())
-working_dir = os.path.join(file_path,'..','..','reports','multiyear') #moving to the reports/monthly directory
+working_dir = os.path.join(file_path,'..','..','reports','multiyear') #moving to the reports/multiyear directory
 
 #check if the folder exists and make it if it doesn't
 if not os.path.exists(working_dir):
@@ -91,6 +88,7 @@ try:
 except:
     pass
 monthly_fuel_price = pd.Series([3.5] *28,index=pd.date_range(startDate,endDate,freq='M'))
+
 #for house in neighborhood.houses:
 for house in report_houses:
     try:

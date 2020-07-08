@@ -8,11 +8,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.interpolate import make_interp_spline, BSpline
-import puma.stats as stats
-#from pandas.plotting import register_matplotlib_converters #this is here to shutup matplotlib warnings
 
 colors = np.array([[255,16,16],[174, 19, 67],[94, 22, 119],[25, 25, 164],[4, 4, 89]])/255
-#colors = np.array([[255,16,16],[174, 19, 67],[94, 22, 119],[25, 25, 164],[4, 4, 89]])
+
 def polar_flow_plot_per_month_df(label,data,fname):
     """
     Plots a polar flow plot of the hourly flow rate of a month.
@@ -176,7 +174,7 @@ def plot_annual_fuel_usage(gal_by_year,fname):
 def plot_fuel_usage(your_gal,their_gal,fname):
     bar_text_height = their_gal
     if your_gal > their_gal:
-        #colors = np.array([[231,76,60],[52,152,219]])/255
+
         bar_text_height = your_gal
         
     plt.figure(figsize = (9,6), dpi = 200)
@@ -226,7 +224,6 @@ def plot_multiyear_bar_progress_with_temperature(gphddpm,monthlyMeanTemperature,
         if (len(T) > 1):
             spl = make_interp_spline(T, power, k=3,bc_type=(l, r))  # type: BSpline
             smoothed = spl(xnew)
-            #smoothed = spline(monthlyMeanTemperature[monthlyMeanTemperature.index.year == y].index.month.tolist(), monthlyMeanTemperature[monthlyMeanTemperature.index.year == y], xnew)
             line = axes2.plot(xnew,smoothed, label=y,c=colors[i])
 
     xticks = [datetime.date(1900, j, 1).strftime('%b') for j in range(min(gphddpm.index.month), max(gphddpm.index.month) + 1)]
@@ -245,7 +242,7 @@ def plot_bar_progress(gphddpm, fname):
     :param fname: string filename with path
     :return:
     '''
-    #ym.strftime('%b %y'))
+
     data = pd.DataFrame({'value':gphddpm.values,'month':gphddpm.index.month}, index = gphddpm.index)
 
     plt.figure(figsize=(14, 6))
@@ -265,10 +262,7 @@ def plot_bar_progress(gphddpm, fname):
                 plt.text(rect.get_x() + rect.get_width()/2, height + (np.nanmax(data) * 0.5), 'N\A',
                          horizontalalignment='center',verticalalignment = 'bottom', fontsize=12)
     plt.yticks([])
-    #xticks = [datetime.date(1900, [key for key, value in customMonthOrder.items() if value == j][0], 1).strftime('%b')
-      #        for j in range(min(df['sort_order']), max(df['sort_order']) + 1)]
     xticks = [datetime.date(1900, h, 1).strftime('%b') for h in range(1,13)]
-    #plt.xticks([j for j in range(min(df['sort_order']), max(df['sort_order']) + 1)],xticks , fontsize=22,rotation=90)
     plt.xticks([j for j in range(1, 13)], xticks, fontsize=18, rotation=90)
     plt.xlabel('\nTemperature Adjusted Gallons per Month', fontsize=22)
     plt.ylabel( '\ngal/HDD*',fontsize=22)

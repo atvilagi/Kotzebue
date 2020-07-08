@@ -68,13 +68,12 @@ class Report:
         return self.stoves
     def generateMetrics(self):
         '''create a dataframe for the report time period and generate report metrics based on the dataset'''
-
         self.area = sum([float(house.area) for house in self.houses])  # total area metrics are being calculated for
         self.report_duration = self.end - self.start
         #filter the dataset to the portion required for this report
         self.filtered_df,self.unfiltered_df = self.filterDataset()
-
         self.getTip()  # set a tip to display
+
         if len(self.filtered_df) > 0:
             self.date_duration = pd.to_timedelta(self.filtered_df.index[-1] - self.filtered_df.index[0],
                                                  unit='day') #range that data was actually collected for
@@ -141,8 +140,6 @@ class Report:
             self.prog_usage = 0
 
     def getGphddBym(self):
-
-
         return pfuel.weather_adjusted_gallons_consumed_per_month(self.filtered_df, 'outT',
                                                                  'fuel_consumption')
 
@@ -153,11 +150,13 @@ class Report:
     def getGallonsPerFt(self):
         return self.total_gallons / self.area
     def getFuelByDay(self):
-       #return self.filtered_df.fuel_consumption.groupby(pd.Grouper(freq="D")).sum()
         return self.filtered_df.fuel_consumption.groupby(self.filtered_df.index.to_period("D")).sum()
     def getAveCostPerDay(self):
         return self.ave_fuel_per_day[0] * self.fuel_price
     def getAveTemperature(self, t_field):
+        '''get the daily and monthly average value for a specified field
+        :return: df --dataframe of averages by month
+        :return dg -- pd.Series of mean daily values'''
         dg = self.filtered_df[t_field].groupby(self.filtered_df.index.to_period("D")).mean()
         mg = self.filtered_df.groupby(pd.Grouper(freq='M'))
         ave = mg[t_field].mean()
@@ -165,18 +164,21 @@ class Report:
         df = pd.concat([ave, sem], axis=1)
         df.columns = ['ave','sem']
         return df, dg
+
     def getAveGPH_byHour(self):
         '''average gallons per hour for each hour interval in a day - hours 0-23
         :return pandas series with hour index'''
         m = self.gph.groupby(self.gph.index.hour).mean()
-        # s = self.gph.groupby(self.gph.index.hour).sem()
         return m
     def getAveGPH(self):
-
+        '''get the average gallons per hour over the report period
+        return: tuple of float average and standard error of gallons per hour for the report period'''
         m = float(self.gph.mean())
         s = float(self.gph.sem())
         return (m,s)
     def getAveFuelPerDay(self):
+        '''calculate the average fuel consumed per day and standard error
+        return: tuple of float average and mean daily gallons per day'''
         gpd,gpm = pfuel.gallons_per_day_and_per_month(self.filtered_df, 'fuel_consumption')
         ave_gpd = float(gpd.mean()) # average gpd, and standard error
         sem_gpd = float(gpd.sem())

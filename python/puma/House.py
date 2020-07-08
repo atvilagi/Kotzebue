@@ -1,11 +1,16 @@
-# Projet: fuelmeter-tools
-# Created by: # Created on: 12/2/2019
+# Project: fuelmeter-tools
+# Created by: T. Morgan# Created on: 12/2/2019
 
 class House:
     """
     Description: A house can be made up of 1 or more stoves, and contains metrics of all stoves it contains
     Attributes: 
-        stoves,metrics
+        stoves--a list of stove objects associated with this house
+        name -- the name of the house, typically begins with the neighborhood designation
+        area -- teh square footage of the house
+        location -- latitude and longitude of the house location
+        report -- a Report object for the house
+        reportCollection -- a collection of report objects associated with a house
         
     """
 
