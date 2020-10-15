@@ -32,11 +32,11 @@ def bash_multimonth_reports(dateRange):
         cd ../../../output/
         zip -r ''' + total_file + r'''.zip ''' + total_file + r'''/
         cp ''' + total_file + r'''.zip ../archived_data/''' + total_file + r'''.zip
-        cd ../reports/monthly/
+        cd ../reports/multiyear/
     done
     '''
 
-    with open('multimonthl_reports.sh', 'w') as bash_script:
+    with open('multimonthly_reports.sh', 'w') as bash_script:
         bash_script.write(text)
     return
 def bash_monthly_reports(dateRange):

@@ -2,7 +2,7 @@
 # Created by:T.Morgan # Created on: 12/3/2019
 import numpy as np
 import pandas as pd
-import puma.stats as stats
+#import puma.stats as stats
 import os
 class Neighborhood:
     """
@@ -38,18 +38,20 @@ class Neighborhood:
         Two seperate R scripts are used, one for spatial modeling, one for temperature.'''
         import subprocess
         #R is used for modeling with gamms and glmms
+
         self.writeNeigborhoodStatsInput() #write a combined text file for all houses
-        processPath = "..\\..\\R"       #path to R scripts
+        processPath = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','R')      #path to R scripts
         rscript = "model_data.r"
         rsource = os.path.join(processPath, rscript)
-        subprocess.call(["C:\\Program Files\\R\\R-4.0.0\\bin\\x64\\RScript", "--vanilla", rsource], shell=True) #images are placed in report folders
+        subprocess.call(["RScript",rsource]) #images are placed in report folders
+        #subprocess.call(["C:\\Program Files\\R\\R-4.0.0\\bin\\x64\\RScript", "--vanilla", rsource],shell=True)  # images are placed in report folders
 
         # generate the glmm spatial pngs
-        processPath = "..\\..\\R"
+
         rscript = "spatial_model.R"
         rsource = os.path.join(processPath, rscript)
-
-        subprocess.call(["C:\\Program Files\\R\\R-4.0.0\\bin\\x64\\RScript", "--vanilla", rsource], shell=True)
+        subprocess.call(["RScript", rsource])
+        #subprocess.call(["C:\\Program Files\\R\\R-4.0.0\\bin\\x64\\RScript", "--vanilla", rsource], shell=True)
 
         return
 

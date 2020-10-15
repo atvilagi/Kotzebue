@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.interpolate import make_interp_spline, BSpline
 
-colors = np.array([[255,16,16],[174, 19, 67],[94, 22, 119],[25, 25, 164],[4, 4, 89]])/255
+colors = np.array([[255,16,16],[25, 179, 164],[255, 153, 0],[20, 28, 166],[94, 22, 119]])/255
 
 def polar_flow_plot_per_month_df(label,data,fname):
     """
@@ -52,11 +52,12 @@ def seasonal_polar_flow_plot(ave_gal_by_hour_by_season,fname):
     dailyMax = max(ave_gal_by_hour_by_season['fuel_consumption'].groupby('season').sum())
     for season in set(ave_gal_by_hour_by_season.index.levels[0]):
         data = ave_gal_by_hour_by_season[np.in1d(ave_gal_by_hour_by_season.index.get_level_values(0), [season])]
-        if (len(data) < 24) & (len(data) > 0):
+        if (len(data) <= 24) & (len(data) > 0):
             fillData = pd.Series([0] * 24, pd.Index(range(0, 24, 1)))
+            if len(data.index.levels) > 1:
+                data.index = data.index.droplevel(0)
             data1 = pd.concat([data, fillData], axis=1)
-            data1.loc[pd.isnull(data1.iloc[:, 0]), 0] = data1.iloc[:1]
-            # data1.loc[pd.isnull(data1['fuel_consumption']), 0] = data1[0]
+            data1.loc[pd.isnull(data1['fuel_consumption']), 'fuel_consumption'] = data1.loc[pd.isnull(data1['fuel_consumption']),0]
             data = data1.iloc[:, 0]
         elif (len(data) <= 0):
             data = pd.Series(np.zeros(24))
@@ -66,12 +67,12 @@ def seasonal_polar_flow_plot(ave_gal_by_hour_by_season,fname):
         #hourly value is proportion of daily average scaled to 360 converted to radians
 
         data_theta = np.radians((data/dailyMax) * 360)
-        data_theta.index = data_theta.index.levels[1]
+        #data_theta.index = data_theta.index.levels[1]
         data_theta.loc[24] = data_theta.loc[0]
 
         t_theta[24] = t_theta[0]
         data_theta.index = t_theta
-        data_theta = data_theta['fuel_consumption']
+        #data_theta = data_theta['fuel_consumption']
 
         if (data_theta.sum() > 0):
 
@@ -210,21 +211,31 @@ def plot_multiyear_bar_progress_with_temperature(gphddpm,monthlyMeanTemperature,
 
 
     ax1.set_ylim(0, max(gphddpm) * 1.2)
-    ax1.set_ylabel('\ngal/HDD*', fontsize=14)
+    ax1.set_ylabel('\ngal/HDD', fontsize=14)
     # now monthly outside temperature
     axes2 = ax1.twinx()
     axes2.set_ylabel('Average Temperature $^\circ$F',fontsize=14)
-    axes2.set_ylim(min(monthlyMeanTemperature), max(monthlyMeanTemperature) * 1.1)
+    axes2.set_ylim(monthlyMeanTemperature.min(), monthlyMeanTemperature.max() * 1.1)
     l, r = [(2, 0)], [(2, 0)]
     for i,y in enumerate(list(set(gphddpm.index.year))):
-        T = monthlyMeanTemperature[monthlyMeanTemperature.index.year == y].index.month.tolist()
-        power = monthlyMeanTemperature[monthlyMeanTemperature.index.year == y]
-        xnew = np.linspace(min(monthlyMeanTemperature[monthlyMeanTemperature.index.year == y].index.month.tolist()), max(monthlyMeanTemperature[monthlyMeanTemperature.index.year == y].index.month.tolist()),
-                           len(monthlyMeanTemperature[monthlyMeanTemperature.index.year == y])*10)
+        T = monthlyMeanTemperature[(pd.notnull(monthlyMeanTemperature)) & (monthlyMeanTemperature.index.year == y)].index.month.tolist()
+        power = monthlyMeanTemperature[
+            (pd.notnull(monthlyMeanTemperature)) & (monthlyMeanTemperature.index.year == y)]
         if (len(T) > 1):
-            spl = make_interp_spline(T, power, k=3,bc_type=(l, r))  # type: BSpline
-            smoothed = spl(xnew)
-            line = axes2.plot(xnew,smoothed, label=y,c=colors[i])
+
+             xnew = np.linspace(min(monthlyMeanTemperature[(pd.notnull(monthlyMeanTemperature)) & (
+                         monthlyMeanTemperature.index.year == y)].index.month.tolist()), max(monthlyMeanTemperature[(
+                                                                                                                        pd.notnull(
+                                                                                                                            monthlyMeanTemperature)) & (
+                                                                                                                                monthlyMeanTemperature.index.year == y)].index.month.tolist()),
+                                len(monthlyMeanTemperature[(pd.notnull(monthlyMeanTemperature)) & (
+                                            monthlyMeanTemperature.index.year == y)]) * 10)
+
+             spl = make_interp_spline(T, power, k=3,bc_type=(l, r))  # type: BSpline
+             smoothed = spl(xnew)
+             line = axes2.plot(xnew,smoothed, label=y,c=colors[i])
+        elif (len(T)==1):
+            line = axes2.plot(T[0], power[0], label=y, c=colors[i])
 
     xticks = [datetime.date(1900, j, 1).strftime('%b') for j in range(min(gphddpm.index.month), max(gphddpm.index.month) + 1)]
     plt.xticks([j for j in range(min(gphddpm.index.month), max(gphddpm.index.month) + 1)], xticks, fontsize=22, rotation=0)

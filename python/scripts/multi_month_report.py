@@ -19,10 +19,6 @@ from puma.House import House
 from puma.Neigborhood import Neighborhood
 from puma.MultiMonthReport import MultiMonthReport
 
-import numpy as np
-
-
-
 import puma.bash as pbash
 import datetime
 import yaml
@@ -37,25 +33,22 @@ with open(stoves_file) as stoveFile:
 
 def makeStoves(stoveNameList):
     splitNames = stoveNameList.split(",") #make a list
-    return [Stove(name,yams.get(name)['Stove Type']) for name in splitNames]
+    return [Stove(name,yams.get(name)['Stove Type']) for name in splitNames if yams.get(name) != None]
 
 
 
-with open(houses_file) as report_houses_file:
-    yamh = yaml.safe_load(report_houses_file)
+with open(houses_file) as house_file:
+    yamh = yaml.safe_load(house_file)
 
-    report_houses = [House(i,yamh.get(i)['Square Footage'],yamh.get(i)['Location'], makeStoves(yamh.get(i)['Stove'])) for i in yamh if yamh.get(i)['Report'] is True]
-    control_houses = [House(i, yamh.get(i)['Square Footage'], yamh.get(i)['Location'], makeStoves(yamh.get(i)['Stove']))
-                     for i in yamh if yamh.get(i)['Report'] is False]
+    report_houses = [House(i,yamh.get(i)['Square Footage'],yamh.get(i)['Location'], makeStoves(yamh.get(i)['Stove'])) for i in yamh]
 
-report_houses = report_houses + control_houses
-
+#report_houses = [h for h in report_houses if h.name == 'FBK045']
 neighborhood = Neighborhood('FBK',report_houses.copy())
 working_dir = os.path.join(file_path,'..','..','reports','multiyear') #moving to the reports/multiyear directory
 
 #check if the folder exists and make it if it doesn't
 if not os.path.exists(working_dir):
-    os.mkdir(working_dir)
+    os.makedirs(working_dir)
 os.chdir(working_dir)
 
 
@@ -84,12 +77,13 @@ end_year_month = (2020,5)
 
 excludeControlList = ['FBK015','FBK020']
 try:
-    [control_houses.remove(h) for h in control_houses if h.name in excludeControlList]
+    [report_houses.remove(h) for h in report_houses if h.name in excludeControlList]
 except:
     pass
 monthly_fuel_price = pd.Series([3.5] *28,index=pd.date_range(startDate,endDate,freq='M'))
-
+#report_houses = [r for r in report_houses if r.name in ['FBK004','FBK045']]
 #for house in neighborhood.houses:
+
 for house in report_houses:
     try:
         print("starting house: ", house.name)
@@ -108,9 +102,9 @@ for house in report_houses:
 
 
 #reports only have house metrics at this point
-#add in neighborhood metrics
+#add in neighborhood metrics -these were calculated externnaly
 neighborhood.applyStatsModels()
-
+#report_houses = [h for h in report_houses if h.name  in ['FBK036','FBK037','FBK029','FBK024-FBK025']]
 for house in report_houses:
         try:
             house.report.setNeighborhood(neighborhood)
@@ -122,7 +116,11 @@ for house in report_houses:
             if not os.path.exists(house.name):
                 os.mkdir(house.name)
             if house in neighborhood.houses:
-                house.report.moveModelImages(house.name)
+                try:
+                    house.report.moveModelImages(house.name)
+                except:
+                    pass
+
                 house.report.makePlots()
                 house.report.writeReport()
 

@@ -4,8 +4,9 @@ library(dplyr)
 library(lme4)
 library(ggplot2)
 library(mgcv)
-setwd("E:\\PUMA\\fuelmeter-tools\\R")
-data <-read.csv("..\\data\\text\\multiStoveInput.csv", header=TRUE)
+setwd("/Users/tawnamorgan/Documents/puma/fuelmeter-tools/R")
+data <-read.csv("/Users/tawnamorgan/Documents/puma/fuelmeter-tools/data/text/multiStoveInput.csv", header=TRUE)
+data <- data[!is.na(data$fuel),]
 data$gpf = data$fuel/data$area
 data <- data[data$fuel>0,] #this should not be needed because we should filter negative values long before this
 
@@ -16,7 +17,7 @@ makeFuelCostPrediction<-function(data){
   #                   data = data, family=gaussian(link="identity"))
   # #gammResult <-gamm(formula = gpf ~ s(indoorT) + outdoorT, random=list(stove=~1), data = data, family=gaussian(link="identity"))
   gammResult <-gamm(formula = log(gpf) ~ s(indoorT) + outdoorT, random=list(stove=~1), data = data, family=gaussian(link="identity"))
-
+ print(gammResult)
   stoves<-unique(data$stove)
 
   for (s in stoves){
@@ -33,19 +34,16 @@ makeFuelCostPrediction<-function(data){
     
     # outcome <- predict(glmmResult,predictable, se.fit=TRUE)
     outcome2 <-predict(gammResult$gam,predictable, se.fit=TRUE)
-    
-    # outcome<-cbind(outcome,predictable)
-    # outcome$upr<-outcome$fit + (2*outcome$se.fit)
-    # outcome$lwr<-outcome$fit - (2*outcome$se.fit)
-    
+    print(predictable[0:3,])
+
     outcome2<-cbind(outcome2,predictable)
     outcome2$upr<-outcome2$fit + (2*outcome2$se.fit)
     outcome2$lwr<-outcome2$fit - (2*outcome2$se.fit)
-    
-    # outcome$fuel <- outcome$fit * stoveArea
+
     outcome2$fuel <-exp(outcome2$fit) * stoveArea
     outcome2$upr <- exp(outcome2$upr) * stoveArea
     outcome2$lwr <- exp(outcome2$lwr) * stoveArea
+    print(outcome2[0:3,])
     # makePlot(outcome,s)
     print(paste("starting to plot",s))
     makePlot(outcome2,s,FALSE)

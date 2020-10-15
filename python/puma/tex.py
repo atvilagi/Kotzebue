@@ -1,7 +1,6 @@
 """
 TeX File Functions for PuMA
 
-By Douglas Keller
 """
 import os
 import numpy as np
@@ -53,7 +52,10 @@ def write_multimonth_tex_var_file(reportRange,Total_Usage,meanMonthly_Usage_per_
         newRow= tuple(myList)
         resultTable.append(" & ".join(newRow))
     rows = r"\\".join(resultTable) + r"\\"
-
+    if Stove_ID != 'FBK013':
+        location_shown = "The location of your house is indicated with a triangle."
+    else:
+        location_shown = ""
     with open('multimonth_values.tex', 'w') as tex_file:  # opening and writing the tex file
 
         months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July',
@@ -77,6 +79,7 @@ def write_multimonth_tex_var_file(reportRange,Total_Usage,meanMonthly_Usage_per_
                  r'\newcommand{\neighborhoodsize}{' + str(NeighborhoodSize) + '}',
                  r'\newcommand{\daysmonitored}{' + str(daysMonitored) + '}',
                  r'\newcommand{\highmonths}{' + str(highMonthString) + '}',
+                 r'\newcommand{\locationshown}{' + location_shown + '}',
                  r'\newcommand{\qualify}{' + flag + qualifier + '}',
                  r"""\newcommand\resultTable %
                 { \begin
@@ -89,10 +92,10 @@ def write_multimonth_tex_var_file(reportRange,Total_Usage,meanMonthly_Usage_per_
                 Fuel\\
                 Consumption\\ (g)\\} &  \makecell
         {Average \\Daily\\ Cost*} &  \makecell
-        {Total\\ Gallons} &  \makecell
-        {Total\\ Cost} &  \makecell
-        {Average\\ Indoor\\ Temperature\\ (F)} &  \makecell
-        {Average\\ Outdoor\\ Tempearture\\ (F)} \\ [0.5ex]
+        {Monthly \\Total\\ Gallons} &  \makecell
+        {Monthly \\Total\\ Cost} &  \makecell
+        {Monthly \\Average\\ Indoor\\ Temperature\\ (F)} &  \makecell
+        {Monthly \\Average\\ Outdoor\\ Tempearture\\ (F)} \\ [0.5ex]
         \hline\hline """ + rows + r' \hline \end {tabular} }',
                  r'\newcommand{\fuelprice}{' + str(format(fuelPrice, ',.2f')) + '}',]
 
@@ -115,7 +118,7 @@ def write_multimonth_tex_report_file(stove,current):
     %MultiMonth report for the PuMA fuel meter project
     %Created by T. Morgan
 
-    \documentclass[12pt,a4paper]{article}
+     \documentclass[12pt,a4paper]{article}
 
     \usepackage{fancyhdr,url,graphicx,caption,tabu,varwidth,gensymb}
     \usepackage[a4paper, top = 1in, bottom = 1in, left = .75in, right = .75in]{geometry}
@@ -176,21 +179,21 @@ def write_multimonth_tex_report_file(stove,current):
  
    &&  
   \begin{minipage}{\linewidth}
- \vspace{2pt}  
-\underline{ Summary:}\vspace{4pt}  \\
-   \vspace{2pt}
+ \vspace{6pt}  
+\textbf{\large{\underline{ Summary:}\vspace{6pt} }} \\
+   \vspace{3pt}
 Total Usage: {\totalusage} gal\\
-   \vspace{2pt}
+   \vspace{3pt}
 Total Days Monitored: {\daysmonitored}\\
-   \vspace{2pt}
+   \vspace{3pt}
 Average Indoor Temperature: {\inTave} {\degree}F\\
-   \vspace{2pt}
-Total Cost: \${\totalcost}\\
-   \vspace{2pt}
+   \vspace{3pt}
+Total Cost: \${\totalcost}**\\
+   \vspace{3pt}
 \underline{Average Annual Cost: \${\annualcost}}\\
 
-\tiny{\qualify}
-
+\tiny{\qualify}\\
+ \tiny{**Total cost estimates are based on a static fuel price of \${\fuelprice} per gallon.}
 \end{minipage}
   
  \end{tabu} 
@@ -198,57 +201,90 @@ Total Cost: \${\totalcost}\\
    
   \vspace{8pt}
 \begin{center}
-    \textbf{\large{Mean Daily Fuel Consumption During Cold Weather Months}\textsuperscript{*}}\\
-     \includegraphics[height= 2.5in]{spatial_fuel.png}\\       
-      \tiny{*Months used to calculate average fuel consumption were September through April. }
-  \end{center}  
+    \textbf{\large{Mean Daily Fuel Consumption During\\
+ Cold Weather Months}}\\
+     \includegraphics[height= 3in]{spatial_fuel.png}\\ 
+     \end{center}
+     \begin{varwidth}{1\textwidth}
+     \large
+     {The figure above is a color shaded map showing the estimated average daily gallons of fuel oil used per square foot within the study area during September through April. Consumption estimates were produced using data collected from all participants in the Fairbanks North Star Borough using generalized linear models based on latitude, logitude, slope, elevation and aspect. {\locationshown}}
+ \end{varwidth}
 \vspace{4pt}
+\newpage
 \begin{center} 
-  \textbf{\large{Mean Fuel Consumption per Area}\textsuperscript{*}}\\     
+  \textbf{\large{Mean Fuel Consumption per Area}}\\     
        \includegraphics[height= 2.5in]{fuel_usage.png}\\
-         \tiny{*Your Neigthbor is the average of other FNSB households participating in this study. }
+         
 \end{center}  
-  \newpage 
-    \vspace{8pt}
+  \begin{varwidth}{1\textwidth}
+     \large
+     {Standardizing the rate of fuel consumption per square foot permits comparison between homes of different sizes.
+      The figure above shows how your consumption rate (red) compares to other participants of this study (purple) during each year of this study. 
+      }
+ \end{varwidth}
+    \vspace{4pt}
     
     \begin{center}
    
    
     \textbf{\large{Annual Fuel Consumption and Mean Monthly Temperature}}\\
-    \vspace{8pt}
+    \vspace{4pt}
     \includegraphics[height= 3in]{monthly_track_your_progress.png}\\
-    \tiny{*gal/HDD is the number of gallons of fuel used in a month divided by the total number of heating degree days in the month. Heating degree days for a given day are calculated by subtracting the day's average temperature from the base temperature of 65 {\degree}F.}
     \end{center}
+ 
+       \begin{varwidth}{1\textwidth}
+
+      \large{The figure above shows your monthly fuel consumption rate and the mean monthly temperature over the study period. 
+      The bars show the gallons of fuel you consumed per heating degree day.
+       Gallons per heating degree day is the number of gallons of fuel used in a month divided by the total number of 
+        heating degree days in the month. Heating degree days are used to adjust for the weather when comparing fuel usage across 
+        different months. The lines show the average temperature for the month. The color of bars and lines corresponds to the calendar year.}\\
+    \end{varwidth}
+    \newpage
     
-    \vspace{16pt}
+    \vspace{8pt}
     \begin{center}
     \small
      {\highmonths}\\
-     \vspace{8pt}
+     \vspace{16pt}
     \textbf{\large{Your Home's Fuel Usage for the Duration of This Study}}\\
     \vspace{16pt}
     {\resultTable}\\
     \end{center}
     \vspace{4pt}
-    \tiny{*cost estimates are based on a static fuel price of \${\fuelprice} per gallon}
+   
+       \begin{varwidth}{1\textwidth}
+
+      \large{The table above shows your average daily fuel consumption, average daily fuel cost, monthly total gallons consumed, monthly total cost, monthly average indoor temperature and the monthly average outdoor temperature for the duration of the study. Missing entries correspond to periods when the fuel meter was down or when your stove was not in use. All cost estimates are based on a static fuel price of \${\fuelprice} per gallon.}
+    \end{varwidth}
     \newpage
+    \begin{minipage}{\linewidth}
+     \begin{varwidth}{1\textwidth}
+
+      \large{The figure below shows your average fuel consumption for each hour of the day by season. The different collors correspond to the seasons.}
+    \end{varwidth}
+       
+
     \begin{center} 
    \textbf{\large{Your Seasonal Diurnal Fuel Consumption Pattern}}\\
   \textbf{\small{  (Gallons per Hour)  }}\\       
        \includegraphics[height= 3in]{seasonal_polar_plot.png}\\
 \end{center}  
-       \begin{minipage}{\linewidth}
        \begin{varwidth}{1\textwidth}
 
       \large{
-      Many factors can affect the amount of fuel required to keep your home comfortable. Indoor temperature settings affect overall fuel requirements. Below is your estimated cost based on average daily outdoor temperature for the range of indoor temperatures we recorded for your home.}
+      Many factors can affect the amount of fuel required to keep your home comfortable. 
+      Indoor temperature settings affect overall fuel requirements. 
+      Below is your estimated cost based on average daily outdoor temperature for the range of indoor temperatures we recorded for your home.
+      The colors correspond to different indoor temperatures. The higher the indoor temperature setting, the greater the heating cost per day. 
+      As can been seen in the graphic below, this effect is amplified as the outdoor temperature decreases.}
        \end{varwidth}
 
     \begin{center}
       \textbf{\large{Predicted Fuel Cost}}\\
      \textbf{\small{(based on a mean fuel price of \$3.50 per gallon)}}\\
     \vspace{16pt}
-    \includegraphics[height= 4in]{gamm.png}\\
+    \includegraphics[height= 3.2in]{gamm.png}\\
 
     \end{center}
 

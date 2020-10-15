@@ -60,55 +60,82 @@ class PumaData:
         '''
 
         #read from csv file
-        df = pd.read_csv(stove_file,delimiter='\t')
-        df.columns = ['time', 'state', 'cumulative_clicks', 'thermistor']
+        try:
+            df = pd.read_csv(stove_file,delimiter='\t')
+            df.columns = ['time', 'state', 'cumulative_clicks', 'thermistor']
+            #df['filename'] = str(stove_file)
+            #remove incomplete rows of data
+            df = df.dropna(axis=0, how='any')
 
-        #remove incomplete rows of data
-        df = df.dropna(axis=0, how='any')
+            #cumulative clicks and state set to NA for off states
+            df.loc[df.state == 'X','cumulative_clicks'] = np.nan
+            df.loc[df.state == 'X','state'] = np.nan
+            df.loc[df.state == '5', 'cumulative_clicks'] = np.nan #state 5 indicates a reset to cum clicks = 0
 
-        #cumulative clicks and state set to NA for off states
-        df.loc[df.state == 'X','cumulative_clicks'] = np.nan
-        df.loc[df.state == 'X','state'] = np.nan
-        df.loc[df.state == '5', 'cumulative_clicks'] = np.nan #state 5 indicates a reset to cum clicks = 0
+            #make the time field and index and drop it as a column
+            df['time'] = pd.to_datetime(df['time'],unit ='s', utc=True) #Time is recorded and stored as UTC time
+            df = df.set_index(pd.to_datetime(df['time'].tolist(), utc=True),drop=False)
+            df = df.astype({'state':float,'cumulative_clicks':float,'thermistor':float}) #set datatypes
+            return df
+        except Exception as e:
+            print((f"error reading {stove_file}"))
+            print(e)
+            return None
 
-        #make the time field and index and drop it as a column
-        df['time'] = pd.to_datetime(df['time'],unit ='s', utc=True) #Time is recorded and stored as UTC time
-        df = df.set_index(pd.to_datetime(df['time'].tolist(), utc=True),drop=False)
-        df = df.astype({'state':float,'cumulative_clicks':float,'thermistor':float}) #set datatypes
-        return df
+    # def file2data(self, stove_file,result):
+    #     '''read in a single file into a dataframe and store the result
+    #     multi-processor safe method of reading in multiple files'''
+    #     stove_df = self.pumatxt2data(stove_file)
+    #     result.put(stove_df)
+    #
+    # def dir2data(self):
+    #     '''reads in all files within a directory into a single dataframe'''
+    #
+    #     file_list = self.getStoveFiles()
+    #
+    #     result = mp.Manager().Queue()
+    #     # # Instantiating a multiprocess safe buffer (needed for multiprocessing)
+    #     pool = mp.Pool(mp.cpu_count())
+    #     # #Making a pool of processes (think of it as other initializations of python
+    #     # #each running its own program)
+    #     for file in file_list:
+    #          pool.apply_async(self.file2data,args=(file,result)) #Asynchronous running of the file2data_mp function on the text files
+    #     pool.close()
+    #     pool.join()
+    #
+    #     stove_df = pd.DataFrame()
+    #
+    #     while not result.empty():  # Extracting results from the multiprocessing
+    #         if len(stove_df) < 1:
+    #             stove_df = result.get()
+    #         else:
+    #             stove_df = stove_df.append(result.get()) #results is a list of dataframes for a given stove
+    #
+    #
+    #     return stove_df
 
-    def file2data(self, stove_file,result):
+    def file2data(self, stove_file):
         '''read in a single file into a dataframe and store the result
         multi-processor safe method of reading in multiple files'''
-        stove_df = self.pumatxt2data(stove_file)
-        result.put(stove_df)
+        return self.pumatxt2data(stove_file)
+
 
     def dir2data(self):
         '''reads in all files within a directory into a single dataframe'''
 
         file_list = self.getStoveFiles()
-
-        result = mp.Manager().Queue()
-        # # Instantiating a multiprocess safe buffer (needed for multiprocessing)
-        pool = mp.Pool(mp.cpu_count())
+        stove_df = pd.DataFrame()
         # #Making a pool of processes (think of it as other initializations of python
         # #each running its own program)
         for file in file_list:
-             pool.apply_async(self.file2data,args=(file,result)) #Asynchronous running of the file2data_mp function on the text files
-        pool.close()
-        pool.join()
-
-        stove_df = pd.DataFrame()
-
-        while not result.empty():  # Extracting results from the multiprocessing
-            if len(stove_df) < 1:
-                stove_df = result.get()
-            else:
-                stove_df = stove_df.append(result.get()) #results is a list of dataframes for a given stove
-
+            file_df = self.pumatxt2data(file) #Asynchronous running of the file2data_mp function on the text files
+            if (file_df is not None):
+                if len(stove_df) < 1:
+                    stove_df =file_df
+                else:
+                    stove_df = stove_df.append(file_df) #results is a list of dataframes for a given stove
 
         return stove_df
-
 
     def stove_data_polish(self,df):
         #Runs both the data_sort function and the remove_duplicates_list function
@@ -158,8 +185,8 @@ class PumaData:
         # negative clicks occurr when two input txt files condain overlapping dates, but different cumulative click values
         # the entire day with messed up values gets dropped
         badDays = df[df['clicks'] < 0].index
-        for d in badDays:
-            baddate = d.date()
+        for d in list(set(badDays.date)):
+            baddate = d
             df = df[df.index.date != baddate]
         #clicks need to be recalculated then
         df.loc[pd.notnull(df['cumulative_clicks']), 'clicks'] = (
@@ -347,7 +374,7 @@ class PumaData:
         stoves = [s for s in stove_list if s.name in dir_list]
         print('Stove data collated:')
         print([s.name for s in stoves])
-
+        #stoves = [s for s in stoves if s.name == 'FBK045']
         #read and merge all datafiles per stove
         for stove in stoves:
             merged_file.createGroup(stove.name)
@@ -445,14 +472,16 @@ class PumaData:
             self.nc_units_set(merged_file[stove.name+'/Event/Clicks'],click_variables,click_units)
 
             os.chdir(stove.name) #Changing to the stove directory
+            print(f"Loading data for {stove.name} {datetime.datetime.now()}")
             # recursively read the stove data into a dataframe
             stove_data = self.dir2data()
+            print(f"Completed loading data for {stove.name} {datetime.datetime.now()}")
             os.chdir('..')
             print(stove.name)
             [self.fill_nc(merged_file[stove.name+'/Raw'],v, stove_data) for v in raw_variables]
             #make the end date the end of the month
-            timezone = pytz.timezone('UTC')
-            enddate = timezone.localize(max(stove_data.index).to_period('M').to_timestamp(), timezone)
+            mytimezone = pytz.timezone('UTC')
+            enddate = mytimezone.localize(max(stove_data.index).to_period('M').to_timestamp())
 
             #add in air_temperature for timed records
             air_temp = self.getAirTemp(min(stove_data.index),enddate)
@@ -472,6 +501,7 @@ class PumaData:
             #these values can be identified as records with NA for cumulative_clicks (this will include temperature only records)
             #as a cautionary note both temperature and stove data can be missing chunks of time
             #if there is no stove time, temperature timestamp is used as a substitute
+            # stove_data['time'] = stove_data['time'].dt.tz.localize(mytimezone)
             stove_data['time'] = (stove_data['time'] - datetime.datetime(1970, 1, 1, tzinfo=pytz.timezone('UTC'))).dt.total_seconds()
             stove_data.loc[pd.isnull(stove_data['time']),'time'] = stove_data.loc[pd.isnull(stove_data['time']),'outTime']
             print(stove.name)

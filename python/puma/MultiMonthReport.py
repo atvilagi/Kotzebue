@@ -51,8 +51,9 @@ class MultiMonthReport(Report):
 
     def calculateTotalGallonsByMonth(self):
         '''Calculates the total gallons consumed by month based on an average daily consumption rate for each month'''
-        groupedDaily = self.filtered_df['fuel_consumption'].groupby(pd.Grouper(freq="D")).sum() #total gallons each day
-        self.meanDailyByMonth = groupedDaily.groupby(pd.Grouper(freq='M')).mean() #total daily gallons averaged over month
+        groupedDaily = self.filtered_df['fuel_consumption'].groupby(pd.Grouper(freq="D")).sum(min_count=1) #total gallons each day
+        self.meanDailyByMonth = groupedDaily.groupby(pd.Grouper(freq='M')).agg(['mean','count']) #total daily gallons averaged over month
+        self.meanDailyByMonth = self.meanDailyByMonth.loc[self.meanDailyByMonth['count'] >=20,'mean'] #drop months with fewer than 20 days of data
         estimatedTotalByMonth = self.meanDailyByMonth * self.meanDailyByMonth.index.days_in_month #use the average to calculate a total amount for the month
         return estimatedTotalByMonth
     def calculateMeanGallonsPerMonth(self):
@@ -121,7 +122,7 @@ class MultiMonthReport(Report):
         self.estimatedCostByMonth = combinedData['total_cost_by_month']
         combinedData['month_year'] = [datetime.datetime.strftime(pd.to_datetime(i),format="%b %y") for i in combinedData.index]
         combinedData = combinedData.astype(str)
-        combinedData = combinedData.astype(dtype=pd.StringDtype())
+        #combinedData = combinedData.astype(dtype=pd.StringDtype())
         combinedData['total_cost_by_month'] = "\$" + combinedData['total_cost_by_month']
         combinedData['ave_daily_cost_by_month'] = "\$" + combinedData['ave_daily_cost_by_month']
         subset = combinedData[['month_year','ave_daily_by_month','ave_daily_cost_by_month','total_gal_by_month', 'total_cost_by_month','ave_indoor_t_by_month','ave_outdoor_t_by_month']]

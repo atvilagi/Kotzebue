@@ -8,10 +8,12 @@ library(lubridate)
 library(GISTools)
 
 
-setwd("E:\\PUMA\\fuelmeter-tools\\R\\Spatial")
-data <-read.csv("..\\..\\data\\text\\multiStoveInput.csv", header=TRUE) #
+setwd("/Users/tawnamorgan/Documents/puma/fuelmeter-tools/R/Spatial")
+data <-read.csv("/Users/tawnamorgan/Documents/puma/fuelmeter-tools/data/text/multiStoveInput.csv", header=TRUE) #
+data <- data[!is.na(data$fuel),]
 data<-data[data$fuel > 0,]
 houses<-unique(data[c("stove","latitude","longitude")])
+houses<-houses[houses$stove != "FBK013",] #FBK013 is outside the available prediction area
 geo_proj = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 albers_proj <-  "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
 
@@ -27,19 +29,19 @@ elevation <- st_read(getwd(), "aoi_pts_elev")
 
 slope <- st_read(getwd(),"aoi_pts_slope")
 bbox = st_bbox(slope)
-print(bbox)
+
 
 #read in roads layer
 roads<-st_read(getwd(), "FBKRoads")
 roads<-st_zm(roads)
 
 e<-extent(albershouses)
+
 e[1] <- e[1] - 1000
 e[2] <-e[2] + 1000
 e[3] <- e[3] - 1000
 e[4] <- e[4] + 1000
 select_roads<-  st_crop(roads,e)
-
 
 r <-raster(xmn=bbox[1]- 25,xmx=bbox[3]+25,ymn=bbox[2]-25,ymx=bbox[4] + 25,crs="+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs")
 res(r)<-50
@@ -97,9 +99,9 @@ for (stove in houses$stove){
   par(mar=c(0,0,0,4), oma=c(0,4,0,4))
   plot(myhillshade,ylim=c(e[3]-1000,e[4]+ 1000),xlim=c(e[1]-1000,e[2]+1000), axes=FALSE, legend=FALSE,box = FALSE, col = grey(1:100/100))
 
-  plot(rfuel$newValues,ylim=c(e[3]-1000,e[4]+ 1000),xlim=c(e[1]-1000,e[2]+1000), axes=FALSE, box = FALSE, legend=TRUE, legend.args=list(text=expression(paste("gallons per ft"^"2", sep = "")), side=4, font=2, line=4, cex=1),col = heat.colors(5, rev=TRUE), add=TRUE, alpha=0.4)
-plot(select_roads$geometry,ylim=c(e[3]-900,e[4]+ 900),xlim=c(e[1]-900,e[2]+900), axes=FALSE, legend=FALSE,box = TRUE, col = "dark grey", add=TRUE )
-    plot(albershouses[albershouses$stove == stove,],ylim=c(e[3]-1000,e[4]+ 1000),xlim=c(e[1]-1000,e[2]+1000), add=TRUE, pch=24, cex =2, col="red", bg="blue", lwd=2, box=TRUE)
+  plot(rfuel$newValues,ylim=c(e[3]-1000,e[4]+ 1000),xlim=c(e[1]-1000,e[2]+1000), axes=FALSE, box = FALSE, legend=TRUE, legend.args=list(text=expression(paste("gallons per ft"^"2", sep = "")), side=4, font=2, line=4, cex=1),col = rev(heat.colors(5)), add=TRUE, alpha=0.4)
+  plot(select_roads$geometry,ylim=c(e[3]-900,e[4]+ 900),xlim=c(e[1]-900,e[2]+900), axes=FALSE, legend=FALSE,box = TRUE, col = "dark grey", add=TRUE )
+  plot(albershouses[albershouses$stove == stove,],ylim=c(e[3]-1000,e[4]+ 1000),xlim=c(e[1]-1000,e[2]+1000), add=TRUE, pch=24, cex =2, col="red", bg="blue", lwd=2, box=TRUE)
  map.scale(x=e[2]-10000, y=e[3]+1500, len = 5000, ndivs=2,units="km")
 north.arrow(xb=e[2]-3000, yb=e[3]+ 1500, len=300, lab="N", col="black") 
   dev.off()

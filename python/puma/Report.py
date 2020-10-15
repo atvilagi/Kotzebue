@@ -150,7 +150,7 @@ class Report:
     def getGallonsPerFt(self):
         return self.total_gallons / self.area
     def getFuelByDay(self):
-        return self.filtered_df.fuel_consumption.groupby(self.filtered_df.index.to_period("D")).sum()
+        return self.filtered_df.fuel_consumption.groupby(self.filtered_df.index.to_period("D")).sum(min_count=1)
     def getAveCostPerDay(self):
         return self.ave_fuel_per_day[0] * self.fuel_price
     def getAveTemperature(self, t_field):
@@ -224,14 +224,36 @@ class Report:
         not the duration that the dataset is suppose to cover'
         :return timedelta, integer number of days with atleast 6 hours of data'''
 
-        time = (pd.Series(self.filtered_df.index))
-        time.index = self.filtered_df.index
-        dailydf = time.groupby(time.index.to_period('D')).diff()
-        dailydf = dailydf.groupby(dailydf.index.to_period('D')).sum() # daily sampling duration
-        dailydf.dt.round('H') #round to nearest hours
-        actualTime = dailydf.sum()
-        days = len(dailydf[dailydf > pd.to_timedelta(0.25, unit='day')]) #threshhold of 6 hours of data to be included in metrics
+        time =self.filtered_df[['stove']]
+        #time['time'] = time.index
+        stove_groups= time.groupby(['stove'])
+        dailydf = pd.DataFrame()
+        for g in stove_groups.groups.keys():
+            differ = pd.Series(stove_groups.groups[g])
+            differ.index = differ
+            duration = differ.groupby(pd.Grouper(freq = 'D')).diff()
+            daily = duration.groupby(pd.Grouper(freq = 'D')).sum()
+            dailydf = pd.concat([dailydf, daily], axis=1, join='outer')
+        time = dailydf.max(axis=1)
+        time = time.dt.round('H') #round to nearest hours
+        actualTime = time.sum()
+        days = len(time[time > pd.to_timedelta(0.25, unit='day')]) #threshhold of 6 hours of data to be included in metrics
         return actualTime,days
+    def getDaysWithLessThan12hours(self,filtered_df):
+        time = filtered_df[['stove']]
+        # time['time'] = time.index
+        stove_groups = time.groupby(['stove'])
+        dailydf = pd.DataFrame()
+        for g in stove_groups.groups.keys():
+            differ = pd.Series(stove_groups.groups[g])
+            differ.index = differ
+            duration = differ.groupby(pd.Grouper(freq='D')).diff()
+            daily = duration.groupby(pd.Grouper(freq='D')).sum()
+            dailydf = pd.concat([dailydf, daily], axis=1, join='outer')
+        time = dailydf.max(axis=1)
+        time = time.dt.round('H')  # round to nearest hours
+        return time[time < pd.to_timedelta(0.5, unit='day')]
+
     def getEstimatedTotalGallons(self):
         self.gpd_hdd = self.getEstimatedGallons()
         return self.gpd_hdd['fuel_consumption'].sum()  # the total is the sum of all days (actual and estimated)
@@ -281,6 +303,14 @@ class Report:
         #list of dataframes generated from each stove read in
         def makeCombinedDataframe(s):
             try:
+                # event_df = pd.DataFrame({
+                #               'fuel_consumption': uni_nc[s + '/Event/Clicks']['fuel_consumption'][:],
+                #               'gph': uni_nc[s + '/Event/Clicks']['fuel_consumption_rate'][:],
+                #               'clicks': uni_nc[s + '/Event/Clicks']['clicks'][:],
+                #                 'inT': uni_nc[s + '/Event/Clicks']['indoor_temp'][:],
+                #               'stove': [s] * len(uni_nc[s + '/Event/Clicks']['time'][:])
+                #               },
+                #              index=pd.to_datetime(uni_nc[s + '/Event/Clicks']['time'][:],unit='s',utc=True))
                 event_df = pd.DataFrame({
                               'fuel_consumption': uni_nc[s + '/Event/Clicks']['fuel_consumption'][:],
                               'gph': uni_nc[s + '/Event/Clicks']['fuel_consumption_rate'][:],
@@ -288,7 +318,7 @@ class Report:
                                 'inT': uni_nc[s + '/Event/Clicks']['indoor_temp'][:],
                               'stove': [s] * len(uni_nc[s + '/Event/Clicks']['time'][:])
                               },
-                             index=pd.to_datetime(uni_nc[s + '/Event/Clicks']['time'][:],unit='s',utc=True))
+                             index=pd.to_datetime(uni_nc[s + '/Event/Clicks']['time'][:],utc=True, unit='s'))
             except KeyError as e:
                 print(e)
                 event_df = pd.DataFrame()
@@ -297,7 +327,12 @@ class Report:
                                 'inT': uni_nc[s + '/Time']['indoor_temp'][:],
                                 'deltaT':uni_nc[s + '/Time']['delta_temp'][:],
                                 'stove': [s] * len(uni_nc[s + '/Time']['time'][:])},
-                                        index=pd.to_datetime(uni_nc[s + '/Time']['time'][:], unit='s',utc=True))
+                                        index=pd.to_datetime(uni_nc[s + '/Time']['time'][:],utc=True, unit='s'))
+                # timed_df = pd.DataFrame({'outT': uni_nc[s + '/Time']['outdoor_temp'][:],
+                #                          'inT': uni_nc[s + '/Time']['indoor_temp'][:],
+                #                          'deltaT': uni_nc[s + '/Time']['delta_temp'][:],
+                #                          'stove': [s] * len(uni_nc[s + '/Time']['time'][:])},
+                #                         index=pd.to_datetime(uni_nc[s + '/Time']['time'][:], unit='s', utc=True))
             except KeyError as e:
                 print(e)
                 timed_df = pd.DataFrame()
@@ -317,18 +352,30 @@ class Report:
         filtered_df = filtered_df.sort_index(0)
         studyStart = datetime.datetime.strptime('2017-09-01 00:00:00',"%Y-%m-%d %H:%M:%S")
         studyStart = timezone.localize(studyStart, timezone)
-        dataStart = min(filtered_df[studyStart:][pd.notnull(filtered_df.deltaT)].index) #drop records that are earlier than our actual data collection
+        dataStart = min(filtered_df[pd.notnull(filtered_df.deltaT)][studyStart:].index) #drop records that are earlier than our actual data collection
         filtered_df = filtered_df[dataStart:]
+        #filter out days with fewer than 12 hours of data and fewer thand 20 days of data per month
+
+        daysWithTooLittleData = self.getDaysWithLessThan12hours(filtered_df)
+        daysWithTooLittleData.name = 'baddays'
+        daysWithTooLittleData.index = daysWithTooLittleData.index.date
+
+        f =   pd.merge(filtered_df, daysWithTooLittleData, how='outer', left_on=filtered_df.index.date,
+                     right_on=daysWithTooLittleData.index)
+        f.index = filtered_df.index
+        filtered_df = f.loc[pd.isnull(f['baddays']),]
+
         d = filtered_df[pd.notnull(filtered_df['fuel_consumption'])] #only days with fuel data
-        dsum = d['fuel_consumption'].groupby(d.index.to_period("D")).sum()
+
+        dsum = d['fuel_consumption'].groupby(pd.Grouper(freq="D")).sum()
         dcount = dsum.groupby(pd.Grouper(freq="M")).count() #if there are fewer than 20 days we don't want to extrapolate month long information
         dcount.name = 'day_count'
-        dcount.index = dcount.index.to_timestamp()
-        dcount.index = dcount.index.tz_localize(filtered_df.index.tz)
+        if (dcount.index.tzinfo is None):
+            dcount.index = dcount.index.tz_localize(filtered_df.index.tz)
         filtered_df = filtered_df.join(dcount, how="outer")
         filtered_df['day_count'] = filtered_df['day_count'].ffill()
         cleaned = filtered_df[filtered_df['day_count'] > 19] #drop months with fewer than 19 days of data
-        cleaned = cleaned.drop('day_count', axis = 1)
+        cleaned = cleaned.drop(['day_count','baddays','key_0'], axis = 1)
         return cleaned[self.start:self.end], filtered_df[studyStart:self.end] #all records up to end date
 
     def findImage(self,path,name):
