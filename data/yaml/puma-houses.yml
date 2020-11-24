@@ -20,6 +20,7 @@ FBK001:
   Square Footage: '528'
   Report: False
   Stove: 'FBK001'
+  Stove Correction: 1.1269
 FBK002:
   Location:
   - 64.85885
@@ -27,6 +28,7 @@ FBK002:
   Square Footage: '1318'
   Report: False
   Stove: 'FBK002'
+  
 FBK003:
   Location:
   - 64.90049
@@ -34,6 +36,7 @@ FBK003:
   Square Footage: '672'
   Report: False
   Stove: 'FBK003'
+  Stove Correction: 1.1269
 FBK004:
   Location:
   - 64.89163
@@ -41,6 +44,7 @@ FBK004:
   Square Footage: '792'
   Report: True
   Stove: 'FBK004'
+  Stove Correction: 1.2705
 FBK005:
   Location:
   - 64.8487
@@ -48,6 +52,7 @@ FBK005:
   Square Footage: '564'
   Report: False
   Stove: 'FBK005'
+  Stove Correction: 1.0525
 FBK006:
   Location:
   - 64.79955
@@ -55,6 +60,7 @@ FBK006:
   Square Footage: '1008'
   Report: False
   Stove: 'FBK006'
+  Stove Correction: 1.1886
 FBK007:
   Location:
   - 64.91331
@@ -62,6 +68,7 @@ FBK007:
   Square Footage: '576'
   Report: False
   Stove: 'FBK007'
+  Stove Correction: 1.1886
 FBK008:
   Location:
   - 64.8496
@@ -69,6 +76,7 @@ FBK008:
   Square Footage: '576'
   Report: False
   Stove: 'FBK008'
+  
 FBK009:
   Location:
   - 64.57072
@@ -76,6 +84,7 @@ FBK009:
   Square Footage: '672'
   Report: False
   Stove: 'FBK009'
+  Stove Correction: 1.1886
 FBK010:
   Location:
   - 64.92074
@@ -83,6 +92,7 @@ FBK010:
   Square Footage: '552'
   Report: True
   Stove: 'FBK010'
+  Stove Correction: 1.1002
 FBK011:
   Location:
   - 64.77877
@@ -90,6 +100,7 @@ FBK011:
   Square Footage: '576'
   Report: False
   Stove: 'FBK011'
+  Stove Correction: 1.1269
 FBK012:
   Location:
   - 64.78514
@@ -97,6 +108,7 @@ FBK012:
   Square Footage: '1512'
   Report: False
   Stove: 'FBK012'
+  Stove Correction: 1.3079
 FBK013:
   Location:
   - 64.96401
@@ -104,6 +116,7 @@ FBK013:
   Square Footage: '936'
   Report: False
   Stove: 'FBK013'
+  Stove Correction: 1.1886
 FBK014-FBK015:
   Location:
   - 64.83723
@@ -111,6 +124,7 @@ FBK014-FBK015:
   Square Footage: '1830'
   Report: False
   Stove: 'FBK014,FBK015'
+  Stove Correction: 1.2575
 FBK016:
   Location:
   - 64.76378
@@ -118,6 +132,7 @@ FBK016:
   Square Footage: '572'
   Report: True
   Stove: 'FBK016'
+  Stove Correction: 1.1886
 FBK017-FBK018:
   Location:
   - 64.81606
@@ -125,6 +140,7 @@ FBK017-FBK018:
   Square Footage: '1360'
   Report: True
   Stove: 'FBK017,FBK018'
+  
 FBK019-FBK020:
   Location:
   - 64.87386
@@ -132,6 +148,7 @@ FBK019-FBK020:
   Square Footage: '1080'
   Report: False
   Stove: 'FBK019,FBK020'
+  
 FBK021:
   Location:
   - 64.85657
@@ -139,6 +156,7 @@ FBK021:
   Square Footage: '480'
   Report: False
   Stove: 'FBK021'
+  Stove Correction: 1.2575
 FBK022:
   Location:
   - 64.78939
@@ -146,6 +164,7 @@ FBK022:
   Square Footage: '512'
   Report: False
   Stove: 'FBK022'
+  Stove Correction: 1.1269
 FBK023:
   Location:
   - 64.8388
@@ -153,6 +172,7 @@ FBK023:
   Square Footage: '900'
   Report: True
   Stove: 'FBK023'
+  Stove Correction: 1.1269
 FBK024-FBK025:
   Location:
   - 64.92216
@@ -160,6 +180,7 @@ FBK024-FBK025:
   Square Footage: '1264'
   Report: False
   Stove: 'FBK024,FBK025'
+  
 FBK026:
   Location:
   - 64.9112
@@ -167,6 +188,7 @@ FBK026:
   Square Footage: '320'
   Report: False
   Stove: 'FBK026'
+  Stove Correction: 0.9008
 FBK027:
   Location:
   - 64.89892
@@ -174,6 +196,7 @@ FBK027:
   Square Footage: '864'
   Report: True
   Stove: 'FBK027'
+  Stove Correction: 1.1886
 FBK028:
   Location:
   - 64.77966
@@ -181,6 +204,7 @@ FBK028:
   Square Footage: '1320'
   Report: False
   Stove: 'FBK028'
+  Stove Correction: 1.1886
 FBK029:
   Location:
   - 64.91823
@@ -188,6 +212,7 @@ FBK029:
   Square Footage: '396'
   Report: False
   Stove: 'FBK029'
+  Stove Correction: 1.1269
 FBK030:
   Location:
   - 64.8601
@@ -195,6 +220,7 @@ FBK030:
   Square Footage: '510'
   Report: False
   Stove: 'FBK030'
+  Stove Correction: 1.2575
 FBK031:
   Location:
   - 64.8873
@@ -202,6 +228,7 @@ FBK031:
   Square Footage: '288'
   Report: True
   Stove: 'FBK031'
+  Stove Correction: 1.1566
 FBK032:
   Location:
   - 64.80488
@@ -209,6 +236,7 @@ FBK032:
   Square Footage: '640'
   Report: False
   Stove: 'FBK032'
+  Stove Correction: 1.2838
 FBK033:
   Location:
   - 64.90272
@@ -216,6 +244,7 @@ FBK033:
   Square Footage: '408'
   Report: False
   Stove: 'FBK033'
+  Stove Correction: 1.2575
 FBK034:
   Location:
   - 64.87842
@@ -223,6 +252,7 @@ FBK034:
   Square Footage: '861'
   Report: False
   Stove: 'FBK034'
+  Stove Correction: 1.1886
 FBK035:
   Location:
   - 64.89301
@@ -230,6 +260,7 @@ FBK035:
   Square Footage: '1728'
   Report: False
   Stove: 'FBK035'
+  Stove Correction: 1.1886
 FBK036:
   Location:
   - 64.79853
@@ -237,6 +268,7 @@ FBK036:
   Square Footage: '1014'
   Report: False
   Stove: 'FBK036'
+  Stove Correction: 1.1726
 FBK037:
   Location:
   - 64.86302
@@ -244,6 +276,7 @@ FBK037:
   Square Footage: '576'
   Report: True
   Stove: 'FBK037'
+  Stove Correction: 1.1269
 FBK038:
   Location:
   - 64.90147
@@ -251,6 +284,7 @@ FBK038:
   Square Footage: '624'
   Report: False
   Stove: 'FBK038'
+  Stove Correction: 1.1805
 FBK039:
   Location:
   - 64.89185
@@ -258,6 +292,7 @@ FBK039:
   Square Footage: '760'
   Report: True
   Stove: 'FBK039'
+  Stove Correction: 1.1886
 FBK040:
   Location:
   - 64.84648
@@ -265,6 +300,7 @@ FBK040:
   Square Footage: '960'
   Report: True
   Stove: 'FBK040'
+  Stove Correction: 1.1568
 FBK041:
   Location:
   - 64.90553
@@ -272,6 +308,7 @@ FBK041:
   Square Footage: '448'
   Report: True
   Stove: 'FBK041'
+  Stove Correction: 1.2673
 FBK042:
   Location:
   - 64.86369
@@ -279,6 +316,7 @@ FBK042:
   Square Footage: '812'
   Report: False
   Stove: 'FBK042'
+  Stove Correction: 1.1269
 FBK043:
   Location:
   - 64.83624
@@ -286,6 +324,7 @@ FBK043:
   Square Footage: '1100'
   Report: False
   Stove: 'FBK043'
+  Stove Correction: 1.1744
 FBK044:
   Location:
   - 64.80454
@@ -293,6 +332,7 @@ FBK044:
   Square Footage: '576'
   Report: True
   Stove: 'FBK044'
+  Stove Correction: 1.0573
 FBK045:
   Location:
   - 64.89274
@@ -300,3 +340,4 @@ FBK045:
   Square Footage: '472'
   Report: False
   Stove: 'FBK045'
+  Stove Correction: 1.1886
