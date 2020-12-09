@@ -21,6 +21,7 @@ FBK001:
   Report: False
   Stove: 'FBK001'
   Stove Correction: 1.1269
+  Stove Initialized: '1/26/2019' 
 FBK002:
   Location:
   - 64.85885
@@ -38,6 +39,7 @@ FBK003:
   Report: False
   Stove: 'FBK003'
   Stove Correction: 1.1269
+  Stove Initialized: '11/27/2018'
 FBK004:
   Location:
   - 64.89163
@@ -46,6 +48,7 @@ FBK004:
   Report: True
   Stove: 'FBK004'
   Stove Correction: 1.2705
+  Stove Initialized: '11/27/2018'
 FBK005:
   Location:
   - 64.8487
@@ -54,6 +57,7 @@ FBK005:
   Report: False
   Stove: 'FBK005'
   Stove Correction: 1.0525
+  Stove Initialized: '2/12/2019'
 FBK006:
   Location:
   - 64.79955
@@ -62,6 +66,7 @@ FBK006:
   Report: False
   Stove: 'FBK006'
   Stove Correction: 1.1886
+  Stove Initialized: '2/13/2019'
 FBK007:
   Location:
   - 64.91331
@@ -70,6 +75,7 @@ FBK007:
   Report: False
   Stove: 'FBK007'
   Stove Correction: 1.1886
+  Stove Initialized: '2/18/2019'
 FBK008:
   Location:
   - 64.8496
@@ -87,6 +93,7 @@ FBK009:
   Report: False
   Stove: 'FBK009'
   Stove Correction: 1.1886
+  Stove Initialized: '11/29/2018'
 FBK010:
   Location:
   - 64.92074
@@ -95,6 +102,7 @@ FBK010:
   Report: True
   Stove: 'FBK010'
   Stove Correction: 1.1002
+  Stove Initialized: '2/12/2019'
 FBK011:
   Location:
   - 64.77877
@@ -103,6 +111,7 @@ FBK011:
   Report: False
   Stove: 'FBK011'
   Stove Correction: 1.1269
+  Stove Initialized: '2/20/2019'
 FBK012:
   Location:
   - 64.78514
@@ -111,6 +120,7 @@ FBK012:
   Report: False
   Stove: 'FBK012'
   Stove Correction: 1.3079
+  Stove Initialized: '12/1/2018'
 FBK013:
   Location:
   - 64.96401
@@ -119,6 +129,7 @@ FBK013:
   Report: False
   Stove: 'FBK013'
   Stove Correction: 1.1886
+  Stove Initialized: '2/18/2019'
 FBK014-FBK015:
   Location:
   - 64.83723
@@ -127,6 +138,7 @@ FBK014-FBK015:
   Report: False
   Stove: 'FBK014,FBK015'
   Stove Correction: 1.1886,1.2575
+  Stove Initialized: '2/11/2019,2/11/2019'
 FBK016:
   Location:
   - 64.76378
@@ -135,6 +147,7 @@ FBK016:
   Report: True
   Stove: 'FBK016'
   Stove Correction: 1.1886
+  Stove Initialized: '2/13/2020'
 FBK017-FBK018:
   Location:
   - 64.81606
@@ -143,6 +156,7 @@ FBK017-FBK018:
   Report: True
   Stove: 'FBK017,FBK018'
   Stove Correction: 1.1886,1.1269
+  Stove Initialized: '12/2/2018,12/6/2018'
 FBK019-FBK020:
   Location:
   - 64.87386
@@ -160,6 +174,7 @@ FBK021:
   Report: False
   Stove: 'FBK021'
   Stove Correction: 1.2575
+  Stove Initialized: '1/25/2019'
 FBK022:
   Location:
   - 64.78939
@@ -168,6 +183,7 @@ FBK022:
   Report: False
   Stove: 'FBK022'
   Stove Correction: 1.1269
+  Stove Initialized: '12/3/2018'
 FBK023:
   Location:
   - 64.8388
@@ -176,6 +192,7 @@ FBK023:
   Report: True
   Stove: 'FBK023'
   Stove Correction: 1.1269
+  Stove Initialized: '12/6/2018'
 FBK024-FBK025:
   Location:
   - 64.92216
@@ -184,6 +201,7 @@ FBK024-FBK025:
   Report: False
   Stove: 'FBK024,FBK025'
   Stove Correction: 1.1886,1.1269
+  Stove Initialized: '1/1/2019,12/4/2018'
 FBK026:
   Location:
   - 64.9112
@@ -192,6 +210,7 @@ FBK026:
   Report: False
   Stove: 'FBK026'
   Stove Correction: 0.9008
+  Stove Initialized: '2/11/2019'
 FBK027:
   Location:
   - 64.89892
@@ -200,6 +219,7 @@ FBK027:
   Report: True
   Stove: 'FBK027'
   Stove Correction: 1.1886
+  Stove Initialized: '12/4/2018'
 FBK028:
   Location:
   - 64.77966
@@ -208,6 +228,7 @@ FBK028:
   Report: False
   Stove: 'FBK028'
   Stove Correction: 1.1886
+  Stove Initialized: '12/1/2018'
 FBK029:
   Location:
   - 64.91823
@@ -216,6 +237,7 @@ FBK029:
   Report: False
   Stove: 'FBK029'
   Stove Correction: 1.1269
+  Stove Initialized: '1/1/2019'
 FBK030:
   Location:
   - 64.8601
@@ -224,6 +246,7 @@ FBK030:
   Report: False
   Stove: 'FBK030'
   Stove Correction: 1.2575
+  Stove Initialized: '1/25/2019'
 FBK031:
   Location:
   - 64.8873
@@ -232,6 +255,7 @@ FBK031:
   Report: True
   Stove: 'FBK031'
   Stove Correction: 1.1566
+  Stove Initialized: '2/13/2019'
 FBK032:
   Location:
   - 64.80488
@@ -240,6 +264,7 @@ FBK032:
   Report: False
   Stove: 'FBK032'
   Stove Correction: 1.2838
+  Stove Initialized: '12/6/2018'
 FBK033:
   Location:
   - 64.90272
@@ -248,6 +273,7 @@ FBK033:
   Report: False
   Stove: 'FBK033'
   Stove Correction: 1.2575
+  Stove Initialized: '12/6/2018'
 FBK034:
   Location:
   - 64.87842
@@ -256,6 +282,7 @@ FBK034:
   Report: False
   Stove: 'FBK034'
   Stove Correction: 1.1886
+  Stove Initialized: '12/7/2018'
 FBK035:
   Location:
   - 64.89301
@@ -264,6 +291,7 @@ FBK035:
   Report: False
   Stove: 'FBK035'
   Stove Correction: 1.1886
+  Stove Initialized: '9/8/2019'
 FBK036:
   Location:
   - 64.79853
@@ -272,6 +300,7 @@ FBK036:
   Report: False
   Stove: 'FBK036'
   Stove Correction: 1.1726
+  Stove Initialized: '12/8/2018'
 FBK037:
   Location:
   - 64.86302
@@ -280,6 +309,7 @@ FBK037:
   Report: True
   Stove: 'FBK037'
   Stove Correction: 1.1269
+  Stove Initialized: '12/8/2018'
 FBK038:
   Location:
   - 64.90147
@@ -288,6 +318,7 @@ FBK038:
   Report: False
   Stove: 'FBK038'
   Stove Correction: 1.1805
+  Stove Initialized: '12/9/2018'
 FBK039:
   Location:
   - 64.89185
@@ -296,6 +327,7 @@ FBK039:
   Report: True
   Stove: 'FBK039'
   Stove Correction: 1.1886
+  Stove Initialized: '2/14/2019'
 FBK040:
   Location:
   - 64.84648
@@ -304,6 +336,7 @@ FBK040:
   Report: True
   Stove: 'FBK040'
   Stove Correction: 1.1568
+  Stove Initialized: '12/11/2018'
 FBK041:
   Location:
   - 64.90553
@@ -312,6 +345,7 @@ FBK041:
   Report: True
   Stove: 'FBK041'
   Stove Correction: 1.2673
+  Stove Initialized: '2/9/2019'
 FBK042:
   Location:
   - 64.86369
@@ -320,6 +354,7 @@ FBK042:
   Report: False
   Stove: 'FBK042'
   Stove Correction: 1.1269
+  Stove Initialized: '12/17/2018'
 FBK043:
   Location:
   - 64.83624
@@ -328,6 +363,7 @@ FBK043:
   Report: False
   Stove: 'FBK043'
   Stove Correction: 1.1744
+  Stove Initialized: '12/18/2018'
 FBK044:
   Location:
   - 64.80454
@@ -336,6 +372,7 @@ FBK044:
   Report: True
   Stove: 'FBK044'
   Stove Correction: 1.0573
+  Stove Initialized: '1/15/2019'
 FBK045:
   Location:
   - 64.89274
@@ -344,3 +381,4 @@ FBK045:
   Report: False
   Stove: 'FBK045'
   Stove Correction: 1.1886
+  Stove Initialized: '2/1/2019'
