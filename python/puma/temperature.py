@@ -7,7 +7,8 @@ By Doug Keller
 import numpy as np
 import pandas as pd
 
-def heat_degree_day(df,base,column):
+BASE = 65
+def heat_degree_day(Tcolumn):
     """
     Returns a list of the heating degree day from an outdoor temperature list
     
@@ -22,10 +23,11 @@ def heat_degree_day(df,base,column):
     This function provides the heating degree day value of a given list of outdoor temperature data
      (in Fahrenheit) with an accompanying datetime object list, needed for the definition of a heating degree day (https://www.weather.gov/key/climate_heat_cool).
     """
-    dailydf = daily_average_temperature(df,column)
-    dailydf['hdd'] = base - dailydf[column]
+    Temp = Tcolumn.groupby(pd.Grouper(freq = 'D')).mean()
+    hdd = BASE - Temp
+    hdd.name='hdd'
 
-    return dailydf
+    return hdd
 
 def daily_average_temperature(df,column):
     '''Returns the average temperature over a day.
@@ -40,7 +42,7 @@ def daily_average_temperature(df,column):
     '''
     
     dailydf = df[column].resample('1D').ohlc()
-    dailydf.index = dailydf.index.to_period('D') #get rid of hours portion of datetime
+    dailydf.index = dailydf.index.date #get rid of hours portion of datetime
     dailydf = dailydf.drop(['open', 'close'], 1)
     dailydf[column] = dailydf.mean(1)
 

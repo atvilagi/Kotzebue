@@ -70,6 +70,7 @@ class Report:
         '''create a dataframe for the report time period and generate report metrics based on the dataset'''
         self.area = sum([float(house.area) for house in self.houses])  # total area metrics are being calculated for
         self.report_duration = self.end - self.start
+
         #filter the dataset to the portion required for this report
         self.filtered_df,self.unfiltered_df = self.filterDataset()
         self.getTip()  # set a tip to display
@@ -80,8 +81,8 @@ class Report:
             self.days_monitored  =self.getDaysMonitored() #this is actual duration that there is data for
 
             #in the case of multi month report temperatures will be by month
-            self.ave_MonthlyindoorT, self.ave_DailyIndoorT = self.getAveTemperature('inT') #average of indoor Temperature for report time period
-            self.ave_MonthlyoutdoorT,self.ave_DailyOutdoorT = self.getAveTemperature('outT') #average of outdoor Temperature for report time period
+            self.ave_MonthlyindoorT, self.ave_DailyIndoorT = self.getAveTemperature(self.filtered_df['inT']) #average of indoor Temperature for report time period
+            self.ave_MonthlyoutdoorT,self.ave_DailyOutdoorT = self.getAveTemperature(self.hourlyOutdoorTemperature) #average of outdoor Temperature for report time period
 
             self.gallons = self.filtered_df.fuel_consumption.sum() #recorded total consumption in gallons
 
@@ -122,7 +123,7 @@ class Report:
             self.total_cost = self.getTotalCost()  # estimated cost (actual if no missing data)
         else:
             self.total_gallons = self.getEstimatedTotalGallons()
-            self.total_cost = self.getEstimatedTotalCost()  # estimated cost (actual if no missing data)
+            self.total_cost = self.total_gallons * self.fuel_price.mean() # estimated cost (actual if no missing data)
             self.dataFlag = 1  # if flag is one then gallons is an estimate and not measured value
 
     def setProgUsage(self):
@@ -140,7 +141,7 @@ class Report:
             self.prog_usage = 0
 
     def getGphddBym(self):
-        return pfuel.weather_adjusted_gallons_consumed_per_month(self.filtered_df, 'outT',
+        return pfuel.weather_adjusted_gallons_consumed_per_month(self.filtered_df, self.hourlyOutdoorTemperature,
                                                                  'fuel_consumption')
 
     def getTotalCost(self):
@@ -150,25 +151,26 @@ class Report:
     def getGallonsPerFt(self):
         return self.total_gallons / self.area
     def getFuelByDay(self):
-        return self.filtered_df.fuel_consumption.groupby(self.filtered_df.index.to_period("D")).sum(min_count=1)
+        return self.filtered_df.fuel_consumption.groupby(pd.Grouper(freq='D')).sum(min_count=1)
     def getAveCostPerDay(self):
         return self.ave_fuel_per_day[0] * self.fuel_price
-    def getAveTemperature(self, t_field):
+    def getAveTemperature(self, t_data):
         '''get the daily and monthly average value for a specified field
         :return: df --dataframe of averages by month
         :return dg -- pd.Series of mean daily values'''
-        dg = self.filtered_df[t_field].groupby(self.filtered_df.index.to_period("D")).mean()
-        mg = self.filtered_df.groupby(pd.Grouper(freq='M'))
-        ave = mg[t_field].mean()
-        sem = mg[t_field].sem()
+        average_dailyTemperature = t_data.groupby(pd.Grouper(freq ='D')).mean()
+        ave = t_data.groupby(pd.Grouper(freq='M')).mean()
+        sem = t_data.groupby(pd.Grouper(freq='M')).sem()
         df = pd.concat([ave, sem], axis=1)
         df.columns = ['ave','sem']
-        return df, dg
-
+        return df, average_dailyTemperature
+    def getHourlyTemperature(self,df,t_field):
+        hourly = df[t_field].groupby(pd.Grouper(freq='h')).mean()
+        return hourly
     def getAveGPH_byHour(self):
         '''average gallons per hour for each hour interval in a day - hours 0-23
         :return pandas series with hour index'''
-        m = self.gph.groupby(self.gph.index.hour).mean()
+        m = self.gph.groupby(pd.Grouper(freq='H')).mean()
         return m
     def getAveGPH(self):
         '''get the average gallons per hour over the report period
@@ -202,7 +204,7 @@ class Report:
     def getGallonsPerHour(self):
         '''mean gallons per hour by hour
         :returns pandas series'''
-        return self.filtered_df.fuel_consumption.groupby(self.filtered_df.index.to_period('H')).agg('mean','sem')
+        return self.filtered_df.fuel_consumption.groupby(pd.Grouper(freq='H')).agg('mean','sem')
     def getTip(self):
         '''tips are report subclass specific'''
         pass
@@ -240,7 +242,7 @@ class Report:
         days = len(time[time > pd.to_timedelta(0.25, unit='day')]) #threshhold of 6 hours of data to be included in metrics
         return actualTime,days
     def getDaysWithLessThan12hours(self,filtered_df):
-        time = filtered_df[['stove']]
+        time = filtered_df.loc[(pd.notnull(filtered_df['inT']) | pd.notnull(filtered_df['fuel_consumption'])),['stove']]
         # time['time'] = time.index
         stove_groups = time.groupby(['stove'])
         dailydf = pd.DataFrame()
@@ -248,11 +250,12 @@ class Report:
             differ = pd.Series(stove_groups.groups[g])
             differ.index = differ
             duration = differ.groupby(pd.Grouper(freq='D')).diff()
-            daily = duration.groupby(pd.Grouper(freq='D')).sum()
+            daily = duration.groupby(pd.Grouper(freq='D')).sum(min_count=6)
             dailydf = pd.concat([dailydf, daily], axis=1, join='outer')
-        time = dailydf.max(axis=1)
-        time = time.dt.round('H')  # round to nearest hours
-        return time[time < pd.to_timedelta(0.5, unit='day')]
+        dailydf['dur'] = dailydf.max(axis=1)
+        dailydf['dur'] = dailydf['dur'].dt.round('H')  # round to nearest hours
+        dailydf.loc[pd.isnull(dailydf['dur']),'dur'] = pd.to_timedelta('0h')
+        return dailydf.loc[(dailydf['dur'] < pd.to_timedelta(0.4, unit='day')) | (pd.isnull(dailydf['dur'])),'dur']
 
     def getEstimatedTotalGallons(self):
         self.gpd_hdd = self.getEstimatedGallons()
@@ -266,10 +269,10 @@ class Report:
           and sum both the actual and estimated to produce an estimated total
           :returns float value of total gallons for the report time period'''
 
-        hdd = ptemp.heat_degree_day(self.filtered_df, 65, 'outT') #returns a series of hdd values by day with actual gallons used per day
+        hdd = ptemp.heat_degree_day(self.hourlyOutdoorTemperature) #returns a series of hdd values by day with actual gallons used per day
         gpd = pfuel.gallons_per_day_and_per_month(self.filtered_df, 'fuel_consumption')[0] #the first value in the returned tuple is dataframe by day
+        gpd_hdd = pd.concat([gpd,hdd],axis=1)
 
-        gpd_hdd = hdd.join(gpd,how='outer')
         gpd_hdd['gphdd'] = gpd_hdd['fuel_consumption'] / gpd_hdd['hdd']
 
         #decide on a fill method and fill missing values
@@ -348,7 +351,7 @@ class Report:
         filtered_df_list = [makeCombinedDataframe(s.name) for s in self.stoves]
 
         filtered_df = pd.concat(filtered_df_list)
-
+        self.hourlyOutdoorTemperature = self.getHourlyTemperature(filtered_df, 'outT')
         filtered_df = filtered_df.sort_index(0)
         studyStart = datetime.datetime.strptime('2017-09-01 00:00:00',"%Y-%m-%d %H:%M:%S")
         studyStart = timezone.localize(studyStart, timezone)
@@ -356,26 +359,41 @@ class Report:
         filtered_df = filtered_df[dataStart:]
         #filter out days with fewer than 12 hours of data and fewer thand 20 days of data per month
 
+        d = filtered_df[pd.notnull(filtered_df['fuel_consumption'])]
+        dsum = d['fuel_consumption'].groupby(pd.Grouper(freq="D")).sum(min_count=1)
+        daysWithClicks = dsum.groupby(pd.Grouper(
+            freq="M")).count()  # if there are fewer than 150days we don't want to extrapolate month long information
+        daysWithClicks.name = 'day_with_clicks_count'
+
+        d = filtered_df[pd.notnull(filtered_df['inT'])]
+        dsum = d['inT'].groupby(pd.Grouper(freq="D")).sum(min_count=1)
+        daysWithT = dsum.groupby(pd.Grouper(
+            freq="M")).count()  # if there are fewer than 150days we don't want to extrapolate month long information
+        daysWithT.name = 'day_with_Temperature_count'
+
         daysWithTooLittleData = self.getDaysWithLessThan12hours(filtered_df)
         daysWithTooLittleData.name = 'baddays'
         daysWithTooLittleData.index = daysWithTooLittleData.index.date
+        daysWithTooLittleData.loc[pd.isnull(daysWithTooLittleData)] = pd.to_timedelta('0h')
 
-        f =   pd.merge(filtered_df, daysWithTooLittleData, how='outer', left_on=filtered_df.index.date,
+        f =   pd.merge(filtered_df, daysWithTooLittleData, how='left', left_on=filtered_df.index.date,
                      right_on=daysWithTooLittleData.index)
         f.index = filtered_df.index
         filtered_df = f.loc[pd.isnull(f['baddays']),]
 
-        d = filtered_df[pd.notnull(filtered_df['fuel_consumption'])] #only days with fuel data
+        d = filtered_df[(pd.notnull(filtered_df['fuel_consumption']) | (pd.notnull(filtered_df['inT'])))] #only days with fuel data - either clicks or temperature
 
-        dsum = d['fuel_consumption'].groupby(pd.Grouper(freq="D")).sum()
-        dcount = dsum.groupby(pd.Grouper(freq="M")).count() #if there are fewer than 20 days we don't want to extrapolate month long information
+        dsum = d['inT'].groupby(pd.Grouper(freq="D")).sum(min_count = 9)
+        dcount = dsum.groupby(pd.Grouper(freq="M")).count() #if there are fewer than 150days we don't want to extrapolate month long information
         dcount.name = 'day_count'
         if (dcount.index.tzinfo is None):
             dcount.index = dcount.index.tz_localize(filtered_df.index.tz)
-        filtered_df = filtered_df.join(dcount, how="outer")
-        filtered_df['day_count'] = filtered_df['day_count'].ffill()
-        cleaned = filtered_df[filtered_df['day_count'] > 19] #drop months with fewer than 19 days of data
-        cleaned = cleaned.drop(['day_count','baddays','key_0'], axis = 1)
+        filtered_df = filtered_df.drop('key_0',axis=1)
+        filtered_df = filtered_df.reset_index().merge(dcount,how='left', left_on=[filtered_df.index.year,filtered_df.index.month], right_on=[dcount.index.year,dcount.index.month]).set_index('index')
+
+
+        cleaned = filtered_df[filtered_df['day_count'] >= 15] #drop months with fewer than 15 days of data
+        cleaned = cleaned.drop(['day_count','baddays','key_1','outT'], axis = 1)
         return cleaned[self.start:self.end], filtered_df[studyStart:self.end] #all records up to end date
 
     def findImage(self,path,name):
@@ -411,8 +429,8 @@ class MonthlyReport(Report):
         if isinstance(fuel_price,pd.Series):
             self.fuel_price = fuel_price[start:end].mean()
 
-    def getAveTemperature(self, t_field):
-        allMonths = super().getAveTemperature(t_field) #allMonths is a tuple with dataframe as first record
+    def getAveTemperature(self, t_data):
+        allMonths = super().getAveTemperature(t_data) #allMonths is a tuple with dataframe as first record
 
         return allMonths[0], allMonths[1] #the ave and sem for month of report
 

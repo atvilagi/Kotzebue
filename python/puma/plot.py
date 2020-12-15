@@ -237,9 +237,11 @@ def plot_multiyear_bar_progress_with_temperature(gphddpm,monthlyMeanTemperature,
         elif (len(T)==1):
             line = axes2.plot(T[0], power[0], label=y, c=colors[i])
 
-    xticks = [datetime.date(1900, j, 1).strftime('%b') for j in range(min(gphddpm.index.month), max(gphddpm.index.month) + 1)]
-    plt.xticks([j for j in range(min(gphddpm.index.month), max(gphddpm.index.month) + 1)], xticks, fontsize=22, rotation=0)
-    plt.xlabel('\nTemperature Adjusted Gallons per Month', fontsize=22)
+    #xticks = [datetime.date(1900, j, 1).strftime('%b') for j in range(min(gphddpm.index.month), max(gphddpm.index.month) + 1)]
+    xticks = [datetime.date(1900, j, 1).strftime('%b') for j in
+              range(min(monthlyMeanTemperature.index.month), max(monthlyMeanTemperature.index.month) + 1)]
+    plt.xticks([j for j in range(min(monthlyMeanTemperature.index.month), max(monthlyMeanTemperature.index.month) + 1)], xticks, fontsize=22, rotation=0)
+    #plt.xlabel('\nTemperature Adjusted Gallons per Month', fontsize=22)
 
     plt.box(False)
     plt.legend(bbox_to_anchor=(.73, 0.98), fontsize=14)

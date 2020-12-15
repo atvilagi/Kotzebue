@@ -46,7 +46,7 @@ def write_multimonth_tex_var_file(reportRange,Total_Usage,meanMonthly_Usage_per_
         qualifier = ''
     resultTable = []
     for row in tableRows:  # table rows is a list of tuples
-        myList = [v.replace('nan', '--') for v in row]
+        myList = [v.replace('$nan','--').replace('nan', '--') for v in row]
         if '--' in myList:
             myList = [myList[0]] + ['--' for v in myList[1:]]
         newRow= tuple(myList)
@@ -91,7 +91,7 @@ def write_multimonth_tex_var_file(reportRange,Total_Usage,meanMonthly_Usage_per_
         Daily\\
                 Fuel\\
                 Consumption\\ (g)\\} &  \makecell
-        {Average \\Daily\\ Cost*} &  \makecell
+        {Average \\Daily\\ Cost} &  \makecell
         {Monthly \\Total\\ Gallons} &  \makecell
         {Monthly \\Total\\ Cost} &  \makecell
         {Monthly \\Average\\ Indoor\\ Temperature\\ (F)} &  \makecell
@@ -219,7 +219,7 @@ Total Cost: \${\totalcost}**\\
   \begin{varwidth}{1\textwidth}
      \large
      {Standardizing the rate of fuel consumption per square foot permits comparison between homes of different sizes.
-      The figure above shows how your consumption rate (red) compares to other participants of this study (purple) during each year of this study. 
+      The figure above shows how your consumption rate (red) compares to other participants of this study (orange) during each year of this study. 
       }
  \end{varwidth}
     \vspace{4pt}
@@ -245,7 +245,7 @@ Total Cost: \${\totalcost}**\\
     \vspace{8pt}
     \begin{center}
     \small
-     {\highmonths}\\
+     {\highmonths}{ }\\
      \vspace{16pt}
     \textbf{\large{Your Home's Fuel Usage for the Duration of This Study}}\\
     \vspace{16pt}
@@ -261,7 +261,7 @@ Total Cost: \${\totalcost}**\\
     \begin{minipage}{\linewidth}
      \begin{varwidth}{1\textwidth}
 
-      \large{The figure below shows your average fuel consumption for each hour of the day by season. The different collors correspond to the seasons.}
+      \large{The figure below shows your average fuel consumption for each hour of the day by season. The different colors correspond to the seasons.}
     \end{varwidth}
        
 

@@ -1,0 +1,55 @@
+library(tidyverse)#
+library(oce)#
+library(ncdf4)#
+library(imputeTS)
+install.package("tidyverse")
+package.install("tidyverse")
+install.packages("tidyverse")
+library(tidyverse)
+package.install("dplyr"")
+package.install("dplyr")
+install.packages("dplyr")
+install.packages("tidyverse")
+heat.colors()
+heat.colors(5)
+rev(heat.colors(5))
+library(tidyr)#
+library(dplyr)#
+library(lme4)#
+library(ggplot2)#
+library(mgcv)
+setwd("/Users/tawnamorgan/Documents/puma/fuelmeter-tools/R")#
+data <-read.csv("/Users/tawnamorgan/Documents/puma/fuelmeter-tools/data/text/multiStoveInput.csv", header=TRUE)#
+data$gpf = data$fuel/data$area#
+data <- data[data$fuel>0,] #this should not be needed because we should filter negative values long before this
+data[0:5,]
+data <-read.csv("/Users/tawnamorgan/Documents/puma/fuelmeter-tools/data/text/multiStoveInput.csv", header=TRUE)
+data[0:5,]
+data[data$fuel != NA]
+data[data$fuel != NA,]
+data[data$fue= != NA,]
+data[data$fuel == NA,]
+data[data$fuel != NA,]
+data[data$fuel > 0,]
+nrow(data)
+nrow(data[date$fuel > 0,])
+nrow(data[data$fuel > 0,])
+nrow(data[data$area > 0,])
+data <- data[data$fuel >0]
+data <- data[data$fuel >0,]
+nrow(data)
+data$gpf = data$fuel/data$area
+data[0:5,]
+char(data)
+str(data)
+data <-read.csv("/Users/tawnamorgan/Documents/puma/fuelmeter-tools/data/text/multiStoveInput.csv", header=TRUE)
+len(data)
+nrow(data)
+data <= data[!is.na(data$fuel),]
+data <- data[!is.na(data$fuel),]
+nrow(data)_
+nrow(data)
+data$gpf = data$fuel/data$area#
+data <- data[data$fuel>0,]
+data[0:5]
+data[0:5,]
