@@ -1,7 +1,7 @@
 FBK001:
   Stove Type: Laser 56/560
 FBK002:
-  Stove Type: M2200
+  Stove Type: M2200, Laser 530
 FBK003:
   Stove Type: Laser 56/560
 FBK004:
@@ -33,7 +33,7 @@ FBK017:
 FBK018:
   Stove Type: Laser 73/730
 FBK019:
-  Stove Type: M441
+  Stove Type: M441, Laser 530
 FBK020:
   Stove Type: M422   
 FBK021:                  
