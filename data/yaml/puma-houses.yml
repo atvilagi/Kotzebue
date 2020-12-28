@@ -208,9 +208,9 @@ FBK026:
   - -147.879
   Square Footage: '320'
   Report: False
-  Stove: 'FBK026'
-  Stove Correction: 0.9008
-  Stove Initialized: '2/11/2019'
+  Stove: 'FBK026,FBK026'
+  Stove Correction: 0.9008,0.9008
+  Stove Initialized: '2/11/2019, 8/25/2019'
 FBK027:
   Location:
   - 64.89892
