@@ -168,6 +168,20 @@ class PumaData:
         :param stove is the name of a stove as described in the stove inventory yaml file
         :return the original dataframe with addition columns of gallons and clicks'''
 
+        def toUtc(d):
+            d = datetime.datetime.strptime(d, "%m/%d/%Y")
+            mytimezone = pytz.timezone('UTC')
+            if d.tzinfo == None:
+                d= pytz.timezone('US/Alaska').localize(d)
+                return d.astimezone(pytz.utc)
+            elif d.tzinfo == mytimezone:
+                return d
+            else:
+
+                return mytimezone.localize(d)
+
+
+        df = df[toUtc(stove.initiation[0]):] #filtering to only include data after initiation. First click count should b 0.
         df = self.cumulative_clicks2clicks(df) #calculate the difference between clicks
         df = self.run_clicks2gallons(df,stove)
         df = self.galperhour(df)
@@ -209,14 +223,14 @@ class PumaData:
         df.is_copy = False #suppress SettingWithCopyWarning - we know its a copy
         return df
 
-    def clicks2gallons(self, df, rate):
+    def clicks2gallons(self, df, rate, adjustment):
         '''Determines the fuel pumped from the clicks counted by the PuMA device
         clicks is the difference in clicks between rows
         rate is read in as a string so cast to float
         :param df is a dataframe with clicks column
         :param rate is a string, int or float representing the number of gallons consumed per click
         :return original dataframe with additional gallons column'''
-        df['gallons'] = df['clicks'] * float(rate)
+        df['gallons']= df['clicks'] * float(rate) * adjustment
         return df
 
     def run_clicks2gallons(self, df, stove):
@@ -225,8 +239,34 @@ class PumaData:
         :param stove: A Stove object with attribute stove_type
         :return: original dataframe with additional gallons column
         '''
-        rate = self.rate_dict[stove.stoveType]
-        df = self.clicks2gallons(df,rate)
+        def toUtc(d):
+            mytimezone = pytz.timezone('UTC')
+            if d.tzinfo == None:
+                d= pytz.timezone('US/Alaska').localize(d)
+                return d.astimezone(pytz.utc)
+            elif d.tzinfo == mytimezone:
+                return d
+            else:
+
+                return mytimezone.localize(d)
+
+        dfs = []
+        for i in range(len(stove.stoveType)):
+            rate = self.rate_dict[stove.stoveType[i].lstrip(' ')] #standard rate
+            dStart = toUtc(datetime.datetime.strptime(stove.initiation[i],"%m/%d/%Y"))
+            dEnd = df.index[-1]
+            try:
+                dEnd = toUtc(datetime.datetime.strptime(stove.initiation[i+1],"%m/%d/%Y"))
+            except IndexError:
+                pass
+
+
+            if stove.adjustment[i] !=None:
+                adj = float(stove.adjustment[i])
+            else:
+                adj = 1
+            dfs.append(self.clicks2gallons(df[dStart:dEnd],rate, adj))
+        df = pd.concat(dfs)
         return df
 
     def galperhour(self, df):
@@ -501,7 +541,7 @@ class PumaData:
             #these values can be identified as records with NA for cumulative_clicks (this will include temperature only records)
             #as a cautionary note both temperature and stove data can be missing chunks of time
             #if there is no stove time, temperature timestamp is used as a substitute
-            # stove_data['time'] = stove_data['time'].dt.tz.localize(mytimezone)
+            stove_data['time'] = stove_data['time'].dt.tz_localize(mytimezone)
             stove_data['time'] = (stove_data['time'] - datetime.datetime(1970, 1, 1, tzinfo=pytz.timezone('UTC'))).dt.total_seconds()
             stove_data.loc[pd.isnull(stove_data['time']),'time'] = stove_data.loc[pd.isnull(stove_data['time']),'outTime']
             print(stove.name)
@@ -518,7 +558,14 @@ class PumaData:
         :param the file path to a yaml file contiaining stove information
         :return list of Stove objects
         :return dictionary from yaml file'''
-
+        def yamread(ydict,keyname):
+            v = None
+            try:
+                v = ydict[keyname]
+            except IndexError:
+                v = None
+            finally:
+                return v
         with open(yaml_file, 'r') as file:
             # Opening the inventory file of the stoves in the project
             yams = yaml.load(file)
@@ -526,7 +573,7 @@ class PumaData:
         stove_list = []
         # Making a list of the stove names
         for i in yams:
-            stove_list.append(Stove(i,yams.get(i)['Stove Type']))
+            stove_list.append(Stove(i,yams.get(i)['Stove Type'], yamread(yams.get(i),'Stove Correction'), yamread(yams.get(i),'Stove Initialized')))
         return stove_list,yams
 
     def getStoveFiles(self):

@@ -31,11 +31,11 @@ class MultiMonthReport(Report):
         df = pd.concat([fuel_by_day, self.fuel_price.groupby(pd.Grouper(freq='D')).mean()], axis=1)
         df.fuel_price = df.fuel_price.ffill()  # filled for days that did not match
         return df.fuel_consumption * df.fuel_price
-    def getEstimatedTotalGallons(self):
-        '''calculates the total gallons used each month and sets the attribute gallons_by_month
-        :return float total gallons for the entire report period'''
-        self.gallons_by_month = self.calculateTotalGallonsByMonth()
-        return self.gallons_by_month.sum()
+    # def getEstimatedTotalGallons(self):
+    #     '''calculates the total gallons used each month and sets the attribute gallons_by_month
+    #     :return float total gallons for the entire report period'''
+    #     self.estimated_gallons_by_month = self.calculateTotalGallonsByMonth()
+    #     return self.gallons_by_month.sum()
     def getCostPerMonth(self):
         '''calculates the total cost of consumed fuel per month by summing cost per day for every day within a month'''
         if self.cost_per_day == None:
@@ -50,13 +50,16 @@ class MultiMonthReport(Report):
         costPerDay = self.getCostPerDay(self.gpd_hdd)
         return costPerDay.sum()
 
-    def calculateTotalGallonsByMonth(self):
+    def calculateMeanDailyGallonsPerMonth(self):
         '''Calculates the total gallons consumed by month based on an average daily consumption rate for each month'''
-        groupedDaily = self.filtered_df['fuel_consumption'].groupby(pd.Grouper(freq="D")).sum() #total gallons each day
+        #actual measured total by day We use a count of 5 records as our cutoff for producing a legit average
+        groupedDaily = self.filtered_df['fuel_consumption'].groupby(pd.Grouper(freq="D")).sum(min_count=5) #total gallons each day
+        #total days needing estimates
+
         self.meanDailyByMonth = groupedDaily.groupby(pd.Grouper(freq='M')).agg(['mean','count']) #total daily gallons averaged over month
         self.meanDailyByMonth = self.meanDailyByMonth.loc[self.meanDailyByMonth['count'] >=15,'mean'] #drop months with fewer than 20 days of data
-        estimatedTotalByMonth = self.meanDailyByMonth * self.meanDailyByMonth.index.days_in_month #use the average to calculate a total amount for the month
-        return estimatedTotalByMonth
+        #estimatedTotalByMonth = self.meanDailyByMonth * self.meanDailyByMonth.index.days_in_month #use the average to calculate a total amount for the month
+        return
     def calculateMeanGallonsPerMonth(self):
         '''get the average gallons consumed for all months in the reporting period'''
         tgpm = self.calculateTotalGallonsByMonth()
@@ -74,8 +77,8 @@ class MultiMonthReport(Report):
         '''produces pngs of plots specific to this report'''
         os.chdir(self.name)
         outDoor =  self.ave_MonthlyoutdoorT['ave']
-
-        pplot.plot_multiyear_bar_progress_with_temperature(self.gphddBym, outDoor[self.start:self.end],
+        pplot.plotActualvsEstimated(self.actualGallonsByMonth, self.estimatedGallonsByMonth['total_fuel'] )
+        pplot.plot_multiyear_bar_progress_with_temperature(self.actualAverageGallonsPerHDDByMonth['average_gphdd'], outDoor[self.start:self.end],
                                     'monthly_track_your_progress.png')
 
         you = self.getMeanGallonsPerMonthPerAreaByYear()
@@ -100,8 +103,10 @@ class MultiMonthReport(Report):
         return self.ave_cost_per_day * 365
 
     def getMeanGallonsPerMonthPerAreaByYear(self):
-        gpmpa = self.calculateTotalGallonsByMonth()/self.area
-        AverageGPMPerArea = gpmpa.groupby(pd.Grouper(freq='A')).mean()
+        gpmpa = self.estimatedGallonsByMonth/self.area
+        gpmpa = pd.concat([gpmpa,self.actualGallonsByMonth], axis=1)
+        gpmpa = gpmpa[pd.notnull(gpmpa.iloc[:,1])]     #estimate is only produced for months with at least 15 days of actual data
+        AverageGPMPerArea = gpmpa['total_fuel'].groupby(pd.Grouper(freq='A')).mean()
         return AverageGPMPerArea
     def getYearlyNeigborhoodUsagePerArea(self):
         return self.neighborhood.getMeanMonthlyGPFByYear(self.houses)
@@ -116,18 +121,24 @@ class MultiMonthReport(Report):
         return
     def generateSummaryTable(self,cost):
         '''create a summary table of fuel usage, costs and temperatures by month'''
-        combinedData = pd.concat([np.round(self.gallons_by_month,2), np.round(self.meanDailyByMonth,4), np.round(self.ave_MonthlyindoorT['ave'], 0), np.round(self.ave_MonthlyoutdoorT['ave'], 0)], axis=1)
-        combinedData.columns = ['total_gal_by_month','ave_daily_by_month','ave_indoor_t_by_month','ave_outdoor_t_by_month']
+        
+        combinedData = pd.concat([np.round(self.estimatedGallonsByMonth['total_fuel'],2), self.estimatedGallonsByMonth['sample_size'],np.round(self.meanDailyByMonth,4), np.round(self.ave_MonthlyindoorT['ave'], 0),
+                                  np.round(self.ave_MonthlyoutdoorT['ave'], 0)], axis=1)
+        combinedData = combinedData[:self.estimatedGallonsByMonth.index[-1]]
+        combinedData.columns = ['total_gal_by_month','sample_size','ave_daily_by_month','ave_indoor_t_by_month','ave_outdoor_t_by_month']
+        combinedData.loc[pd.isnull(combinedData['ave_indoor_t_by_month']), 'ave_daily_by_month'] = np.nan
+
         combinedData['ave_daily_cost_by_month'] = np.round(combinedData['ave_daily_by_month'] * cost,2)
         combinedData['total_cost_by_month'] = np.round(combinedData['total_gal_by_month'] * cost,2)
-        self.estimatedCostByMonth = combinedData['total_cost_by_month']
+        #self.estimatedCostByMonth = combinedData['total_cost_by_month']
         combinedData['month_year'] = [datetime.datetime.strftime(pd.to_datetime(i),format="%b %y") for i in combinedData.index]
         combinedData['total_cost_by_month'] = combinedData['total_cost_by_month'].map('\${:,.2f}'.format)
+
         combinedData['ave_daily_cost_by_month'] = combinedData['ave_daily_cost_by_month'].map('\${:,.2f}'.format)
         combinedData = combinedData[self.reportRange[0]:self.reportRange[-1]]
         combinedData = combinedData.astype(str)
         #combinedData = combinedData.astype(dtype=pd.StringDtype())
-
+        combinedData.loc[combinedData['ave_daily_by_month'] != 'nan', 'ave_daily_by_month'] = combinedData.loc[combinedData['ave_daily_by_month'] != 'nan', 'ave_daily_by_month'] + " (" + combinedData.loc[combinedData['ave_daily_by_month'] != 'nan', 'sample_size'] + ")"
         subset = combinedData[['month_year','ave_daily_by_month','ave_daily_cost_by_month','total_gal_by_month', 'total_cost_by_month','ave_indoor_t_by_month','ave_outdoor_t_by_month']]
 
         myTable = [tuple(x) for x in subset.to_numpy()]
@@ -135,15 +146,18 @@ class MultiMonthReport(Report):
     def generateHighMonths(self):
         '''calculate which months are in the 90th percentile for fuel consumption for the entier report period based on gallons_by_month attribute
         :return list of string month names'''
-        highValue = np.percentile(self.gallons_by_month, 90)
-        highMonths = self.gallons_by_month[self.gallons_by_month > highValue].index.month
-        return [datetime.datetime.strftime(datetime.datetime(2020, h, 1), format="%B") for h in highMonths]
+        highValue = np.percentile(self.estimatedGallonsByMonth , 90)
+        highMonths = self.estimatedGallonsByMonth [self.estimatedGallonsByMonth  > highValue].index.month
+        if len(highMonths) > 0:
+            return [datetime.datetime.strftime(datetime.datetime(2020, h, 1), format="%B") for h in highMonths]
+        else:
+            return None
     def generateMetrics(self):
         super().generateMetrics() #generate all the metrics used in monthly reports
-        self.gpm = self.calculateMeanGallonsPerMonth() #gpm is an estimated average per month
+        self.calculateMeanDailyGallonsPerMonth() #gpm is an estimated average per month
         self.aveYearlyCost = self.getAveCostPerYear()
-        firstIndex = self.filtered_df[pd.notnull(self.filtered_df['fuel_consumption'])].index[0]
-        lastIndex = self.filtered_df[pd.notnull(self.filtered_df['fuel_consumption'])].index[-1] + MonthEnd(1)
+        firstIndex = self.indoorTData[pd.notnull(self.indoorTData['inT'])].index[0]
+        lastIndex = self.indoorTData[pd.notnull(self.indoorTData['inT'])].index[-1] + MonthEnd(1)
         if lastIndex.month == firstIndex.month:
             lastIndex = lastIndex + pd.to_timedelta('1d')
 
@@ -168,7 +182,7 @@ class MultiMonthReport(Report):
                             'fuel':self.fuel_by_day.copy(),'outdoorT':self.ave_DailyOutdoorT, 'indoorT':self.ave_DailyIndoorT},index=self.fuel_by_day.index)
 
 
-        return df
+        return df[pd.notnull(df['fuel'])]
     def writeReport(self):
         '''write the multiyear report tex file into the report directory for the specific house'''
         os.chdir(self.name)

@@ -33,7 +33,7 @@ with open(stoves_file) as stoveFile:
 
 def makeStoves(stoveNameList):
     splitNames = stoveNameList.split(",") #make a list
-    return [Stove(name,yams.get(name)['Stove Type']) for name in splitNames if yams.get(name) != None]
+    return [Stove(name,yams.get(name)['Stove Type'],yams.get(name)['Stove Correction'],yams.get(name)['Stove Initialized']) for name in splitNames if yams.get(name) != None]
 
 
 
@@ -81,7 +81,7 @@ try:
 except:
     pass
 monthly_fuel_price = pd.Series([3.5] *28,index=pd.date_range(startDate,endDate,freq='M'))
-#report_houses = [r for r in report_houses if r.name in ['FBK004','FBK045']]
+#report_houses = [h for h in report_houses if h.name  in ['FBK019-FBK020']]
 #for house in neighborhood.houses:
 
 for house in report_houses:

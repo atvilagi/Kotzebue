@@ -29,8 +29,8 @@ def write_multimonth_tex_var_file(reportRange,Total_Usage,meanMonthly_Usage_per_
 
     histString = 'Your highest consumption months were '
 
-    if len(highMonths) <1:
-        highMonthString = ""
+    if highMonths == None:
+        highMonthString = " "
     elif (len(highMonths) == 1):
         highMonthString = 'Your highest consumption month was ' + highMonths[0]
     elif len(highMonths) == 2:
@@ -47,8 +47,8 @@ def write_multimonth_tex_var_file(reportRange,Total_Usage,meanMonthly_Usage_per_
     resultTable = []
     for row in tableRows:  # table rows is a list of tuples
         myList = [v.replace('$nan','--').replace('nan', '--') for v in row]
-        if '--' in myList:
-            myList = [myList[0]] + ['--' for v in myList[1:]]
+        #if '--' in myList:
+         #   myList = [myList[0]] + ['--' for v in myList[1:]]
         newRow= tuple(myList)
         resultTable.append(" & ".join(newRow))
     rows = r"\\".join(resultTable) + r"\\"
@@ -78,7 +78,6 @@ def write_multimonth_tex_var_file(reportRange,Total_Usage,meanMonthly_Usage_per_
                  r'\newcommand{\annualcost}{' + '{:,.2f}'.format(annualCost) + '}',
                  r'\newcommand{\neighborhoodsize}{' + str(NeighborhoodSize) + '}',
                  r'\newcommand{\daysmonitored}{' + str(daysMonitored) + '}',
-                 r'\newcommand{\highmonths}{' + str(highMonthString) + '}',
                  r'\newcommand{\locationshown}{' + location_shown + '}',
                  r'\newcommand{\qualify}{' + flag + qualifier + '}',
                  r"""\newcommand\resultTable %
@@ -245,8 +244,7 @@ Total Cost: \${\totalcost}**\\
     \vspace{8pt}
     \begin{center}
     \small
-     {\highmonths}{ }\\
-     \vspace{16pt}
+    
     \textbf{\large{Your Home's Fuel Usage for the Duration of This Study}}\\
     \vspace{16pt}
     {\resultTable}\\
@@ -255,7 +253,11 @@ Total Cost: \${\totalcost}**\\
    
        \begin{varwidth}{1\textwidth}
 
-      \large{The table above shows your average daily fuel consumption, average daily fuel cost, monthly total gallons consumed, monthly total cost, monthly average indoor temperature and the monthly average outdoor temperature for the duration of the study. Missing entries correspond to periods when the fuel meter was down or when your stove was not in use. All cost estimates are based on a static fuel price of \${\fuelprice} per gallon.}
+      \large{The table above shows your average daily fuel consumption, average daily fuel cost, monthly total gallons consumed, monthly total cost, 
+      monthly average indoor temperature and the monthly average outdoor temperature for the duration of the study. 
+      Missing entries correspond to periods when the fuel meter was down or when your stove was not in use. Numbers in parenthesis indicate the number of days the average daily consumption value was calculated from. 
+      If there are sample days missing during the month, an estimate was produced based on your average consumption rate per heating degree day. 
+      The first and last month in the table may not be complete months and represent values only for the portion of time that a device was installed at your home. All cost estimates are based on a static fuel price of \${\fuelprice} per gallon.}
     \end{varwidth}
     \newpage
     \begin{minipage}{\linewidth}

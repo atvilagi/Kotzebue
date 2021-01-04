@@ -146,10 +146,10 @@ def plot_annual_fuel_usage(gal_by_year,fname):
                 color=[colors[0],colors[2]], width=adjWidth,label=('you','neighbors'))
 
         plt.text(year.year-(adjWidth * 0.5), gal_by_year.loc[year, 'you'],
-                        str(round(gal_by_year.loc[year, 'you'], 4)),
+                        str(round(gal_by_year.loc[year, 'you'], 3)),
                         horizontalalignment='center', fontsize=20)
         plt.text(year.year +(adjWidth * 0.5), gal_by_year.loc[year, 'meanfuelPerMonthPerArea'],
-                 str(round(gal_by_year.loc[year, 'meanfuelPerMonthPerArea'], 4)),
+                 str(round(gal_by_year.loc[year, 'meanfuelPerMonthPerArea'], 3)),
                  horizontalalignment='center', fontsize=20)
         tickCollection=tickCollection + [year.year-(adjWidth * 0.5), year.year + (adjWidth * 0.5)]
         plt.yticks([])
@@ -191,6 +191,29 @@ def plot_fuel_usage(your_gal,their_gal,fname):
     plt.tight_layout()
     plt.savefig(fname)
     plt.close('all')
+def plotActualvsEstimated(actual, estimated):
+
+    plt.figure(figsize=(14, 6))
+
+    fig, ax1 = plt.subplots()
+    WIDTH = 0.8
+
+    widthRatio = WIDTH/len(set(estimated.index.year))
+
+    for j,y in enumerate(list(set(estimated.index.year))):
+        for i,m in enumerate(list(set(estimated.index.month))):
+            X = m - 0.5
+            a = actual[(actual.index.month == m) & (actual.index.year == y)]
+            e = estimated[(estimated.index.month== m) & (estimated.index.year == y)]
+            bars = ax1.bar(X, e, width=0.5, color='red')
+
+            bars = ax1.bar(X + 0.5, a, width=0.5,
+                           color='blue')
+
+    plt.box(False)
+    plt.legend(bbox_to_anchor=(.73, 0.98), fontsize=14)
+    plt.savefig("dataComparison.png", bbox_inches='tight')
+    plt.close()
 
 def plot_multiyear_bar_progress_with_temperature(gphddpm,monthlyMeanTemperature, fname):
     '''plots gallons per hour for each month and each year with mean monthy tempearture.

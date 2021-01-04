@@ -35,8 +35,8 @@ def gallons_per_day_and_per_month(df, galColumn):
      :param: galColumn is a string name of the column containing gallons
      :return: pandas.Series of total gallons consumed each data and pandas.series of total gallons per month
     '''
-    gpd = df.groupby(pd.Grouper(freq='D'))[galColumn].sum(min_count=6)
-    gpm = gpd.groupby(pd.Grouper(freq='M')).sum(min_count = 15)
+    gpd = df[galColumn].groupby(pd.Grouper(freq='D')).sum(min_count=10) #days with fiewer than 10 fuel click records will by Nan
+    gpm = gpd.groupby(pd.Grouper(freq='M')).agg(['mean', 'count'])
     return gpd, gpm
 
 def gallons_per_heating_degree_day(dailydf,galColumn, hddColumn):

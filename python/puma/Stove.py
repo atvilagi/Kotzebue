@@ -16,11 +16,23 @@ class Stove:
         self.rate = 0 #rate of fuel consumption per click
         self.name = name
 
-    def __init__(self,name,stove_type):
-        self.stoveType = stove_type
+    def __init__(self,name,stove_type, adjustment=[1],initiation=['1/1/2018']):
+        self.stoveType = stove_type.split(",")
         self.dataFolder = None
         self.rate = 0
         self.name = name
+        if initiation == None:
+            initiation = ['1/1/2018']
+        else:
+            initiation = initiation.split(",")
+        if adjustment == None:
+            adjustment = ['1']
+        elif type(adjustment) == float:
+            adjustment = [str(adjustment)]
+        else:
+            adjustment = adjustment.split(",")
+        self.initiation = initiation
+        self.adjustment = adjustment #list of adjustments
 
     def lookupRate(self,stove_dict, fuel_click_file):
         '''

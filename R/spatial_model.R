@@ -15,6 +15,7 @@ data<-data[data$fuel > 0,]
 houses<-unique(data[c("stove","latitude","longitude")])
 allStoves <- houses$stove
 houses<-houses[houses$stove != "FBK013",] #FBK013 is outside the available prediction area
+houses<-houses[houses$stove != "FBK009",] #FBK009 is outside the available prediction area
 geo_proj = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 albers_proj <-  "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
 
