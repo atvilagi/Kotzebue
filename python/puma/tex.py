@@ -86,13 +86,13 @@ def write_multimonth_tex_var_file(reportRange,Total_Usage,meanMonthly_Usage_per_
        { | c|c|c|c|c|c|c|}
         \hline
         Month & \makecell
-        {Average
+        {Estimated \\Average
         Daily\\
                 Fuel\\
                 Consumption\\ (g)\\} &  \makecell
-        {Average \\Daily\\ Cost} &  \makecell
-        {Monthly \\Total\\ Gallons} &  \makecell
-        {Monthly \\Total\\ Cost} &  \makecell
+        {Estimated \\Average\\ Daily\\ Cost} &  \makecell
+        {Estimated \\Monthly\\ Total\\ Gallons} &  \makecell
+        {Estimated \\Monthly\\ Total\\ Cost} &  \makecell
         {Monthly \\Average\\ Indoor\\ Temperature\\ (F)} &  \makecell
         {Monthly \\Average\\ Outdoor\\ Tempearture\\ (F)} \\ [0.5ex]
         \hline\hline """ + rows + r' \hline \end {tabular} }',
@@ -255,7 +255,7 @@ Total Cost: \${\totalcost}**\\
 
       \large{The table above shows your average daily fuel consumption, average daily fuel cost, monthly total gallons consumed, monthly total cost, 
       monthly average indoor temperature and the monthly average outdoor temperature for the duration of the study. 
-      Missing entries correspond to periods when the fuel meter was down or when your stove was not in use. Numbers in parenthesis indicate the number of days the average daily consumption value was calculated from. 
+      Missing entries correspond to periods when the fuel meter was down or when your stove was not in use. Numbers in parenthesis indicate the number of days from which the average daily consumption value was calculated.
       If there are sample days missing during the month, an estimate was produced based on your average consumption rate per heating degree day. 
       The first and last month in the table may not be complete months and represent values only for the portion of time that a device was installed at your home. All cost estimates are based on a static fuel price of \${\fuelprice} per gallon.}
     \end{varwidth}
