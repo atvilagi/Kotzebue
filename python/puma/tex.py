@@ -237,7 +237,7 @@ Total Cost: \${\totalcost}**\\
       The bars show the gallons of fuel you consumed per heating degree day.
        Gallons per heating degree day is the number of gallons of fuel used in a month divided by the total number of 
         heating degree days in the month. Heating degree days are used to adjust for the weather when comparing fuel usage across 
-        different months. The lines show the average temperature for the month. The color of bars and lines corresponds to the calendar year.}\\
+        different months. The lines show the average temperature for the month. The colors of the bars and lines correspond to the calendar year.}\\
     \end{varwidth}
     \newpage
     
