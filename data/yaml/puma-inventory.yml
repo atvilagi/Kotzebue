@@ -29,8 +29,8 @@ FBK007:
   Stove Initialized: '2/18/2019'
 FBK008:
   Stove Type: Laser 73/730
-  Stove Correction: 1.1886,0.4129
-  Stove Initialized: '08/30/2019,12/15/2019'
+  Stove Correction: 0.4129
+  Stove Initialized: '08/30/2019'
 FBK010:
   Stove Type: Laser 56/560
   Stove Correction: 1.1002
@@ -96,11 +96,11 @@ FBK025:
   Stove Correction: 1.1269
   Stove Initialized: '12/4/2018'
 FBK026:
-  Stove Type: Laser 56/560
-  Stove Correction: 0.9008
-  Stove Initialized: '2/11/2019'
+  Stove Type: Laser 56/560,Laser 56/560
+  Stove Correction: 0.9008,0.9008
+  Stove Initialized: '2/11/2019, 8/25/2019'
 FBK027:
-  Stove Type: Laser 73/730
+  Stove Type: Laser 73/730,Laser 73/730
   Stove Correction: 1.1886
   Stove Initialized: '2/14/2019'
 FBK028:
