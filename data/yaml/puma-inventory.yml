@@ -198,8 +198,13 @@ OTZ004:
   
 OTZ005:
   Stove Type: M441
-  Stove Correction: 1.1886
+  Stove Correction: 1.2575
   Stove Initialized: '11/16/2019'
+
+OTZ006:
+  Stove Type: Laser 73/730, Laser 73/730
+  Stove Correction: 1.1886
+  Stove Initialized: '11/17/2019','3/7/2020' 
   
 OTZ011:
   Stove Type: Laser 73/730
