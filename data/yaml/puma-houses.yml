@@ -303,3 +303,42 @@ FBK045:
   Square Footage: '472'
   Report: False
   Stove: 'FBK045'
+OTZ001:
+  Square Footage: '980'
+  Report: True
+  Stove: 'OTZ001'
+
+OTZ002:
+  Square Footage: '972'
+  Report: True
+  Stove: 'OTZ002'
+
+OTZ003:
+  Square Footage: '870'
+  Report: True
+  Stove: 'OTZ003'
+
+OTZ004:
+  Square Footage: '300'
+  Report: True
+  Stove: 'OTZ004'  
+
+OTZ005:
+  Square Footage: '800'
+  Report: True
+  Stove: 'OTZ005'
+  
+OTZ011:
+  Square Footage: '300'
+  Report: True
+  Stove: 'OTZ011'
+  
+OTZ012:
+  Square Footage: '400'
+  Report: True
+  Stove: 'OTZ012'
+  
+OTZ013:
+  Square Footage: '480'
+  Report: True
+  Stove: 'OTZ013'
