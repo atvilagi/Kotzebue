@@ -319,7 +319,7 @@ OTZ003:
   Stove: 'OTZ003'
 
 OTZ004:
-  Square Footage: '300'
+  Square Footage: '200'
   Report: True
   Stove: 'OTZ004'  
 
@@ -327,6 +327,11 @@ OTZ005:
   Square Footage: '800'
   Report: True
   Stove: 'OTZ005'
+
+OTZ006:
+  Square Footage: '400'
+  Report: True
+  Stove: 'OTZ006'
   
 OTZ011:
   Square Footage: '300'
