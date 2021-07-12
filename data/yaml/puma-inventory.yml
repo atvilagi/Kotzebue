@@ -1,177 +1,36 @@
-FBK001:
-  Stove Type: Laser 56/560
-
-  Stove Correction: 1.1269
-  Stove Initialized: '1/26/2019'
-FBK002:
-  Stove Type: M2200,Laser 530
-  Stove Correction: 1.2575,1.1269
-  Stove Initialized: '12/6/2018,2/12/2019'
-FBK003:
-  Stove Type: Laser 56/560
-  Stove Correction: 1.1269
-  Stove Initialized: '11/27/2018'
-FBK004:
-  Stove Type: Laser 73/730
-  Stove Correction: 1.2705
-  Stove Initialized: '11/27/2018'
-FBK005:
-  Stove Type: Laser 56/560
-  Stove Correction: 1.0525
-  Stove Initialized: '2/12/2019'
-FBK006:
+OTZ001:
   Stove Type: Laser 73/730
   Stove Correction: 1.1886
-  Stove Initialized: '2/13/2019'
-FBK007:
-  Stove Type: Laser 73/730
-  Stove Correction: 1.1886
-  Stove Initialized: '2/18/2019'
-FBK008:
-  Stove Type: Laser 73/730
-  Stove Correction: 0.4129
-  Stove Initialized: '08/30/2019'
-FBK010:
-  Stove Type: Laser 56/560
-  Stove Correction: 1.1002
-  Stove Initialized: '2/12/2019'
-FBK011:
-  Stove Type: Laser 56/560
-  Stove Correction: 1.1269
-  Stove Initialized: '2/20/2019'
-FBK012:
-  Stove Type: Laser 73/730
-  Stove Correction: 1.3079
-  Stove Initialized: '12/1/2018'
-FBK013:
-  Stove Type: Laser 73/730
-  Stove Correction: 1.1886
-  Stove Initialized: '2/18/2019'
-FBK014:
-   Stove Type: M441
-   Stove Correction: 1.1886
-   Stove Initialized: '2/11/2019'
-FBK015:
-  Stove Type: M422
+  Stove Initialized: '11/15/2019'
+OTZ002:
+  Stove Type: M2400
   Stove Correction: 1.2575
-  Stove Initialized: '2/11/2019'
-FBK016:
-  Stove Type: Laser 530
-  Stove Correction: 1.1886
-  Stove Initialized: '2/13/2019'
-FBK017:
+  Stove Initialized: '11/14/2019'
+OTZ003:
   Stove Type: Laser 73/730
   Stove Correction: 1.1886
-  Stove Initialized: '12/2/2018'
-FBK018:
+  Stove Initialized: '11/15/2019'
+OTZ004:
   Stove Type: Laser 73/730
-  Stove Correction: 1.1269
-  Stove Initialized: '12/6/2018'
-FBK019:
-  Stove Type: M441,Laser 530
-  Stove Correction: 1.1886,1.1269
-  Stove Initialized: '12/1/2018,8/15/2019'
-FBK020:
-  Stove Type: M422
+  Stove Correction: 1.1886
+  Stove Initialized: '11/15/2019'
+OTZ005:
+  Stove Type: M441
   Stove Correction: 1.2575
-  Stove Initialized: '12/1/2018'
-FBK021:
-  Stove Type: M2200
-  Stove Correction: 1.2575
-  Stove Initialized: '1/25/2019'
-FBK022:
-  Stove Type: Laser 530
-  Stove Correction: 1.1269
-  Stove Initialized: '12/3/2018'
-FBK023:
-  Stove Type: Laser 530
-  Stove Correction: 1.1269
-  Stove Initialized: '12/6/2018'
-FBK024:
-  Stove Type: Laser 730
-  Stove Correction: 1.1886
-  Stove Initialized: '1/1/2019'
-FBK025:
-  Stove Type: Laser 530
-  Stove Correction: 1.1269
-  Stove Initialized: '12/4/2018'
-FBK026:
-  Stove Type: Laser 56/560,Laser 56/560
-  Stove Correction: 0.9008,0.9008
-  Stove Initialized: '2/11/2019, 8/1/2019'
-FBK027:
-  Stove Type: Laser 73/730,Laser 73/730
-  Stove Correction: 1.1886
-  Stove Initialized: '2/14/2019'
-FBK028:
+  Stove Initialized: '11/16/2019'
+OTZ006:
   Stove Type: Laser 73/730
   Stove Correction: 1.1886
-  Stove Initialized: '12/1/2018'
-FBK029:
-  Stove Type: Laser 530
-  Stove Correction: 1.1269
-  Stove Initialized: '1/1/2019'
-FBK030:
-  Stove Type: M422
-  Stove Correction: 1.2575
-  Stove Initialized: '1/25/2019'
-FBK031:
-  Stove Type: Laser 56/560
-  Stove Correction: 1.1566
-  Stove Initialized: '2/13/2019'
-FBK032:
-  Stove Type: Laser 56/560
-  Stove Correction: 1.2838
-  Stove Initialized: '12/6/2018'
-FBK033:
-  Stove Type: M2200
-  Stove Correction: 1.2575
-  Stove Initialized: '12/6/2018'
-FBK034:
+  Stove Initialized: '11/17/2019'
+OTZ011:
   Stove Type: Laser 73/730
   Stove Correction: 1.1886
-  Stove Initialized: '12/7/2018'
-FBK035:
+  Stove Initialized: '11/17/2019'
+OTZ012:
   Stove Type: Laser 73/730
   Stove Correction: 1.1886
-  Stove Initialized: '9/8/2019'
-FBK036:
-  Stove Type: Laser 73/730
-  Stove Correction: 1.1726
-  Stove Initialized: '12/8/2018'
-FBK037:
-  Stove Type: Laser 56/560
-  Stove Correction: 1.1269
-  Stove Initialized: '12/8/2018'
-FBK038:
-  Stove Type: Laser 73/730
-  Stove Correction: 1.1805
-  Stove Initialized: '12/9/2018'
-FBK039:
+  Stove Initialized: '11/16/2019'
+OTZ013:
   Stove Type: Laser 73/730
   Stove Correction: 1.1886
-  Stove Initialized: '2/14/2019'
-FBK040:
-  Stove Type: Laser 73/730
-  Stove Correction: 1.1568
-  Stove Initialized: '12/11/2018'
-FBK041:
-  Stove Type: Laser 56/560
-  Stove Correction: 1.2673
-  Stove Initialized: '2/9/2019'
-FBK042:
-  Stove Type: Laser 56/560
-  Stove Correction: 1.1269
-  Stove Initialized: '12/17/2018'
-FBK043:
-  Stove Type: Laser 73/730
-  Stove Correction: 1.1744
-  Stove Initialized: '12/18/2018'
-FBK044:
-  Stove Type: Laser 73/730
-  Stove Correction: 1.0573
-  Stove Initialized: '1/15/2019'
-FBK045:
-  Stove Type: Laser 73/730
-  Stove Correction: 1.1886
-  Stove Initialized: '2/1/2019'
+  Stove Initialized: '11/16/2019'

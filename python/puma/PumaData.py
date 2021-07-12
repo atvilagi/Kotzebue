@@ -13,8 +13,8 @@ import pandas as pd
 import pytz
 import datetime
 
-
 from puma.Stove import Stove
+#import Stove
 
 class PumaData:
 
@@ -347,10 +347,7 @@ class PumaData:
 
     def getFtpDirectory(self):
         '''returns a path to the set ftp directory or the default ftp directory if none was set'''
-        try:
-            return self.ftp_dir
-        except AttributeError as e:
-            return os.path.join(self.directory, '..', '..', '..', 'ftp-data')
+        return "C:\\Users\\atvilagi\\Desktop\\Kotz"
 
     def makeRateDict(self):
         '''reads in the set fuel_click_file or a default fuel click file if none was set and converts it to a dictionary
@@ -372,14 +369,14 @@ class PumaData:
         try:
             self.airTempFile
         except AttributeError as e:
-            airTempFile = os.path.join(self.directory, '..', '..', 'data', 'netcdf', 'aoos_snotel_temp.nc')
+            airTempFile = os.path.join(self.directory, '..', '..', 'data', 'netcdf', 'OTZ_weather.nc')
         finally:
             at_data = Dataset(airTempFile, 'r')
             # Assuming air temperature file from NRCS Snotel observations in netCDF form
             air_temp = at_data.variables['air_temperature'][:]
-            if 'C' in at_data['air_temperature'].units or 'c' in at_data[
-                'air_temperature'].units:  # Checking the unit type if Celsius is used
-                air_temp = air_temp * 9 / 5 + 32
+            """if 'C' in at_data['air_temperature'].units or 'c' in at_data[
+             #   'air_temperature'].units:  # Checking the unit type if Celsius is used
+              #  air_temp = air_temp * 9 / 5 + 32"""
             at_time = at_data.variables['time'][:]
             # complete dataframe of air temperature truncated to dataset duration
             # large time periods can be missing temperature data
@@ -541,7 +538,7 @@ class PumaData:
             #these values can be identified as records with NA for cumulative_clicks (this will include temperature only records)
             #as a cautionary note both temperature and stove data can be missing chunks of time
             #if there is no stove time, temperature timestamp is used as a substitute
-            stove_data['time'] = stove_data['time'].dt.tz_localize(mytimezone)
+            stove_data['time'] = stove_data['time'].dt.tz_convert(mytimezone)
             stove_data['time'] = (stove_data['time'] - datetime.datetime(1970, 1, 1, tzinfo=pytz.timezone('UTC'))).dt.total_seconds()
             stove_data.loc[pd.isnull(stove_data['time']),'time'] = stove_data.loc[pd.isnull(stove_data['time']),'outTime']
             print(stove.name)

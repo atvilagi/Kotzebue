@@ -198,18 +198,7 @@ Total Cost: \${\totalcost}**\\
  \end{tabu} 
    \end{center}
    
-  \vspace{8pt}
-\begin{center}
-    \textbf{\large{Mean Daily Fuel Consumption During\\
- Cold Weather Months}}\\
-     \includegraphics[height= 3in]{spatial_fuel.png}\\ 
-     \end{center}
-     \begin{varwidth}{1\textwidth}
-     \large
-     {The figure above is a color shaded map showing the estimated average daily gallons of fuel oil used per square foot within the study area during September through April. Consumption estimates were produced using data collected from all participants in the Fairbanks North Star Borough using generalized linear models based on latitude, logitude, slope, elevation and aspect. {\locationshown}}
- \end{varwidth}
 \vspace{4pt}
-\newpage
 \begin{center} 
   \textbf{\large{Mean Fuel Consumption per Area}}\\     
        \includegraphics[height= 2.5in]{fuel_usage.png}\\
@@ -222,7 +211,7 @@ Total Cost: \${\totalcost}**\\
       }
  \end{varwidth}
     \vspace{4pt}
-    
+    \newpage
     \begin{center}
    
    
@@ -272,23 +261,9 @@ Total Cost: \${\totalcost}**\\
   \textbf{\small{  (Gallons per Hour)  }}\\       
        \includegraphics[height= 3in]{seasonal_polar_plot.png}\\
 \end{center}  
-       \begin{varwidth}{1\textwidth}
+       
+"""
 
-      \large{
-      Many factors can affect the amount of fuel required to keep your home comfortable. 
-      Indoor temperature settings affect overall fuel requirements. 
-      Below is your estimated cost based on average daily outdoor temperature for the range of indoor temperatures we recorded for your home.
-      The colors correspond to different indoor temperatures. The higher the indoor temperature setting, the greater the heating cost per day. 
-      As can been seen in the graphic below, this effect is amplified as the outdoor temperature decreases.}
-       \end{varwidth}
-
-    \begin{center}
-      \textbf{\large{Predicted Fuel Cost}}\\
-     \textbf{\small{(based on a mean fuel price of \$3.50 per gallon)}}\\
-    \vspace{16pt}
-    \includegraphics[height= 3.2in]{gamm.png}\\
-
-    \end{center}
 
     \end{minipage}
     \end{document}
@@ -498,15 +473,6 @@ The average outdoor temperature for this month was: {\outTave} {\degree}F\\
 \renewcommand{\headsep}{14pt}
 \fancyfoot{}
 \fancyfoot[C]{\scriptsize{UAF is an AA/EO employer and educational institution and prohibits illegal discrimination against any individual: www.alaska.edu/nondiscrimination/.}}
-\begin{center}
-\textbf{\Huge{Tip to Save Fuel}}
-\end{center}
-\vspace{75pt}
-\begin{center}
-\begin{minipage}{.85\linewidth}
-{\tips}
-\end{minipage}
-\end{center}
 \end{document}
 ''' #tex text
 

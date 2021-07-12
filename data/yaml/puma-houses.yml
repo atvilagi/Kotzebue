@@ -1,305 +1,71 @@
-
-TST001:
-  Location:
-  - 64.89163
-  - -147.674
-  Square Footage: '792'
-  Report: False
-  Stove: 'TST001'
-  Note: This is a copy of FBX004 for testing purposes
-FBK000:
-  Location:
-  - 64.87628
-  - -147.84861
-  Square Footage: '1307'
-  Report: False
-  Stove: 'FBK000'
-FBK001:
-  Location:
-  - 64.86001
-  - -147.913
-  Square Footage: '528'
-  Report: False
-  Stove: 'FBK001'
-FBK002:
-  Location:
-  - 64.85885
-  - -147.962
-  Square Footage: '1318'
-  Report: False
-  Stove: 'FBK002'
-FBK003:
-  Location:
-  - 64.90049
-  - -147.773
-  Square Footage: '672'
-  Report: False
-  Stove: 'FBK003'
-
-FBK004:
-  Location:
-  - 64.89163
-  - -147.674
-  Square Footage: '792'
-  Report: True
-  Stove: 'FBK004'
-
-FBK005:
-  Location:
-  - 64.8487
-  - -147.968
-  Square Footage: '564'
-  Report: False
-  Stove: 'FBK005'
-FBK006:
-  Location:
-  - 64.79955
-  - -148.063
-  Square Footage: '1008'
-  Report: False
-  Stove: 'FBK006'
-FBK007:
-  Location:
-  - 64.91331
-  - -147.602
-  Square Footage: '576'
-  Report: False
-  Stove: 'FBK007'
-FBK008:
-  Location:
-  - 64.8496
-  - -147.715
-  Square Footage: '576'
-  Report: False
-  Stove: 'FBK008'
-FBK009:
-  Location:
-  - 64.57072
-  - -147.045
-  Square Footage: '672'
-  Report: False
-  Stove: 'FBK009'
-FBK010:
-  Location:
-  - 64.92074
-  - -147.918
-  Square Footage: '552'
-  Report: True
-  Stove: 'FBK010'
-FBK011:
-  Location:
-  - 64.77877
-  - -148.04
-  Square Footage: '576'
-  Report: False
-  Stove: 'FBK011'
-FBK012:
-  Location:
-  - 64.78514
-  - -148.034
-  Square Footage: '1512'
-  Report: False
-  Stove: 'FBK012'
-FBK013:
-  Location:
-  - 64.96401
-  - -147.755
-  Square Footage: '936'
-  Report: False
-  Stove: 'FBK013'
-FBK014-FBK015:
-  Location:
-  - 64.83723
-  - -148.027
-  Square Footage: '1830'
-  Report: False
-  Stove: 'FBK014,FBK015'
-FBK016:
-  Location:
-  - 64.76378
-  - -148.083
-  Square Footage: '572'
-  Report: True
-  Stove: 'FBK016'
-FBK017-FBK018:
-  Location:
-  - 64.81606
-  - -148.002
-  Square Footage: '1360'
-  Report: True
-  Stove: 'FBK017,FBK018'
-FBK019-FBK020:
-  Location:
-  - 64.87386
-  - -147.813
-  Square Footage: '1080'
-  Report: False
-  Stove: 'FBK019,FBK020'
-FBK021:
-  Location:
-  - 64.85657
-  - -147.893
-  Square Footage: '480'
-  Report: False
-  Stove: 'FBK021'
-FBK022:
-  Location:
-  - 64.78939
-  - -148.07
-  Square Footage: '512'
-  Report: False
-  Stove: 'FBK022'
-FBK023:
-  Location:
-  - 64.8388
-  - -148.064
-  Square Footage: '900'
-  Report: True
-  Stove: 'FBK023'
-FBK024-FBK025:
-  Location:
-  - 64.92216
-  - -147.931
-  Square Footage: '1264'
-  Report: False
-  Stove: 'FBK024,FBK025'
-FBK026:
-  Location:
-  - 64.9112
-  - -147.879
-  Square Footage: '320'
-  Report: False
-  Stove: 'FBK026'
-FBK027:
-  Location:
-  - 64.89892
-  - -147.738
-  Square Footage: '864'
-  Report: True
-  Stove: 'FBK027'
-FBK028:
-  Location:
-  - 64.77966
-  - -148.058
-  Square Footage: '1320'
-  Report: False
-  Stove: 'FBK028'
-FBK029:
-  Location:
-  - 64.91823
-  - -147.868
-  Square Footage: '396'
-  Report: False
-  Stove: 'FBK029'
-FBK030:
-  Location:
-  - 64.8601
-  - -147.895
-  Square Footage: '510'
-  Report: False
-  Stove: 'FBK030'
-FBK031:
-  Location:
-  - 64.8873
-  - -147.475
-  Square Footage: '288'
-  Report: True
-  Stove: 'FBK031'
-FBK032:
-  Location:
-  - 64.80488
-  - -148.07
-  Square Footage: '640'
-  Report: False
-  Stove: 'FBK032'
-FBK033:
-  Location:
-  - 64.90272
-  - -147.772
-  Square Footage: '408'
-  Report: False
-  Stove: 'FBK033'
-FBK034:
-  Location:
-  - 64.87842
-  - -147.413
-  Square Footage: '861'
-  Report: False
-  Stove: 'FBK034'
-FBK035:
-  Location:
-  - 64.89301
-  - -147.831
-  Square Footage: '1728'
-  Report: False
-  Stove: 'FBK035'
-FBK036:
-  Location:
-  - 64.79853
-  - -148.075
-  Square Footage: '1014'
-  Report: False
-  Stove: 'FBK036'
-FBK037:
-  Location:
-  - 64.86302
-  - -147.888
-  Square Footage: '576'
-  Report: True
-  Stove: 'FBK037'
-FBK038:
-  Location:
-  - 64.90147
-  - -147.72
-  Square Footage: '624'
-  Report: False
-  Stove: 'FBK038'
-FBK039:
-  Location:
-  - 64.89185
-  - -147.755
-  Square Footage: '760'
-  Report: True
-  Stove: 'FBK039'
-FBK040:
-  Location:
-  - 64.84648
-  - -147.826
-  Square Footage: '960'
-  Report: True
-  Stove: 'FBK040'
-FBK041:
-  Location:
-  - 64.90553
-  - -147.879
-  Square Footage: '448'
-  Report: True
-  Stove: 'FBK041'
-FBK042:
-  Location:
-  - 64.86369
-  - -147.67
-  Square Footage: '812'
-  Report: False
-  Stove: 'FBK042'
-FBK043:
-  Location:
-  - 64.83624
-  - -147.929
-  Square Footage: '1100'
-  Report: False
-  Stove: 'FBK043'
-FBK044:
-  Location:
-  - 64.80454
-  - -147.449
-  Square Footage: '576'
-  Report: True
-  Stove: 'FBK044'
-FBK045:
+OTZ001:
   Location:
   - 64.89274
   - -147.743
-  Square Footage: '472'
-  Report: False
-  Stove: 'FBK045'
+  Square Footage: '980'
+  Report: TRUE
+  Stove: 'OTZ001'
+
+OTZ002:
+  Location:
+  - 64.89274
+  - -147.743
+  Square Footage: '972'
+  Report: TRUE
+  Stove: 'OTZ002'
+
+OTZ003:
+  Location:
+  - 64.89274
+  - -147.743
+  Square Footage: '870'
+  Report: TRUE
+  Stove: 'OTZ003'
+
+OTZ004:
+  Location:
+  - 64.89274
+  - -147.743
+  Square Footage: '200'
+  Report: TRUE
+  Stove: 'OTZ004'
+
+OTZ005:
+  Location:
+  - 64.89274
+  - -147.743
+  Square Footage: '800'
+  Report: TRUE
+  Stove: 'OTZ005'
+
+OTZ006:
+  Location:
+  - 64.89274
+  - -147.743
+  Square Footage: '400'
+  Report: TRUE
+  Stove: 'OTZ006'
+
+OTZ011:
+  Location:
+  - 64.89274
+  - -147.743
+  Square Footage: '300'
+  Report: TRUE
+  Stove: 'OTZ011'
+
+OTZ012:
+  Location:
+  - 64.89274
+  - -147.743
+  Square Footage: '400'
+  Report: TRUE
+  Stove: 'OTZ012'
+
+OTZ013:
+  Location:
+  - 64.89274
+  - -147.743
+  Square Footage: '480'
+  Report: TRUE
+  Stove: 'OTZ013'

@@ -43,7 +43,7 @@ with open(houses_file) as house_file:
     report_houses = [House(i,yamh.get(i)['Square Footage'],yamh.get(i)['Location'], makeStoves(yamh.get(i)['Stove'])) for i in yamh]
 
 #report_houses = [h for h in report_houses if h.name == 'FBK045']
-neighborhood = Neighborhood('FBK',report_houses.copy())
+neighborhood = Neighborhood('OTZ',report_houses.copy())
 working_dir = os.path.join(file_path,'..','..','reports','multiyear') #moving to the reports/multiyear directory
 
 #check if the folder exists and make it if it doesn't
@@ -52,11 +52,11 @@ if not os.path.exists(working_dir):
 os.chdir(working_dir)
 
 
-startyear = 2018
-startmonth = 1
+startyear = 2019
+startmonth = 11
 
-lastyear = 2020
-lastmonth = 4
+lastyear = 2021
+lastmonth = 5
 
 timezone = pytz.timezone('US/Alaska')
 startDate = datetime.datetime(startyear,startmonth,1,0,0,0,0)
@@ -72,15 +72,15 @@ dateRange = pd.date_range(startDate, endDate, freq='D')
 
 year_month = (lastyear,lastmonth) #year and month of the report to print
 
-begin_year_month = (2018,9)
-end_year_month = (2020,5)
+begin_year_month = (2019,11)
+end_year_month = (2021,5)
 
-excludeControlList = ['FBK015','FBK020']
+excludeControlList = []
 try:
     [report_houses.remove(h) for h in report_houses if h.name in excludeControlList]
 except:
     pass
-monthly_fuel_price = pd.Series([3.5] *28,index=pd.date_range(startDate,endDate,freq='M'))
+monthly_fuel_price = pd.Series([3.5] *19,index=pd.date_range(startDate,endDate,freq='M'))
 #report_houses = [h for h in report_houses if h.name  in ['FBK019-FBK020']]
 #for house in neighborhood.houses:
 
@@ -103,7 +103,7 @@ for house in report_houses:
 
 #reports only have house metrics at this point
 #add in neighborhood metrics -these were calculated externnaly
-neighborhood.applyStatsModels()
+#neighborhood.applyStatsModels()
 #report_houses = [h for h in report_houses if h.name  in ['FBK036','FBK037','FBK029','FBK024-FBK025']]
 for house in report_houses:
         try:

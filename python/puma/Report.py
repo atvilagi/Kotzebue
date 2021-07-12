@@ -422,7 +422,7 @@ class Report:
         filtered_df = pd.concat(filtered_df_list)
         self.hourlyOutdoorTemperature = self.getHourlyTemperature(filtered_df, 'outT')
         filtered_df = filtered_df.sort_index(0)
-        studyStart = datetime.datetime.strptime('2017-09-01 00:00:00',"%Y-%m-%d %H:%M:%S")
+        studyStart = datetime.datetime.strptime('2019-09-01 00:00:00',"%Y-%m-%d %H:%M:%S")
         studyStart = timezone.localize(studyStart, timezone)
         dataStart = min(filtered_df[pd.notnull(filtered_df.deltaT)][studyStart:].index) #drop records that are earlier than our actual data collection
         filtered_df = filtered_df[dataStart:]

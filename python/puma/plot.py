@@ -140,7 +140,7 @@ def plot_annual_fuel_usage(gal_by_year,fname):
     textDrop = min(gal_by_year.min() * 0.12)
     plt.subplot(111)
     tickCollection = []
-    for i,year in enumerate(list(set(gal_by_year.index.tolist()))):
+    for i, year in enumerate(list(set(gal_by_year.index.tolist()))):
         bars = plt.bar([year.year-(adjWidth * 0.5), year.year + (adjWidth * 0.5)],
                 [gal_by_year.loc[year, 'you'],gal_by_year.loc[year, 'meanfuelPerMonthPerArea']],
                 color=[colors[0],colors[2]], width=adjWidth,label=('you','neighbors'))
@@ -154,8 +154,8 @@ def plot_annual_fuel_usage(gal_by_year,fname):
         tickCollection=tickCollection + [year.year-(adjWidth * 0.5), year.year + (adjWidth * 0.5)]
         plt.yticks([])
 
-    plt.xticks(tickCollection, ['You', 'Your Neighbor$^*$'], fontsize=20)
-
+    #plt.xticks(tickCollection, ['You', 'Your Neighbor$^*$'], fontsize=20)
+    plt.xticks(tickCollection, fontsize=20)
     plt.ylabel('Average Monthly $gal/ft^2$',fontsize=20)
     plt.yticks([])
     plt.xticks([y.year for y in list(set(gal_by_year.index.tolist()))], [y.year for y in list(set(gal_by_year.index.tolist()))], fontsize=20)

@@ -20,9 +20,9 @@ from puma.PumaData import PumaData
 
 #TODO remove local test
 #os.chdir('e:\\PUMA\\fuelmeter-tools\\') #temporary fix for testing locally
-snotel_file = os.path.join('..','..','data','tmp','snotel.zip')
-os.chdir(os.path.join(file_path,'..','..', 'data','tmp'))
-
+#snotel_file = os.path.join('..','..','data','tmp','snotel.zip')
+#os.chdir(os.path.join(file_path,'..','..', 'data','tmp'))
+os.chdir("C:\\Users\\atvilagi\\Desktop\\Kotz")
 if __name__ == '__main__':
 
     # try:
