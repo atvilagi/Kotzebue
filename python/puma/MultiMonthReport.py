@@ -149,7 +149,7 @@ class MultiMonthReport(Report):
         highValue = np.percentile(self.estimatedGallonsByMonth , 90)
         highMonths = self.estimatedGallonsByMonth [self.estimatedGallonsByMonth  > highValue].index.month
         if len(highMonths) > 0:
-            return [datetime.datetime.strftime(datetime.datetime(2020, h, 1), format="%B") for h in highMonths]
+            return [datetime.datetime.strftime(datetime.datetime(2021, h, 1), format="%B") for h in highMonths]
         else:
             return None
     def generateMetrics(self):

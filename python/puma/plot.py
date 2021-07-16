@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.interpolate import make_interp_spline, BSpline
+from scipy.io import savemat
 
 colors = np.array([[255,16,16],[25, 179, 164],[255, 153, 0],[20, 28, 166],[94, 22, 119]])/255
 
@@ -50,6 +51,9 @@ def seasonal_polar_flow_plot(ave_gal_by_hour_by_season,fname):
     dtMax = 0
     maxI = (1,0)
     dailyMax = max(ave_gal_by_hour_by_season['fuel_consumption'].groupby('season').sum())
+
+    season_t_theta = []
+    season_data_theta = []
     for season in set(ave_gal_by_hour_by_season.index.levels[0]):
         data = ave_gal_by_hour_by_season[np.in1d(ave_gal_by_hour_by_season.index.get_level_values(0), [season])]
         if (len(data) <= 24) & (len(data) > 0):
@@ -72,14 +76,20 @@ def seasonal_polar_flow_plot(ave_gal_by_hour_by_season,fname):
 
         t_theta[24] = t_theta[0]
         data_theta.index = t_theta
+        season_t_theta.append(t_theta)
+        season_data_theta.append(data_theta)
         #data_theta = data_theta['fuel_consumption']
 
         if (data_theta.sum() > 0):
 
             plt.polar(t_theta, data_theta, linewidth=3, color=colors[season - 1], label=seasons[season])
+            #plt.polar(t_thetag, data_theta)
             if np.nanmax(data_theta) > dtMax:
                 dtMax = np.nanmax(data_theta)
                 maxI = (season, int(np.where(data_theta == dtMax)[0][0]))
+
+    savemat("season_data_theta.mat", {"data": season_data_theta})
+    savemat("season_t_theta.mat", {"t_theta": season_t_theta})
 
     plt.rgrids((dtMax / 3, 2 * dtMax / 3, dtMax,
                 3.5 * dtMax / 3), labels=(float(round((ave_gal_by_hour_by_season.loc[maxI] / 3), 2)),
@@ -89,7 +99,12 @@ def seasonal_polar_flow_plot(ave_gal_by_hour_by_season,fname):
     plt.polar([-5 * np.pi / 4, -5 * np.pi / 4], [0, 3.5 * dtMax / 3], linewidth=4, color=[0, 0, 0])
     # adding break line
     plt.polar([-np.pi / 4, -np.pi / 4], [0, 3.5 * dtMax / 3], linewidth=4, color=[0, 0, 0])
-    # plt.polar(t_theta, data_theta, linewidth=3, color=colors[season-1], label='$gal/hr$')
+    #plt.polar(t_theta, data_theta, linewidth=3, color=colors[season-1], label='$gal/hr$')
+    #plt.polar(season_t_theta[0], season_data_theta[0])
+    #plt.polar(season_t_theta[1], season_data_theta[1])
+    #plt.polar(season_t_theta[2], season_data_theta[2])
+    #plt.polar(season_t_theta[3], season_data_theta[3])
+
     plt.text(np.pi / 4, dtMax / 3, 'Night', fontsize=14)
     plt.text(3.92699, dtMax / 3, 'Day', fontsize=14)
     plt.thetagrids((0, 45, 90, 135, 180, 225, 270, 315), ('00:00', '03:00', '06:00', '09:00',

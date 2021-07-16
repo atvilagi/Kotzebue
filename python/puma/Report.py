@@ -274,6 +274,7 @@ class Report:
             differ = pd.Series(stove_groups.groups[g])
             differ.index = differ
             duration = differ.groupby(pd.Grouper(freq = 'D')).diff()
+            duration.loc[pd.isnull(duration)] = pd.to_timedelta('0h')
             daily = duration.groupby(pd.Grouper(freq = 'D')).sum()
             dailydf = pd.concat([dailydf, daily], axis=1, join='outer')
         time = dailydf.max(axis=1)
@@ -291,6 +292,7 @@ class Report:
             differ = pd.Series(stove_groups.groups[g])
             differ.index = differ
             duration = differ.groupby(pd.Grouper(freq='D')).diff()
+            duration.loc[pd.isnull(duration)] = pd.to_timedelta('0h')
             daily = duration.groupby(pd.Grouper(freq='D')).sum(min_count=2)
             dailydf = pd.concat([dailydf, daily], axis=1, join='outer')
         dailydf['dur'] = dailydf.max(axis=1)
